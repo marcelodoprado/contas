@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planilhas de Contas Online</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles for body and container */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #374151;
+            margin: 0;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            background-color: #f9fafb;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Table specific styles */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: middle;
+        }
+        th {
+            background-color: #4f46e5;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+        }
+        td {
+            background-color: #ffffff;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .rounded-table {
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Input and Select field styles */
+        input[type="text"], input[type="number"], input[type="date"], select {
+            width: 100%;
+            padding: 0.625rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            outline: none;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            font-size: 1rem;
+        }
+        input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus, select:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Button styles */
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+        .btn-primary {
+            background-color: #4f46e5;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca;
+            transform: translateY(-1px);
+        }
+
+        /* Action buttons (delete) */
+        .btn-delete-custom {
+            background-color: #fee2e2; color: #ef4444; border: 1px solid #fca5a5;
+            width: 1.75rem; height: 1.75rem; font-size: 1.125rem; line-height: 1;
+            border-radius: 9999px; font-weight: bold; transition: all 0.2s ease-in-out;
+            cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+        }
+        .btn-delete-custom:hover { background-color: #fecaca; color: #dc2626; transform: scale(1.1); }
+
+        /* Status colors */
+        .status-select {
+            -webkit-appearance: none; -moz-appearance: none; appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.5rem; padding-right: 2.5rem;
+        }
+        .status-pending { background-color: #ef4444 !important; color: white !important; }
+        .status-paid { background-color: #22c55e !important; color: white !important; }
+        .status-received { background-color: #facc15 !important; color: black !important; }
+
+        /* Month separator row style */
+        .month-separator-row {
+            background-color: #e0e7ff; color: #374151; font-weight: 600;
+            text-align: center; border-bottom: 1px solid #c7d2fe; cursor: pointer;
+            position: relative;
+        }
+        .month-separator-row.current-month-header td {
+             background-color: #c7d2fe !important;
+             border-bottom: 2px solid #4f46e5;
+        }
+        .month-paid-header td {
+            background-color: #dcfce7 !important;
+            color: #166534;
+        }
+        .month-separator-row td { padding: 0.5rem 1rem; background-color: #e0e7ff; font-size: 1.125rem; }
+        .toggle-icon {
+            font-size: 0.8em;
+            margin-left: 8px;
+            display: inline-block;
+            transition: transform 0.2s ease-in-out;
+        }
+        .collapsed .toggle-icon { transform: rotate(-90deg); }
+        .hidden-row { display: none; }
+
+        /* Monthly totals row style */
+        .monthly-totals-row {
+            background-color: #f0f4ff; color: #374151; font-weight: 600;
+            border-top: 1px solid #c7d2fe; border-bottom: 2px solid #a5b4fc;
+        }
+        .monthly-totals-row td { padding: 0.5rem 1rem; background-color: #f0f4ff; }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body { padding: 0.5rem; }
+            .container { padding: 1rem; }
+            table, thead, tbody, th, td, tr { display: block; }
+            thead tr { position: absolute; top: -9999px; left: -9999px; }
+            tr { margin-bottom: 1rem; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06); }
+            td { border: none; position: relative; padding-left: 50%; text-align: right; font-size: 0.95rem; }
+            td:before {
+                position: absolute; top: 50%; transform: translateY(-50%); left: 6px;
+                width: 45%; padding-right: 10px; white-space: nowrap; text-align: left;
+                font-weight: 600; color: #4f46e5; font-size: 0.875rem;
+            }
+            td:nth-of-type(1):before { content: "Descrição"; }
+            td:nth-of-type(2):before { content: "Tipo"; }
+            td:nth-of-type(3):before { content: "Valor"; }
+            td:nth-of-type(4):before { content: "Data"; }
+            td:nth-of-type(5):before { content: "Parcela"; }
+            td:nth-of-type(6):before { content: "Status"; }
+            td:nth-of-type(7):before { content: "Ações"; }
+            
+            .monthly-totals-row .flex-container { flex-direction: column; align-items: stretch; }
+            .monthly-totals-row .totals-text { text-align: center; margin-bottom: 0.5rem;}
+            .monthly-totals-row .buttons-container { justify-content: center; }
+            .month-separator-row td, .monthly-totals-row td { text-align: center; padding-left: 1rem; }
+            .month-separator-row td:before, .monthly-totals-row td:before { content: none; }
+        }
+        @media (max-width: 480px) {
+            td { padding-left: 40%; }
+            td:before { width: 35%; }
+        }
+    </style>
+</head>
+<body class="p-4">
+    <div class="container mx-auto bg-gray-50 p-6 rounded-xl shadow-lg">
+        <h1 class="text-3xl font-bold text-center text-indigo-700 mb-8">Minha Planilha de Contas Online</h1>
+        <div id="auth-container" class="text-center mb-4">
+             <p id="user-id-display" class="text-sm text-gray-500"></p>
+        </div>
+        <div class="overflow-x-auto rounded-table mb-8">
+            <table id="accounts-table">
+                <thead>
+                    <tr>
+                        <th>Descrição</th>
+                        <th>Tipo</th>
+                        <th>Valor</th>
+                        <th>Data</th>
+                        <th>Parcela</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="accounts-table-body">
+                    <!-- Rows will be added here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import Firebase services
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, serverTimestamp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- Firebase Configuration ---
+        // These variables are provided by the environment. Do not change them.
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        setLogLevel('debug'); // For detailed logs
+
+        // --- Global Variables & Constants ---
+        const accountsTableBody = document.querySelector('#accounts-table-body');
+        const userIdDisplay = document.getElementById('user-id-display');
+        const monthNames = [
+            'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+            'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+        ];
+        let accountsCollection;
+        let unsubscribe; // To detach the Firestore listener later
+
+        // --- Authentication ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                console.log("User is signed in:", user.uid);
+                userIdDisplay.textContent = `Conectado como: ${user.uid}`;
+                
+                // Set up the Firestore collection reference
+                const collectionPath = `artifacts/${appId}/users/${user.uid}/accounts`;
+                accountsCollection = collection(db, collectionPath);
+                
+                // Detach any existing listener before attaching a new one
+                if (unsubscribe) unsubscribe();
+                
+                // Listen for real-time updates
+                unsubscribe = onSnapshot(accountsCollection, (snapshot) => {
+                    const accounts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderAccounts(accounts);
+                });
+
+            } else {
+                console.log("User is signed out. Attempting to sign in.");
+                userIdDisplay.textContent = "Conectando...";
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    try {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                        console.log("Signed in with custom token.");
+                    } catch (error) {
+                        console.error("Custom token sign-in failed, trying anonymous:", error);
+                        await signInAnonymously(auth);
+                    }
+                } else {
+                    await signInAnonymously(auth);
+                    console.log("Signed in anonymously.");
+                }
+            }
+        });
+
+
+        // --- UI Rendering ---
+
+        /**
+         * Applies the correct CSS class to the status select element based on its value.
+         */
+        function applyStatusClass(element, status) {
+            element.classList.remove('status-pending', 'status-paid', 'status-received');
+            switch (status) {
+                case 'Pendente': element.classList.add('status-pending'); break;
+                case 'Pago': element.classList.add('status-paid'); break;
+                case 'Recebido': element.classList.add('status-received'); break;
+            }
+        }
+
+        /**
+         * Creates a single account row in the table.
+         */
+        function createAccountRow(account) {
+            const row = document.createElement('tr');
+            
+            const createCell = (child) => {
+                const cell = row.insertCell();
+                cell.appendChild(child);
+                return cell;
+            };
+
+            const createInput = (type, value, placeholder, changeHandler) => {
+                const input = document.createElement('input');
+                input.type = type;
+                input.value = value;
+                if (placeholder) input.placeholder = placeholder;
+                if (type === 'number') input.step = '0.01';
+                input.addEventListener('change', changeHandler);
+                return input;
+            };
+
+            createCell(createInput('text', account.description, 'Descrição', (e) => updateAccount(account.id, { description: e.target.value })));
+            
+            const typeSelect = document.createElement('select');
+            typeSelect.innerHTML = `<option value="Pagar" ${account.type === 'Pagar' ? 'selected' : ''}>Pagar</option><option value="Receber" ${account.type === 'Receber' ? 'selected' : ''}>Receber</option>`;
+            typeSelect.addEventListener('change', (e) => updateAccount(account.id, { type: e.target.value }));
+            createCell(typeSelect);
+
+            createCell(createInput('number', account.value.toFixed(2), 'Valor', (e) => updateAccount(account.id, { value: parseFloat(e.target.value) || 0 })));
+            createCell(createInput('date', account.date, null, (e) => updateAccount(account.id, { date: e.target.value })));
+            createCell(createInput('text', account.installment, 'Ex: 1/12', (e) => updateAccount(account.id, { installment: e.target.value })));
+
+            const statusSelect = document.createElement('select');
+            statusSelect.classList.add('status-select');
+            statusSelect.innerHTML = `<option value="Pendente" ${account.status === 'Pendente' ? 'selected' : ''}>Pendente</option><option value="Pago" ${account.status === 'Pago' ? 'selected' : ''}>Pago</option><option value="Recebido" ${account.status === 'Recebido' ? 'selected' : ''}>Recebido</option>`;
+            applyStatusClass(statusSelect, account.status);
+            statusSelect.addEventListener('change', (e) => updateAccount(account.id, { status: e.target.value }));
+            createCell(statusSelect);
+
+            const actionsCell = row.insertCell();
+            actionsCell.classList.add('flex', 'flex-row', 'gap-2', 'items-center', 'justify-start');
+            const deleteButton = document.createElement('button');
+            deleteButton.innerHTML = '&times;';
+            deleteButton.title = 'Excluir conta';
+            deleteButton.classList.add('btn-delete-custom');
+            deleteButton.addEventListener('click', () => deleteAccount(account.id));
+            actionsCell.appendChild(deleteButton);
+
+            return row;
+        }
+
+        /**
+         * Renders all accounts into the table, grouped by month.
+         */
+        function renderAccounts(accounts) {
+            accountsTableBody.innerHTML = '';
+            if (!accounts) return;
+
+            const accountsByMonth = {};
+            accounts.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            accounts.forEach(account => {
+                if (account.date) {
+                    const dateObj = new Date(account.date + 'T00:00:00');
+                    const monthYearKey = `${monthNames[dateObj.getMonth()]}/${dateObj.getFullYear()}`;
+                    if (!accountsByMonth[monthYearKey]) {
+                        accountsByMonth[monthYearKey] = [];
+                    }
+                    accountsByMonth[monthYearKey].push(account);
+                }
+            });
+
+            const sortedKeys = Object.keys(accountsByMonth).sort((a, b) => {
+                const [monthA, yearA] = a.split('/');
+                const [monthB, yearB] = b.split('/');
+                const dateA = new Date(yearA, monthNames.indexOf(monthA));
+                const dateB = new Date(yearB, monthNames.indexOf(monthB));
+                return dateA - dateB;
+            });
+
+            const now = new Date();
+            const currentMonthKey = `${monthNames[now.getMonth()]}/${now.getFullYear()}`;
+
+            sortedKeys.forEach(monthKey => {
+                const monthAccounts = accountsByMonth[monthKey];
+                const isCurrentMonth = monthKey === currentMonthKey;
+                const contentRowsClassName = `content-${monthKey.replace(/[^a-zA-Z0-9]/g, '-')}`;
+                const monthlyTotals = calculateMonthlyTotals(monthAccounts);
+
+                const headerRow = accountsTableBody.insertRow();
+                headerRow.classList.add('month-separator-row');
+                if(isCurrentMonth) headerRow.classList.add('current-month-header');
+                if(monthlyTotals.allPaid) headerRow.classList.add('month-paid-header');
+                if(!isCurrentMonth) headerRow.classList.add('collapsed');
+                
+                headerRow.dataset.toggleTarget = `.${contentRowsClassName}`;
+                
+                const headerCell = headerRow.insertCell();
+                headerCell.colSpan = 7;
+                headerCell.innerHTML = `${monthKey} <span class="toggle-icon">▼</span>`;
+
+                monthAccounts.forEach((account) => {
+                    const row = createAccountRow(account);
+                    row.classList.add(contentRowsClassName);
+                    if (!isCurrentMonth) row.classList.add('hidden-row');
+                    accountsTableBody.appendChild(row);
+                });
+
+                const totalsRow = createTotalsRow(monthKey, monthAccounts);
+                totalsRow.classList.add(contentRowsClassName);
+                if (!isCurrentMonth) totalsRow.classList.add('hidden-row');
+                accountsTableBody.appendChild(totalsRow);
+
+                headerRow.addEventListener('click', (e) => {
+                    e.currentTarget.classList.toggle('collapsed');
+                    const targetSelector = e.currentTarget.dataset.toggleTarget;
+                    document.querySelectorAll(targetSelector).forEach(row => {
+                        row.classList.toggle('hidden-row');
+                    });
+                });
+            });
+        }
+        
+        /**
+         * Creates the totals and actions row for a given month group.
+         */
+        function createTotalsRow(monthKey, monthAccounts) {
+            const totalsRow = document.createElement('tr');
+            totalsRow.classList.add('monthly-totals-row');
+            
+            const totalsCell = totalsRow.insertCell();
+            totalsCell.colSpan = 7;
+
+            const flexContainer = document.createElement('div');
+            flexContainer.classList.add('flex', 'flex-row', 'justify-between', 'items-center', 'w-full', 'p-1', 'flex-wrap');
+            flexContainer.classList.add('flex-container');
+
+            const totalsTextContainer = document.createElement('div');
+            totalsTextContainer.classList.add('totals-text', 'text-xs', 'md:text-sm');
+            const monthlyTotals = calculateMonthlyTotals(monthAccounts);
+            totalsTextContainer.innerHTML = `
+                <div>
+                    <strong>Pendentes:</strong> 
+                    A Pagar <span class="text-red-600">R$ ${monthlyTotals.toPay.toFixed(2).replace('.', ',')}</span> | 
+                    A Receber <span class="text-green-600">R$ ${monthlyTotals.toReceive.toFixed(2).replace('.', ',')}</span>
+                </div>
+                <div>
+                    <strong>Quitados:</strong> 
+                    Pago <span class="text-green-700">R$ ${monthlyTotals.paidAmount.toFixed(2).replace('.', ',')}</span> | 
+                    Recebido <span class="text-yellow-600">R$ ${monthlyTotals.receivedAmount.toFixed(2).replace('.', ',')}</span>
+                </div>
+            `;
+
+            const buttonsContainer = document.createElement('div');
+            buttonsContainer.classList.add('buttons-container', 'flex', 'gap-2');
+
+            const addBtn = document.createElement('button');
+            addBtn.textContent = 'Adicionar Conta';
+            addBtn.classList.add('btn', 'btn-primary');
+            addBtn.addEventListener('click', () => {
+                const [monthStr, yearStr] = monthKey.split('/');
+                const monthIndex = monthNames.indexOf(monthStr);
+                const newDate = new Date(yearStr, monthIndex, 2).toISOString().split('T')[0];
+                addAccount({ description: '', type: 'Pagar', value: 0, date: newDate, installment: 'Frequente', status: 'Pendente' });
+            });
+            
+            buttonsContainer.appendChild(addBtn);
+            flexContainer.appendChild(totalsTextContainer);
+            flexContainer.appendChild(buttonsContainer);
+            totalsCell.appendChild(flexContainer);
+
+            return totalsRow;
+        }
+
+        /**
+         * Calculates totals for a given list of accounts.
+         */
+        function calculateMonthlyTotals(accountsList) {
+            let totalToPay = 0, totalToReceive = 0, paidAmount = 0, receivedAmount = 0, pendingCount = 0;
+            
+            if (accountsList) {
+                accountsList.forEach(account => {
+                    switch(account.status) {
+                        case 'Pendente':
+                            pendingCount++;
+                            if (account.type === 'Pagar') totalToPay += account.value;
+                            else if (account.type === 'Receber') totalToReceive += account.value;
+                            break;
+                        case 'Pago':
+                            paidAmount += account.value;
+                            break;
+                        case 'Recebido':
+                            receivedAmount += account.value;
+                            break;
+                    }
+                });
+            }
+            const allPaid = pendingCount === 0 && accountsList && accountsList.length > 0;
+            return { toPay: totalToPay, toReceive: totalToReceive, paidAmount, receivedAmount, allPaid };
+        }
+
+        // --- Firestore Actions ---
+
+        /**
+         * Adds a new account document to Firestore.
+         */
+        async function addAccount(accountData) {
+            if (!accountsCollection) {
+                console.error("Firestore collection is not initialized.");
+                return;
+            }
+            try {
+                await addDoc(accountsCollection, {
+                    ...accountData,
+                    createdAt: serverTimestamp()
+                });
+                console.log("Account added successfully");
+            } catch (error) {
+                console.error("Error adding account: ", error);
+            }
+        }
+
+        /**
+         * Updates an existing account document in Firestore.
+         */
+        async function updateAccount(docId, dataToUpdate) {
+            if (!accountsCollection) {
+                console.error("Firestore collection is not initialized.");
+                return;
+            }
+            const accountDocRef = doc(db, accountsCollection.path, docId);
+            try {
+                await updateDoc(accountDocRef, dataToUpdate);
+                console.log("Account updated successfully");
+            } catch (error) {
+                console.error("Error updating account: ", error);
+            }
+        }
+
+        /**
+         * Deletes an account document from Firestore.
+         */
+        async function deleteAccount(docId) {
+            if (!accountsCollection) {
+                console.error("Firestore collection is not initialized.");
+                return;
+            }
+            const accountDocRef = doc(db, accountsCollection.path, docId);
+            try {
+                await deleteDoc(accountDocRef);
+                console.log("Account deleted successfully");
+            } catch (error) {
+                console.error("Error deleting account: ", error);
+            }
+        }
+    </script>
+</body>
+</html>
