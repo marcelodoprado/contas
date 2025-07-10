@@ -217,13 +217,23 @@
         // Pode encontrar esta configuração no seu projeto Firebase em:
         // Configurações do Projeto (ícone de engrenagem) > Suas apps > App da Web > Configuração (Objeto)
         const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_AUTH_DOMAIN",
-            projectId: "SEU_PROJECT_ID",
-            storageBucket: "SEU_STORAGE_BUCKET",
-            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-            appId: "SEU_APP_ID"
-        };
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCaGjxtY3zdrWpH05TQqS2v6eNQWuZfkRE",
+  authDomain: "contas-1eb87.firebaseapp.com",
+  projectId: "contas-1eb87",
+  storageBucket: "contas-1eb87.firebasestorage.app",
+  messagingSenderId: "463381541875",
+  appId: "1:463381541875:web:1f15a1fd384a3b510b5886"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
         
         const accountsTableBody = document.querySelector('#accounts-table-body');
         const userIdDisplay = document.getElementById('user-id-display');
