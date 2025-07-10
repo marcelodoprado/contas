@@ -233,8 +233,8 @@
         let db;
 
         // --- Initialization ---
-        function initializeAppAndAuth() {
-            if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "SUA_API_KEY") {
+        function initializeAppAndConnect() {
+            if (!firebaseConfig.apiKey || firebaseConfig.apiKey.includes("SUA_API_KEY")) {
                 accountsTableBody.innerHTML = `
                     <tr>
                         <td colspan="7" class="text-center text-red-600 font-bold p-4">
@@ -246,40 +246,46 @@
                 return;
             }
 
-            const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            const auth = getAuth(app);
-            setLogLevel('error');
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                const auth = getAuth(app);
+                setLogLevel('error');
 
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    userIdDisplay.textContent = `Conectado (ID: ${user.uid.substring(0, 6)}...)`;
-                    accountsCollection = collection(db, 'users', user.uid, 'accounts');
-                    
-                    if (unsubscribe) unsubscribe();
-                    
-                    unsubscribe = onSnapshot(accountsCollection, (snapshot) => {
-                         if (snapshot.empty) {
-                            populateInitialData();
-                        } else {
-                            const accounts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                            renderAccounts(accounts);
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userIdDisplay.textContent = `Conectado (ID: ${user.uid.substring(0, 6)}...)`;
+                        // This collection is now shared for all users of this specific app instance
+                        accountsCollection = collection(db, 'sharedAccounts');
+                        
+                        if (unsubscribe) unsubscribe();
+                        
+                        unsubscribe = onSnapshot(accountsCollection, (snapshot) => {
+                            if (snapshot.empty) {
+                                populateInitialData();
+                            } else {
+                                const accounts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                                renderAccounts(accounts);
+                            }
+                        }, (error) => {
+                            console.error("Error fetching collection:", error);
+                            accountsTableBody.innerHTML = `<tr><td colspan="7" class="text-center text-red-500 py-8">Erro ao carregar os dados. Verifique a consola e as regras de segurança do Firestore.</td></tr>`;
+                        });
+
+                    } else {
+                        userIdDisplay.textContent = "A autenticar...";
+                        try {
+                            await signInAnonymously(auth);
+                        } catch (error) {
+                            console.error("Authentication failed:", error);
+                            userIdDisplay.textContent = "Falha na autenticação.";
                         }
-                    }, (error) => {
-                        console.error("Error fetching collection:", error);
-                        accountsTableBody.innerHTML = `<tr><td colspan="7" class="text-center text-red-500 py-8">Erro ao carregar os dados. Verifique a consola.</td></tr>`;
-                    });
-
-                } else {
-                    userIdDisplay.textContent = "A autenticar...";
-                    try {
-                        await signInAnonymously(auth);
-                    } catch (error) {
-                        console.error("Authentication failed:", error);
-                        userIdDisplay.textContent = "Falha na autenticação.";
                     }
-                }
-            });
+                });
+            } catch (error) {
+                console.error("Firebase initialization failed:", error);
+                 accountsTableBody.innerHTML = `<tr><td colspan="7" class="text-center text-red-500 py-8">Falha ao iniciar o Firebase. Verifique a sua configuração.</td></tr>`;
+            }
         }
 
         // --- UI Rendering ---
@@ -524,7 +530,7 @@
                 console.error("Error deleting account: ", error);
             }
         }
-
+        
         async function populateInitialData() {
             if (!accountsCollection) return;
             
@@ -853,7 +859,7 @@
         }
 
         // Start the application
-        initializeAppAndAuth();
+        initializeAppAndConnect();
 
     </script>
 </body>
