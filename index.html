@@ -7,156 +7,49 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Base styles for body and container */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-            color: #374151;
-            margin: 0;
-            padding: 1rem;
-            box-sizing: border-box;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1.5rem;
-            background-color: #f9fafb;
-            border-radius: 0.75rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Table specific styles */
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            overflow: hidden;
-        }
-        th, td {
-            padding: 0.75rem 1rem;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-            vertical-align: middle;
-        }
-        th {
-            background-color: #4f46e5;
-            color: white;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.875rem;
-        }
-        td {
-            background-color: #ffffff;
-        }
-        tr:last-child td {
-            border-bottom: none;
-        }
-        .rounded-table {
-            border-radius: 0.75rem;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-
-        /* Input and Select field styles */
-        input[type="text"], input[type="number"], input[type="date"], select {
-            width: 100%;
-            padding: 0.625rem 0.75rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.375rem;
-            outline: none;
-            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-            font-size: 1rem;
-        }
-        input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus, select:focus {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-        }
-
-        /* Button styles */
-        .btn {
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-        }
-        .btn-primary {
-            background-color: #4f46e5;
-            color: white;
-        }
-        .btn-primary:hover {
-            background-color: #4338ca;
-            transform: translateY(-1px);
-        }
-
-        /* Action buttons (delete) */
-        .btn-delete-custom {
-            background-color: #fee2e2; color: #ef4444; border: 1px solid #fca5a5;
-            width: 1.75rem; height: 1.75rem; font-size: 1.125rem; line-height: 1;
-            border-radius: 9999px; font-weight: bold; transition: all 0.2s ease-in-out;
-            cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
-        }
+        /* Base styles */
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #374151; margin: 0; padding: 1rem; box-sizing: border-box; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 1.5rem; background-color: #f9fafb; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        /* Table styles */
+        table { width: 100%; border-collapse: separate; border-spacing: 0; overflow: hidden; }
+        th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid #e5e7eb; vertical-align: middle; }
+        th { background-color: #4f46e5; color: white; font-weight: 600; text-transform: uppercase; font-size: 0.875rem; }
+        td { background-color: #ffffff; }
+        tr:last-child td { border-bottom: none; }
+        .rounded-table { border-radius: 0.75rem; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        /* Input and Select */
+        input[type="text"], input[type="number"], input[type="date"], select { width: 100%; padding: 0.625rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; outline: none; transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; font-size: 1rem; }
+        input:focus, select:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
+        /* Buttons */
+        .btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s ease-in-out; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.875rem; }
+        .btn-primary { background-color: #4f46e5; color: white; }
+        .btn-primary:hover { background-color: #4338ca; transform: translateY(-1px); }
+        .btn-delete-custom { background-color: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; width: 1.75rem; height: 1.75rem; font-size: 1.125rem; line-height: 1; border-radius: 9999px; font-weight: bold; cursor: pointer; }
         .btn-delete-custom:hover { background-color: #fecaca; color: #dc2626; transform: scale(1.1); }
-
         /* Status colors */
-        .status-select {
-            -webkit-appearance: none; -moz-appearance: none; appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.5rem; padding-right: 2.5rem;
-        }
-        .status-pending { background-color: #ef4444 !important; color: white !important; }
-        .status-paid { background-color: #22c55e !important; color: white !important; }
-        .status-received { background-color: #facc15 !important; color: black !important; }
-
-        /* Month separator row style */
-        .month-separator-row {
-            background-color: #e0e7ff; color: #374151; font-weight: 600;
-            text-align: center; border-bottom: 1px solid #c7d2fe; cursor: pointer;
-            position: relative;
-        }
-        .month-separator-row.current-month-header td {
-             background-color: #c7d2fe !important;
-             border-bottom: 2px solid #4f46e5;
-        }
-        .month-paid-header td {
-            background-color: #dcfce7 !important;
-            color: #166534;
-        }
+        .status-select { -webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.5rem; padding-right: 2.5rem; }
+        .status-Pendente { background-color: #ef4444 !important; color: white !important; }
+        .status-Pago { background-color: #22c55e !important; color: white !important; }
+        .status-Recebido { background-color: #facc15 !important; color: black !important; }
+        /* Month rows */
+        .month-separator-row { background-color: #e0e7ff; color: #374151; font-weight: 600; text-align: center; cursor: pointer; position: relative; }
+        .month-separator-row.current-month-header td { background-color: #c7d2fe !important; border-bottom: 2px solid #4f46e5; }
+        .month-paid-header td { background-color: #dcfce7 !important; color: #166534; }
         .month-separator-row td { padding: 0.5rem 1rem; background-color: #e0e7ff; font-size: 1.125rem; }
-        .toggle-icon {
-            font-size: 0.8em;
-            margin-left: 8px;
-            display: inline-block;
-            transition: transform 0.2s ease-in-out;
-        }
+        .toggle-icon { font-size: 0.8em; margin-left: 8px; display: inline-block; transition: transform 0.2s ease-in-out; }
         .collapsed .toggle-icon { transform: rotate(-90deg); }
         .hidden-row { display: none; }
-
-        /* Monthly totals row style */
-        .monthly-totals-row {
-            background-color: #f0f4ff; color: #374151; font-weight: 600;
-            border-top: 1px solid #c7d2fe; border-bottom: 2px solid #a5b4fc;
-        }
+        .monthly-totals-row { background-color: #f0f4ff; color: #374151; font-weight: 600; border-top: 1px solid #c7d2fe; border-bottom: 2px solid #a5b4fc; }
         .monthly-totals-row td { padding: 0.5rem 1rem; background-color: #f0f4ff; }
-
-        /* Responsive adjustments */
+        /* Responsive */
         @media (max-width: 768px) {
             body { padding: 0.5rem; }
             .container { padding: 1rem; }
             table, thead, tbody, th, td, tr { display: block; }
             thead tr { position: absolute; top: -9999px; left: -9999px; }
             tr { margin-bottom: 1rem; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06); }
-            td { border: none; position: relative; padding-left: 50%; text-align: right; font-size: 0.95rem; }
-            td:before {
-                position: absolute; top: 50%; transform: translateY(-50%); left: 6px;
-                width: 45%; padding-right: 10px; white-space: nowrap; text-align: left;
-                font-weight: 600; color: #4f46e5; font-size: 0.875rem;
-            }
+            td { border: none; position: relative; padding-left: 50%; text-align: right; }
+            td:before { position: absolute; top: 50%; transform: translateY(-50%); left: 6px; width: 45%; padding-right: 10px; white-space: nowrap; text-align: left; font-weight: 600; color: #4f46e5; }
             td:nth-of-type(1):before { content: "Descrição"; }
             td:nth-of-type(2):before { content: "Tipo"; }
             td:nth-of-type(3):before { content: "Valor"; }
@@ -164,16 +57,9 @@
             td:nth-of-type(5):before { content: "Parcela"; }
             td:nth-of-type(6):before { content: "Status"; }
             td:nth-of-type(7):before { content: "Ações"; }
-            
             .monthly-totals-row .flex-container { flex-direction: column; align-items: stretch; }
-            .monthly-totals-row .totals-text { text-align: center; margin-bottom: 0.5rem;}
-            .monthly-totals-row .buttons-container { justify-content: center; }
             .month-separator-row td, .monthly-totals-row td { text-align: center; padding-left: 1rem; }
             .month-separator-row td:before, .monthly-totals-row td:before { content: none; }
-        }
-        @media (max-width: 480px) {
-            td { padding-left: 40%; }
-            td:before { width: 35%; }
         }
     </style>
 </head>
@@ -181,23 +67,16 @@
     <div class="container mx-auto bg-gray-50 p-6 rounded-xl shadow-lg">
         <h1 class="text-3xl font-bold text-center text-indigo-700 mb-8">Minha Planilha de Contas Online</h1>
         <div id="auth-container" class="text-center mb-4">
-             <p id="user-id-display" class="text-sm text-gray-500"></p>
+            <p id="user-id-display" class="text-sm text-gray-500"></p>
         </div>
         <div class="overflow-x-auto rounded-table mb-8">
             <table id="accounts-table">
                 <thead>
                     <tr>
-                        <th>Descrição</th>
-                        <th>Tipo</th>
-                        <th>Valor</th>
-                        <th>Data</th>
-                        <th>Parcela</th>
-                        <th>Status</th>
-                        <th>Ações</th>
+                        <th>Descrição</th><th>Tipo</th><th>Valor</th><th>Data</th><th>Parcela</th><th>Status</th><th>Ações</th>
                     </tr>
                 </thead>
                 <tbody id="accounts-table-body">
-                    <!-- Loading indicator -->
                     <tr>
                         <td colspan="7" id="loading-indicator" class="text-center text-gray-500 py-8">A ligar à base de dados...</td>
                     </tr>
@@ -206,311 +85,651 @@
         </div>
     </div>
 
-   <script type="module">
-    // Import Firebase services
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, serverTimestamp, setLogLevel, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <script type="module">
+        // Import Firebase services
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, serverTimestamp, setLogLevel, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // --- Firebase Configuration ---
-    const firebaseConfig = {
-        apiKey: "AIzaSyCaGjxtY3zdrWpH05TQqS2v6eNQWuZfkRE",
-        authDomain: "contas-1eb87.firebaseapp.com",
-        projectId: "contas-1eb87",
-        storageBucket: "contas-1eb87.appspot.com",
-        messagingSenderId: "463381541875",
-        appId: "1:463381541875:web:1f15a1fd384a3b510b5886"
-    };
-    
-    // --- Constants ---
-    const STATUS_PENDENTE = 'Pendente';
-    const STATUS_PAGO = 'Pago';
-    const STATUS_RECEBIDO = 'Recebido';
-    const TIPO_PAGAR = 'Pagar';
-    const TIPO_RECEBER = 'Receber';
+        // --- Firebase Configuration ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyCaGjxtY3zdrWpH05TQqS2v6eNQWuZfkRE",
+            authDomain: "contas-1eb87.firebaseapp.com",
+            projectId: "contas-1eb87",
+            storageBucket: "contas-1eb87.firebasestorage.app", // Versão corrigida
+            messagingSenderId: "463381541875",
+            appId: "1:463381541875:web:1f15a1fd384a3b510b5886"
+        };
+        
+        // --- Constants ---
+        const STATUS_PENDENTE = 'Pendente';
+        const STATUS_PAGO = 'Pago';
+        const STATUS_RECEBIDO = 'Recebido';
+        const TIPO_PAGAR = 'Pagar';
+        const TIPO_RECEBER = 'Receber';
 
-    // --- DOM Elements ---
-    const accountsTableBody = document.querySelector('#accounts-table-body');
-    const userIdDisplay = document.getElementById('user-id-display');
-    const mainContainer = document.querySelector('.container'); // Elemento principal para adicionar o botão
+        // --- DOM Elements ---
+        const accountsTableBody = document.querySelector('#accounts-table-body');
+        const userIdDisplay = document.getElementById('user-id-display');
+        const mainContainer = document.querySelector('.container');
 
-    // --- Global State ---
-    const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-    let db;
-    let accountsCollection;
-    let unsubscribe;
+        // --- Global State ---
+        const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        let db;
+        let accountsCollection;
+        let unsubscribe;
 
-    // --- NOVO: Botão e Lógica de Importação ---
-    function createAndInjectImportButton() {
-        const existingButton = document.getElementById('import-button');
-        if (existingButton) return; // Não adiciona o botão se ele já existe
+        // --- LÓGICA DE IMPORTAÇÃO (TEMPORÁRIA) ---
 
-        const importButton = document.createElement('button');
-        importButton.id = 'import-button';
-        importButton.textContent = 'Importar Histórico (Apenas 1 Vez)';
-        importButton.classList.add('btn', 'btn-primary');
-        importButton.style.backgroundColor = '#ef4444'; // Vermelho para chamar a atenção
-        importButton.style.marginBottom = '1rem';
-        importButton.style.display = 'block';
-        importButton.style.margin = '0 auto 1.5rem auto';
 
-        importButton.addEventListener('click', async () => {
-            if (!accountsCollection) {
-                alert('A conexão com o Firebase ainda não está pronta. Tente novamente em alguns segundos.');
+                importButton.textContent = 'A importar...';
+                importButton.disabled = true;
+
+                const historicalData = [
+                    { description: 'Internet', type: 'Pagar', value: 99.90, date: '2024-09-10', installment: '', status: 'Pago' },
+                    { description: 'Aluguel', type: 'Pagar', value: 1320.00, date: '2024-09-10', installment: '', status: 'Pago' },
+                    { description: 'Água', type: 'Pagar', value: 198.00, date: '2024-09-20', installment: '', status: 'Pago' },
+                    { description: 'Luz', type: 'Pagar', value: 0, date: '2024-09-10', installment: '', status: 'Pago' },
+                    { description: 'Van Kim', type: 'Pagar', value: 200.00, date: '2024-09-10', installment: '', status: 'Pago' },
+                    { description: 'Van Kim', type: 'Pagar', value: 200.00, date: '2024-10-10', installment: '', status: 'Pago' },
+                    { description: 'Internet', type: 'Pagar', value: 99.90, date: '2024-10-10', installment: '', status: 'Pago' },
+                    { description: 'Aluguel', type: 'Pagar', value: 1320.00, date: '2024-10-10', installment: '', status: 'Pago' },
+                    { description: 'Luz Outra Casa', type: 'Pagar', value: 151.96, date: '2024-10-28', installment: '', status: 'Pago' },
+                    { description: 'Van Kim', type: 'Pagar', value: 200.00, date: '2024-11-10', installment: '', status: 'Pago' },
+                    { description: 'Internet', type: 'Pagar', value: 99.90, date: '2024-11-10', installment: '', status: 'Pago' },
+                    { description: 'Calça Wanessa', type: 'Pagar', value: 159.00, date: '2024-11-05', installment: '', status: 'Pago' },
+                    { description: 'Cartão Tio Edson', type: 'Pagar', value: 946.58, date: '2024-11-05', installment: '', status: 'Pago' },
+                    { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2024-11-07', installment: '01/10', status: 'Pago' },
+                    { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2024-11-12', installment: '', status: 'Pago' },
+                    { description: 'Água 08/2024', type: 'Pagar', value: 197.88, date: '2024-11-20', installment: '', status: 'Pago' },
+                    { description: 'Aluguel', type: 'Pagar', value: 1320.00, date: '2024-11-10', installment: '', status: 'Pago' },
+                    { description: 'Max', type: 'Pagar', value: 19.95, date: '2024-11-29', installment: '', status: 'Pago' },
+                    { description: 'Consórcio3111 Moto', type: 'Pagar', value: 233.05, date: '2024-11-16', installment: '8/53', status: 'Pago' },
+                    { description: 'Água Cachoeira', type: 'Pagar', value: 44.67, date: '2024-12-02', installment: '', status: 'Pago' },
+                    { description: 'Móveis Jufap', type: 'Pagar', value: 250.00, date: '2024-12-05', installment: '3/6', status: 'Pago' },
+                    { description: 'Luz Jenifer', type: 'Pagar', value: 387.00, date: '2024-12-05', installment: '', status: 'Pago' },
+                    { description: 'Well', type: 'Pagar', value: 20.00, date: '2024-12-05', installment: '', status: 'Pago' },
+                    { description: 'Água Colombo 20/09', type: 'Pagar', value: 198.99, date: '2024-12-05', installment: '', status: 'Pago' },
+                    { description: 'Água Colombo 20/10', type: 'Pagar', value: 167.71, date: '2024-12-05', installment: '', status: 'Pago' },
+                    { description: 'Água Colombo 20/11', type: 'Pagar', value: 120.78, date: '2024-12-05', installment: '', status: 'Pago' },
+                    { description: 'Multa Moto', type: 'Pagar', value: 234.78, date: '2024-12-05', installment: '', status: 'Pendente' },
+                    { description: 'Multa HR-V', type: 'Pagar', value: 262.92, date: '2024-12-05', installment: '', status: 'Pago' },
+                    { description: 'Claro Móvel Marcelo', type: 'Pagar', value: 44.99, date: '2024-12-06', installment: '', status: 'Pago' },
+                    { description: 'Claro Móvel Day', type: 'Pagar', value: 44.99, date: '2024-12-07', installment: '', status: 'Pago' },
+                    { description: 'Internet Cachoeira', type: 'Pagar', value: 110.00, date: '2024-12-07', installment: '', status: 'Pago' },
+                    { description: 'Luz Cachoeira', type: 'Pagar', value: 61.47, date: '2024-12-07', installment: '', status: 'Pago' },
+                    { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2024-12-07', installment: '02/10', status: 'Pago' },
+                    { description: 'Youtube Premium', type: 'Pagar', value: 41.90, date: '2024-12-07', installment: '', status: 'Pago' },
+                    { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2024-12-08', installment: '1/10', status: 'Pago' },
+                    { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2024-12-08', installment: '9/18', status: 'Pago' },
+                    { description: 'Consórcio3110 Moto', type: 'Pagar', value: 316.33, date: '2024-12-08', installment: '9/51', status: 'Pago' },
+                    { description: 'Sofá Armário', type: 'Pagar', value: 552.00, date: '2024-12-08', installment: '', status: 'Pago' },
+                    { description: 'Internet Colombo', type: 'Pagar', value: 99.90, date: '2024-12-10', installment: '', status: 'Pendente' },
+                    { description: 'Van Kim', type: 'Pagar', value: 200.00, date: '2024-12-10', installment: '', status: 'Pago' },
+                    { description: 'Aluguel', type: 'Pagar', value: 1320.00, date: '2024-12-10', installment: '', status: 'Pago' },
+                    { description: 'Amazon Prime Vídeo Anual', type: 'Pagar', value: 166.80, date: '2024-12-10', installment: '', status: 'Pago' },
+                    { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2024-12-11', installment: '', status: 'Pago' },
+                    { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2024-12-12', installment: '', status: 'Pago' },
+                    { description: 'Pegar Certidão Divórcio', type: 'Pagar', value: 70.00, date: '2024-12-15', installment: '', status: 'Pago' },
+                    { description: 'Consórcio3111 Moto', type: 'Pagar', value: 230.42, date: '2024-12-16', installment: '9/53', status: 'Pago' },
+                    { description: 'Acordo Inter', type: 'Pagar', value: 160.00, date: '2024-12-19', installment: '1/3', status: 'Pago' },
+                    { description: 'Max', type: 'Pagar', value: 19.95, date: '2024-12-29', installment: '', status: 'Pago' },
+                    { description: 'Rafa', type: 'Pagar', value: 154.00, date: '2025-01-01', installment: '', status: 'Pago' },
+                    { description: 'Água', type: 'Pagar', value: 43.73, date: '2025-01-02', installment: '', status: 'Pago' },
+                    { description: 'Móveis Jufap', type: 'Pagar', value: 250.00, date: '2025-01-05', installment: '4/6', status: 'Pago' },
+                    { description: 'Claro Móvel Marcelo', type: 'Pagar', value: 44.99, date: '2025-01-06', installment: '', status: 'Pago' },
+                    { description: 'Luz', type: 'Pagar', value: 118.03, date: '2025-01-07', installment: '', status: 'Pago' },
+                    { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-01-07', installment: '03/10', status: 'Pago' },
+                    { description: 'Youtube Premium', type: 'Pagar', value: 41.90, date: '2025-01-07', installment: '', status: 'Pago' },
+                    { description: 'Internet Cachoeira', type: 'Pagar', value: 110.00, date: '2025-01-07', installment: '', status: 'Pago' },
+                    { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-01-08', installment: '2/10', status: 'Pago' },
+                    { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-01-08', installment: '10/18', status: 'Pago' },
+                    { description: 'Consórcio3110 Moto', type: 'Pagar', value: 316.15, date: '2025-01-08', installment: '10/51', status: 'Pago' },
+                    { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-01-11', installment: '', status: 'Pago' },
+                    { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-01-12', installment: '', status: 'Pago' },
+                    { description: 'Consórcio3111 Moto', type: 'Pagar', value: 230.15, date: '2025-01-16', installment: '10/53', status: 'Pago' },
+                    { description: 'Acordo Inter', type: 'Pagar', value: 160.00, date: '2025-01-19', installment: '2/3', status: 'Pago' },
+                    { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-01-29', installment: '', status: 'Pago' },
+                    { description: 'Claro Móvel Day', type: 'Pagar', value: 44.99, date: '2025-01-31', installment: '', status: 'Pago' },
+                    { description: 'Claro Móvel Chris', type: 'Pagar', value: 44.99, date: '2025-01-31', installment: '', status: 'Pago' },
+                    { description: 'Água', type: 'Pagar', value: 31.75, date: '2025-02-02', installment: '', status: 'Pago' },
+                    { description: 'Claro Flex Crhis', type: 'Pagar', value: 44.99, date: '2025-02-03', installment: '', status: 'Pago' },
+                    { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-02-03', installment: '', status: 'Pago' },
+                    { description: 'Móveis Jufap', type: 'Pagar', value: 250.00, date: '2025-02-05', installment: '5/6', status: 'Pago' },
+                    { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-02-06', installment: '', status: 'Pago' },
+                    { description: 'Luz', type: 'Pagar', value: 202.65, date: '2025-02-07', installment: '', status: 'Pago' },
+                    { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-02-07', installment: '03/10', status: 'Pago' },
+                    { description: 'Youtube Premium', type: 'Pagar', value: 41.90, date: '2025-02-07', installment: '', status: 'Pago' },
+                    { description: 'Internet', type: 'Pagar', value: 110.00, date: '2025-02-07', installment: '', status: 'Pago' },
+                    { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-02-08', installment: '3/10', status: 'Pago' },
+                    { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-02-08', installment: '11/18', status: 'Pago' },
+                    { description: 'Consórcio3110 Moto', type: 'Pagar', value: 315.96, date: '2025-02-08', installment: '11/51', status: 'Pago' },
+                    { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-02-11', installment: '', status: 'Pago' },
+                    { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-02-12', installment: '', status: 'Pago' },
+                    { description: 'Consórcio3111 Moto', type: 'Pagar', value: 235.42, date: '2025-02-16', installment: '11/53', status: 'Pago' },
+                    { description: 'Acordo Inter', type: 'Pagar', value: 160.00, date: '2025-02-19', installment: '3/3', status: 'Pago' },
+                    { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-02-28', installment: '', status: 'Pago' },
+                    { description: 'Van Chris', type: 'Pagar', value: 300.00, date: '2025-02-01', installment: '', status: 'Pago' },
+                    { description: 'Uniforme Chris', type: 'Pagar', value: 43.90, date: '2025-02-01', installment: '', status: 'Pago' },
+                    { description: 'Uniforme Kim', type: 'Pagar', value: 25.99, date: '2025-02-01', installment: '', status: 'Pago' },
+                    { description: 'PGFN', type: 'Pagar', value: 37.71, date: '2025-02-28', installment: '2/28', status: 'Pago' },
+                    { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-02-28', installment: '2/31', status: 'Pago' },
+                    { description: 'Água', type: 'Pagar', value: 32.30, date: '2025-03-02', installment: '', status: 'Pago' },
+                    { description: 'Móveis Jufap', type: 'Pagar', value: 250.00, date: '2025-03-05', installment: '6/6', status: 'Pago' },
+                    { description: 'Claro Flex Marcelo', type: 'Pagar', value: 54.99, date: '2025-03-13', installment: '', status: 'Pago' },
+                    { description: 'Luz', type: 'Pagar', value: 211.74, date: '2025-03-07', installment: '', status: 'Pago' },
+                    { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-03-07', installment: '04/10', status: 'Pago' },
+                    { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-03-07', installment: '', status: 'Pago' },
+                    { description: 'Claro Flex Chris', type: 'Pagar', value: 34.99, date: '2025-03-07', installment: '', status: 'Pago' },
+                    { description: 'Youtube Premium', type: 'Pagar', value: 41.90, date: '2025-03-07', installment: '', status: 'Pago' },
+                    { description: 'Internet', type: 'Pagar', value: 110.00, date: '2025-03-07', installment: '', status: 'Pago' },
+                    { description: 'Carro', type: 'Pagar', value: 700.00, date: '2025-03-08', installment: '1/23', status: 'Pago' },
+                    { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-03-08', installment: '4/10', status: 'Pago' },
+                    { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-03-08', installment: '12/18', status: 'Pago' },
+                    { description: 'Consórcio3110 Moto', type: 'Pagar', value: 315.78, date: '2025-03-08', installment: '12/51', status: 'Pago' },
+                    { description: 'Futebol', type: 'Pagar', value: 50.00, date: '2025-03-11', installment: '', status: 'Pago' },
+                    { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-03-12', installment: '', status: 'Pago' },
+                    { description: 'Consórcio3111 Moto', type: 'Pagar', value: 235.33, date: '2025-03-16', installment: '12/53', status: 'Pago' },
+                    { description: 'IPVA Moto 2025', type: 'Pagar', value: 550.82, date: '2025-03-16', installment: '', status: 'Pago' },
+                    { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-03-29', installment: '', status: 'Pago' },
+                    { description: 'CRTR', type: 'Pagar', value: 373.85, date: '2025-03-10', installment: '', status: 'Pago' },
+                    { description: 'Van Kim Tio Robson', type: 'Pagar', value: 400.00, date: '2025-03-01', installment: '', status: 'Pago' },
+                    { description: 'Van Chris Tio Cleberson', type: 'Pagar', value: 300.00, date: '2025-03-01', installment: '', status: 'Pago' },
+                    { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-03-31', installment: '3/28', status: 'Pago' },
+                    { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-03-31', installment: '3/31', status: 'Pago' },
+                    { description: 'Aliexpress', type: 'Pagar', value: 23.74, date: '2025-03-26', installment: '', status: 'Pago' },
+                    { description: 'Água', type: 'Pagar', value: 49.05, date: '2025-04-02', installment: '', status: 'Pago' },
+                    { description: 'Claro Flex Marcelo', type: 'Pagar', value: 54.99, date: '2025-04-06', installment: '', status: 'Pago' },
+                    { description: 'Luz', type: 'Pagar', value: 241.59, date: '2025-04-07', installment: '', status: 'Pago' },
+                    { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-04-07', installment: '05/10', status: 'Pago' },
+                    { description: 'Claro Flex Day', type: 'Pagar', value: 54.99, date: '2025-04-07', installment: '', status: 'Pago' },
+                    { description: 'Claro Flex Chris', type: 'Pagar', value: 44.99, date: '2025-04-07', installment: '', status: 'Pago' },
+                    { description: 'Youtube Premium', type: 'Pagar', value: 41.90, date: '2025-04-07', installment: '', status: 'Pago' },
+                    { description: 'Internet', type: 'Pagar', value: 110.00, date: '2025-04-07', installment: '', status: 'Pago' },
+                    { description: 'Microsoft 365 Anuidade', type: 'Pagar', value: 0, date: '2025-04-11', installment: '', status: 'Pago' },
+                    { description: 'Carro', type: 'Pagar', value: 700.00, date: '2025-04-08', installment: '2/23', status: 'Pago' },
+                    { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-04-08', installment: '5/10', status: 'Pago' },
+                    { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-04-08', installment: '13/18', status: 'Pago' },
+                    { description: 'Consórcio3110 Moto', type: 'Pagar', value: 310.77, date: '2025-04-08', installment: '13/51', status: 'Pago' },
+                    { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-04-11', installment: '', status: 'Pago' },
+                    { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2024-04-12', installment: '', status: 'Pago' },
+                    { description: 'Consórcio3111 Moto', type: 'Pagar', value: 225.63, date: '2025-04-16', installment: '13/53', status: 'Pago' },
+                    { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-04-29', installment: '', status: 'Pago' },
+                    { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-04-30', installment: '4/28', status: 'Pago' },
+                    { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-04-30', installment: '4/31', status: 'Pago' },
+                    { description: 'Van Kim Tio Robson', type: 'Pagar', value: 350.00, date: '2025-04-01', installment: '', status: 'Pago' },
+                    { description: 'Van Chris Tio Cleberson', type: 'Pagar', value: 300.00, date: '2025-04-01', installment: '', status: 'Pago' },
+                    { description: 'Aliexpress Marcelo', type: 'Pagar', value: 23.74, date: '2025-04-10', installment: '', status: 'Pago' },
+                    { description: 'Aliexpress Marcelo', type: 'Pagar', value: 23.74, date: '2025-04-25', installment: '', status: 'Pago' },
+                    { description: 'Academia Chris', type: 'Pagar', value: 155.00, date: '2025-04-04', installment: '', status: 'Pago' },
+                    { description: 'Água', type: 'Pagar', value: 49.05, date: '2025-05-02', installment: '', status: 'Pago' },
+                    { description: 'Água', type: 'Pagar', value: 30.78, date: '2025-05-02', installment: '', status: 'Pago' },
+                    { description: 'Chris', type: 'Pagar', value: 30.00, date: '2025-05-05', installment: '', status: 'Pago' },
+                    { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-05-06', installment: '', status: 'Pago' },
+                    { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-05-07', installment: '06/10', status: 'Pago' },
+                    { description: 'Luz', type: 'Pagar', value: 241.59, date: '2025-05-07', installment: '', status: 'Pago' },
+                    { description: 'Luz', type: 'Pagar', value: 252.95, date: '2025-05-07', installment: '', status: 'Pago' },
+                    { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-05-07', installment: '', status: 'Pago' },
+                    { description: 'Youtube Premium', type: 'Pagar', value: 53.90, date: '2025-05-07', installment: '', status: 'Pago' },
+                    { description: 'Internet', type: 'Pagar', value: 129.90, date: '2025-05-07', installment: '', status: 'Pago' },
+                    { description: 'Cartão Tio Edson Carro', type: 'Pagar', value: 700.00, date: '2025-05-08', installment: '3/23', status: 'Pago' },
+                    { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-05-08', installment: '6/10', status: 'Pago' },
+                    { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-05-08', installment: '14/18', status: 'Pago' },
+                    { description: 'Consórcio3110 Moto', type: 'Pagar', value: 317.64, date: '2025-05-08', installment: '13/51', status: 'Pago' },
+                    { description: 'Consórcio3110 Moto', type: 'Pagar', value: 315.59, date: '2025-05-08', installment: '14/51', status: 'Pago' },
+                    { description: 'Van Chris', type: 'Pagar', value: 300.00, date: '2025-05-10', installment: '', status: 'Pago' },
+                    { description: 'Van Kim', type: 'Pagar', value: 350.00, date: '2025-05-10', installment: '', status: 'Pago' },
+                    { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-05-11', installment: '', status: 'Pago' },
+                    { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-05-12', installment: '', status: 'Pendente' },
+                    { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-05-12', installment: '', status: 'Pendente' },
+                    { description: 'Consórcio3111 Moto', type: 'Pagar', value: 238.38, date: '2025-05-16', installment: '13/53', status: 'Pago' },
+                    { description: 'Consórcio3111 Moto', type: 'Pagar', value: 235.24, date: '2025-05-16', installment: '14/53', status: 'Pago' },
+                    { description: 'Gás', type: 'Pagar', value: 110.00, date: '2025-05-17', installment: '', status: 'Pago' },
+                    { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-05-29', installment: '', status: 'Pago' },
+                    { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-05-30', installment: '4/28', status: 'Pendente' },
+                    { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-05-30', installment: '5/28', status: 'Pendente' },
+                    { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-05-30', installment: '4/31', status: 'Pendente' },
+                    { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-05-30', installment: '5/31', status: 'Pendente' },
+                    { description: 'Água', type: 'Pagar', value: 57.14, date: '2025-06-02', installment: '', status: 'Pago' },
+                    { description: 'Edmilson Pedreiro', type: 'Pagar', value: 330.00, date: '2025-06-03', installment: '', status: 'Pago' },
+                    { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-06-06', installment: '', status: 'Pago' },
+                    { description: 'Luz', type: 'Pagar', value: 171.70, date: '2025-06-07', installment: '', status: 'Pago' },
+                    { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-06-07', installment: '07/10', status: 'Pago' },
+                    { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-06-07', installment: '', status: 'Pago' },
+                    { description: 'Youtube Premium', type: 'Pagar', value: 53.90, date: '2025-06-07', installment: '', status: 'Pago' },
+                    { description: 'Internet', type: 'Pagar', value: 129.90, date: '2025-06-07', installment: '', status: 'Pago' },
+                    { description: 'Cartão Tio Edson Óculos Chris', type: 'Pagar', value: 462.00, date: '2025-06-08', installment: '1/3', status: 'Pago' },
+                    { description: 'Cartão Tio Edson Carro', type: 'Pagar', value: 700.00, date: '2025-06-08', installment: '4/23', status: 'Pago' },
+                    { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-06-08', installment: '7/10', status: 'Pago' },
+                    { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-06-08', installment: '15/18', status: 'Pago' },
+                    { description: 'Consórcio3110 Moto', type: 'Pagar', value: 325.99, date: '2025-06-08', installment: '15/51', status: 'Pago' },
+                    { description: 'Academia Chris', type: 'Pagar', value: 155.00, date: '2025-06-10', installment: '', status: 'Pago' },
+                    { description: 'Van Kim e Chris', type: 'Pagar', value: 600.00, date: '2025-06-10', installment: '', status: 'Pago' },
+                    { description: 'Crédito Celular Kim', type: 'Pagar', value: 20.00, date: '2025-06-10', installment: '', status: 'Pago' },
+                    { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-06-11', installment: '', status: 'Pago' },
+                    { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-06-12', installment: '', status: 'Pendente' },
+                    { description: 'Consórcio3111 Moto', type: 'Pagar', value: 234.96, date: '2025-06-16', installment: '15/53', status: 'Pago' },
+                    { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-06-29', installment: '', status: 'Pago' },
+                    { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-06-30', installment: '6/28', status: 'Pendente' },
+                    { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-06-30', installment: '6/31', status: 'Pendente' },
+                    { description: 'Água', type: 'Pagar', value: 0, date: '2025-07-02', installment: '', status: 'Pendente' },
+                    { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-07-06', installment: '', status: 'Pendente' },
+                    { description: 'Luz', type: 'Pagar', value: 0, date: '2025-07-07', installment: '', status: 'Pendente' },
+                    { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-07-07', installment: '08/10', status: 'Pendente' },
+                    { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-07-07', installment: '', status: 'Pendente' },
+                    { description: 'Youtube Premium', type: 'Pagar', value: 53.90, date: '2025-07-07', installment: '', status: 'Pendente' },
+                    { description: 'Internet', type: 'Pagar', value: 129.90, date: '2025-07-07', installment: '', status: 'Pendente' },
+                    { description: 'Cartão Tio Edson Carro', type: 'Pagar', value: 700.00, date: '2025-07-08', installment: '5/23', status: 'Pendente' },
+                    { description: 'Cartão Tio Edson Óculos Chris', type: 'Pagar', value: 462.00, date: '2025-07-08', installment: '2/3', status: 'Pendente' },
+                    { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-07-08', installment: '8/10', status: 'Pendente' },
+                    { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-07-08', installment: '16/18', status: 'Pendente' },
+                    { description: 'Consórcio3110 Moto', type: 'Pagar', value: 325.99, date: '2025-07-08', installment: '16/51', status: 'Pendente' },
+                    { description: 'Academia Chris', type: 'Pagar', value: 155.00, date: '2025-07-10', installment: '', status: 'Pendente' },
+                    { description: 'Van Kim e Chris', type: 'Pagar', value: 600.00, date: '2025-07-10', installment: '', status: 'Pendente' },
+                    { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-07-11', installment: '', status: 'Pendente' },
+                    { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-07-12', installment: '', status: 'Pendente' },
+                    { description: 'Consórcio3111 Moto', type: 'Pagar', value: 234.96, date: '2025-07-16', installment: '16/53', status: 'Pendente' },
+                    { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-07-29', installment: '', status: 'Pendente' },
+                    { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-07-31', installment: '7/28', status: 'Pendente' },
+                    { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-07-31', installment: '7/31', status: 'Pendente' },
+                    { description: 'Água', type: 'Pagar', value: 0, date: '2025-08-02', installment: '', status: 'Pendente' },
+                    { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-08-06', installment: '', status: 'Pendente' },
+                    { description: 'Luz', type: 'Pagar', value: 0, date: '2025-08-07', installment: '', status: 'Pendente' },
+                    { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-08-07', installment: '09/10', status: 'Pendente' },
+                    { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-08-07', installment: '', status: 'Pendente' },
+                    { description: 'Youtube Premium', type: 'Pagar', value: 53.90, date: '2025-08-07', installment: '', status: 'Pendente' },
+                    { description: 'Internet', type: 'Pagar', value: 129.90, date: '2025-08-07', installment: '', status: 'Pendente' },
+                    { description: 'Cartão Tio Edson Carro', type: 'Pagar', value: 700.00, date: '2025-08-08', installment: '6/23', status: 'Pendente' },
+                    { description: 'Cartão Tio Edson Óculos Chris', type: 'Pagar', value: 462.00, date: '2025-08-08', installment: '3/3', status: 'Pendente' },
+                    { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-08-08', installment: '9/10', status: 'Pendente' },
+                    { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-08-08', installment: '17/18', status: 'Pendente' },
+                    { description: 'Consórcio3110 Moto', type: 'Pagar', value: 325.99, date: '2025-08-08', installment: '17/51', status: 'Pendente' },
+                    { description: 'Academia Chris', type: 'Pagar', value: 155.00, date: '2025-08-10', installment: '', status: 'Pendente' },
+                    { description: 'Van Kim e Chris', type: 'Pagar', value: 600.00, date: '2025-08-10', installment: '', status: 'Pendente' },
+                    { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-08-11', installment: '', status: 'Pendente' },
+                    { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-08-12', installment: '', status: 'Pendente' },
+                    { description: 'Consórcio3111 Moto', type: 'Pagar', value: 234.96, date: '2025-08-16', installment: '17/53', status: 'Pendente' },
+                    { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-08-29', installment: '', status: 'Pendente' },
+                    { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-08-29', installment: '8/28', status: 'Pendente' },
+                    { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-08-29', installment: '8/31', status: 'Pendente' },
+                    { description: 'Água', type: 'Pagar', value: 0, date: '2025-09-02', installment: '', status: 'Pendente' },
+                    { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-09-06', installment: '', status: 'Pendente' },
+                    { description: 'Luz', type: 'Pagar', value: 0, date: '2025-09-07', installment: '', status: 'Pendente' },
+                    { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-09-07', installment: '10/10', status: 'Pendente' },
+                    { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-09-07', installment: '', status: 'Pendente' },
+                    { description: 'Youtube Premium', type: 'Pagar', value: 53.90, date: '2025-09-07', installment: '', status: 'Pendente' },
+                    { description: 'Internet', type: 'Pagar', value: 129.90, date: '2025-09-07', installment: '', status: 'Pendente' },
+                    { description: 'Cartão Tio Edson Carro', type: 'Pagar', value: 700.00, date: '2025-09-08', installment: '7/23', status: 'Pendente' },
+                    { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-09-08', installment: '10/10', status: 'Pendente' },
+                    { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-09-08', installment: '18/18', status: 'Pendente' },
+                    { description: 'Consórcio3110 Moto', type: 'Pagar', value: 325.99, date: '2025-09-08', installment: '18/51', status: 'Pendente' },
+                    { description: 'Academia Chris', type: 'Pagar', value: 155.00, date: '2025-09-10', installment: '', status: 'Pendente' },
+                    { description: 'Van Kim e Chris', type: 'Pagar', value: 600.00, date: '2025-09-10', installment: '', status: 'Pendente' },
+                    { description: 'Crédito Celular Kim', type: 'Pagar', value: 20.00, date: '2025-09-10', installment: '', status: 'Pendente' },
+                    { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-09-11', installment: '', status: 'Pendente' },
+                    { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-09-12', installment: '', status: 'Pendente' },
+                    { description: 'Consórcio3111 Moto', type: 'Pagar', value: 234.96, date: '2025-09-16', installment: '18/53', status: 'Pendente' },
+                    { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-09-29', installment: '', status: 'Pendente' },
+                    { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-09-30', installment: '9/28', status: 'Pendente' },
+                    { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-09-30', installment: '9/31', status: 'Pendente' },
+                    { description: 'Água', type: 'Pagar', value: 0, date: '2025-10-02', installment: '', status: 'Pendente' },
+                    { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-10-06', installment: '', status: 'Pendente' },
+                    { description: 'Luz', type: 'Pagar', value: 0, date: '2025-10-07', installment: '', status: 'Pendente' },
+                    { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-10-07', installment: '', status: 'Pendente' },
+                    { description: 'Youtube Premium', type: 'Pagar', value: 53.90, date: '2025-10-07', installment: '', status: 'Pendente' },
+                    { description: 'Internet', type: 'Pagar', value: 110.00, date: '2025-10-07', installment: '', status: 'Pendente' },
+                    { description: 'Consórcio3110 Moto', type: 'Pagar', value: 325.99, date: '2025-10-08', installment: '19/51', status: 'Pendente' },
+                    { description: 'Van Kim e Chris', type: 'Pagar', value: 600.00, date: '2025-10-10', installment: '', status: 'Pendente' },
+                    { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-10-11', installment: '', status: 'Pendente' },
+                    { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-10-12', installment: '', status: 'Pendente' },
+                    { description: 'Consórcio3111 Moto', type: 'Pagar', value: 234.96, date: '2025-10-16', installment: '19/53', status: 'Pendente' },
+                    { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-10-29', installment: '', status: 'Pendente' },
+                    { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-10-31', installment: '10/28', status: 'Pendente' },
+                    { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-10-31', installment: '10/31', status: 'Pendente' },
+                    { description: 'Preventivo Day', type: 'Pagar', value: 0, date: '2025-10-10', installment: '', status: 'Pendente' },
+                    { description: 'Água', type: 'Pagar', value: 0, date: '2025-11-02', installment: '', status: 'Pendente' },
+                    { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-11-06', installment: '', status: 'Pendente' },
+                    { description: 'Luz', type: 'Pagar', value: 0, date: '2025-11-07', installment: '', status: 'Pendente' },
+                    { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-11-07', installment: '', status: 'Pendente' },
+                    { description: 'Youtube Premium', type: 'Pagar', value: 53.90, date: '2025-11-07', installment: '', status: 'Pendente' },
+                    { description: 'Internet', type: 'Pagar', value: 110.00, date: '2025-11-07', installment: '', status: 'Pendente' },
+                    { description: 'Consórcio3110 Moto', type: 'Pagar', value: 325.99, date: '2025-11-08', installment: '20/51', status: 'Pendente' },
+                    { description: 'Van Kim e Chris', type: 'Pagar', value: 600.00, date: '2025-11-10', installment: '', status: 'Pendente' },
+                    { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-11-11', installment: '', status: 'Pendente' },
+                    { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-11-12', installment: '', status: 'Pendente' },
+                    { description: 'Consórcio3111 Moto', type: 'Pagar', value: 234.96, date: '2025-11-16', installment: '20/53', status: 'Pendente' },
+                    { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-11-29', installment: '', status: 'Pendente' },
+                    { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-11-28', installment: '11/28', status: 'Pendente' },
+                    { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-11-28', installment: '11/31', status: 'Pendente' },
+                    { description: 'Água', type: 'Pagar', value: 0, date: '2025-12-02', installment: '', status: 'Pendente' },
+                    { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-12-06', installment: '', status: 'Pendente' },
+                    { description: 'Amazon Prime Anuidade', type: 'Pagar', value: 166.80, date: '2025-12-06', installment: '', status: 'Pendente' },
+                    { description: 'Luz', type: 'Pagar', value: 0, date: '2025-12-07', installment: '', status: 'Pendente' },
+                    { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-12-07', installment: '', status: 'Pendente' },
+                    { description: 'Youtube Premium', type: 'Pagar', value: 53.90, date: '2025-12-07', installment: '', status: 'Pendente' },
+                    { description: 'Internet', type: 'Pagar', value: 129.90, date: '2025-12-07', installment: '', status: 'Pendente' },
+                    { description: 'Consórcio3110 Moto', type: 'Pagar', value: 325.99, date: '2025-12-08', installment: '21/51', status: 'Pendente' },
+                    { description: 'Van Kim e Chris', type: 'Pagar', value: 600.00, date: '2025-12-10', installment: '', status: 'Pendente' },
+                    { description: 'Crédito Celular Kim', type: 'Pagar', value: 0, date: '2025-12-10', installment: '', status: 'Pendente' },
+                    { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-12-11', installment: '', status: 'Pendente' },
+                    { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-12-12', installment: '', status: 'Pendente' },
+                    { description: 'Consórcio3111 Moto', type: 'Pagar', value: 234.96, date: '2025-12-16', installment: '21/53', status: 'Pendente' },
+                    { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-12-29', installment: '', status: 'Pendente' },
+                    { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-12-30', installment: '12/28', status: 'Pendente' },
+                    { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-12-30', installment: '12/31', status: 'Pendente' }
+                ];
+
+                const batch = writeBatch(db);
+                historicalData.forEach(account => {
+                    const docRef = doc(accountsCollection); // Gera um novo ID para cada conta
+                    // CORREÇÃO: Preenche 'installment' se estiver vazio
+                    const dataToSet = { ...account };
+                    if (dataToSet.installment === '') {
+                        dataToSet.installment = 'Frequente';
+                    }
+                    batch.set(docRef, { ...dataToSet, createdAt: serverTimestamp() });
+                });
+
+                try {
+                    await batch.commit();
+                    alert(`Sucesso! ${historicalData.length} contas foram importadas para a sua planilha.`);
+                    importButton.remove(); // Remove o botão depois do sucesso
+                } catch (error) {
+                    console.error("Erro ao importar dados históricos:", error);
+                    alert('Ocorreu um erro ao importar os dados. Verifique a consola para mais detalhes.');
+                    importButton.textContent = 'Tentar Importar Novamente';
+                    importButton.disabled = false;
+                }
+            });
+
+            // Adiciona o botão no topo do container
+            mainContainer.prepend(importButton);
+        }
+        
+        // --- Initialization ---
+        function initializeAppAndConnect() {
+            if (!firebaseConfig.apiKey || firebaseConfig.apiKey.includes("SUA_API_KEY")) {
+                showError("ERRO: A configuração do Firebase está em falta.");
                 return;
             }
-            if (!confirm('Tem a certeza de que quer importar todo o seu histórico de contas? Esta ação não pode ser desfeita.')) {
-                return;
+
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                const auth = getAuth(app);
+                setLogLevel('error');
+                handleAuthentication(auth);
+            } catch (error) {
+                console.error("Firebase initialization failed:", error);
+                showError("Falha ao iniciar o Firebase. Verifique a sua configuração.");
             }
+        }
 
-            importButton.textContent = 'A importar...';
-            importButton.disabled = true;
+        // --- Authentication ---
+        function handleAuthentication(auth) {
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userIdDisplay.textContent = `Conectado (ID: ${user.uid.substring(0, 6)}...)`;
+                    accountsCollection = collection(db, 'contas', user.uid, 'items');
+                    listenForAccountChanges();
+                } else {
+                    userIdDisplay.textContent = "A autenticar...";
+                    try {
+                        await signInAnonymously(auth);
+                    } catch (error) {
+                        console.error("Authentication failed:", error);
+                        userIdDisplay.textContent = "Falha na autenticação.";
+                    }
+                }
+            });
+        }
 
-            const historicalData = [
-                { description: 'Internet', type: 'Pagar', value: 99.90, date: '2024-09-10', installment: 'Frequente', status: 'Pago' },
-                { description: 'Aluguel', type: 'Pagar', value: 1320.00, date: '2024-09-10', installment: 'Frequente', status: 'Pago' },
-                { description: 'Água', type: 'Pagar', value: 198.00, date: '2024-09-20', installment: 'Frequente', status: 'Pago' },
-                { description: 'Luz', type: 'Pagar', value: 0, date: '2024-09-10', installment: 'Frequente', status: 'Pago' },
-                { description: 'Van Kim', type: 'Pagar', value: 200.00, date: '2024-09-10', installment: 'Frequente', status: 'Pago' },
-                { description: 'Van Kim', type: 'Pagar', value: 200.00, date: '2024-10-10', installment: 'Frequente', status: 'Pago' },
-                { description: 'Internet', type: 'Pagar', value: 99.90, date: '2024-10-10', installment: 'Frequente', status: 'Pago' },
-                { description: 'Aluguel', type: 'Pagar', value: 1320.00, date: '2024-10-10', installment: 'Frequente', status: 'Pago' },
-                { description: 'Luz Outra Casa', type: 'Pagar', value: 151.96, date: '2024-10-28', installment: 'Frequente', status: 'Pago' },
-                { description: 'Van Kim', type: 'Pagar', value: 200.00, date: '2024-11-10', installment: 'Frequente', status: 'Pago' },
-                { description: 'Internet', type: 'Pagar', value: 99.90, date: '2024-11-10', installment: 'Frequente', status: 'Pago' },
-                { description: 'Calça Wanessa', type: 'Pagar', value: 159.00, date: '2024-11-05', installment: 'Frequente', status: 'Pago' },
-                { description: 'Cartão Tio Edson', type: 'Pagar', value: 946.58, date: '2024-11-05', installment: 'Frequente', status: 'Pago' },
-                { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2024-11-07', installment: '01/10', status: 'Pago' },
-                { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2024-11-12', installment: 'Frequente', status: 'Pago' },
-                { description: 'Água 08/2024', type: 'Pagar', value: 197.88, date: '2024-11-20', installment: 'Frequente', status: 'Pago' },
-                { description: 'Aluguel', type: 'Pagar', value: 1320.00, date: '2024-11-10', installment: 'Frequente', status: 'Pago' },
-                { description: 'Max', type: 'Pagar', value: 19.95, date: '2024-11-29', installment: 'Frequente', status: 'Pago' },
-                { description: 'Consórcio3111 Moto', type: 'Pagar', value: 233.05, date: '2024-11-16', installment: '8/53', status: 'Pago' },
-                { description: 'Água Cachoeira', type: 'Pagar', value: 44.67, date: '2024-12-02', installment: 'Frequente', status: 'Pago' },
-                { description: 'Móveis Jufap', type: 'Pagar', value: 250.00, date: '2024-12-05', installment: '3/6', status: 'Pago' },
-                { description: 'Luz Jenifer', type: 'Pagar', value: 387.00, date: '2024-12-05', installment: 'Frequente', status: 'Pago' },
-                { description: 'Well', type: 'Pagar', value: 20.00, date: '2024-12-05', installment: 'Frequente', status: 'Pago' },
-                { description: 'Água Colombo 20/09', type: 'Pagar', value: 198.99, date: '2024-12-05', installment: 'Frequente', status: 'Pago' },
-                { description: 'Água Colombo 20/10', type: 'Pagar', value: 167.71, date: '2024-12-05', installment: 'Frequente', status: 'Pago' },
-                { description: 'Água Colombo 20/11', type: 'Pagar', value: 120.78, date: '2024-12-05', installment: 'Frequente', status: 'Pago' },
-                { description: 'Multa Moto', type: 'Pagar', value: 234.78, date: '2024-12-05', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Multa HR-V', type: 'Pagar', value: 262.92, date: '2024-12-05', installment: 'Frequente', status: 'Pago' },
-                { description: 'Claro Móvel Marcelo', type: 'Pagar', value: 44.99, date: '2024-12-06', installment: 'Frequente', status: 'Pago' },
-                { description: 'Claro Móvel Day', type: 'Pagar', value: 44.99, date: '2024-12-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Internet Cachoeira', type: 'Pagar', value: 110.00, date: '2024-12-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Luz Cachoeira', type: 'Pagar', value: 61.47, date: '2024-12-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2024-12-07', installment: '02/10', status: 'Pago' },
-                { description: 'Youtube Premium', type: 'Pagar', value: 41.90, date: '2024-12-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2024-12-08', installment: '1/10', status: 'Pago' },
-                { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2024-12-08', installment: '9/18', status: 'Pago' },
-                { description: 'Consórcio3110 Moto', type: 'Pagar', value: 316.33, date: '2024-12-08', installment: '9/51', status: 'Pago' },
-                { description: 'Sofá Armário', type: 'Pagar', value: 552.00, date: '2024-12-08', installment: 'Frequente', status: 'Pago' },
-                { description: 'Internet Colombo', type: 'Pagar', value: 99.90, date: '2024-12-10', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Van Kim', type: 'Pagar', value: 200.00, date: '2024-12-10', installment: 'Frequente', status: 'Pago' },
-                { description: 'Aluguel', type: 'Pagar', value: 1320.00, date: '2024-12-10', installment: 'Frequente', status: 'Pago' },
-                { description: 'Amazon Prime Vídeo Anual', type: 'Pagar', value: 166.80, date: '2024-12-10', installment: 'Frequente', status: 'Pago' },
-                { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2024-12-11', installment: 'Frequente', status: 'Pago' },
-                { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2024-12-12', installment: 'Frequente', status: 'Pago' },
-                { description: 'Pegar Certidão Divórcio', type: 'Pagar', value: 70.00, date: '2024-12-15', installment: 'Frequente', status: 'Pago' },
-                { description: 'Consórcio3111 Moto', type: 'Pagar', value: 230.42, date: '2024-12-16', installment: '9/53', status: 'Pago' },
-                { description: 'Acordo Inter', type: 'Pagar', value: 160.00, date: '2024-12-19', installment: '1/3', status: 'Pago' },
-                { description: 'Max', type: 'Pagar', value: 19.95, date: '2024-12-29', installment: 'Frequente', status: 'Pago' },
-                { description: 'Rafa', type: 'Pagar', value: 154.00, date: '2025-01-01', installment: 'Frequente', status: 'Pago' },
-                { description: 'Água', type: 'Pagar', value: 43.73, date: '2025-01-02', installment: 'Frequente', status: 'Pago' },
-                { description: 'Móveis Jufap', type: 'Pagar', value: 250.00, date: '2025-01-05', installment: '4/6', status: 'Pago' },
-                { description: 'Claro Móvel Marcelo', type: 'Pagar', value: 44.99, date: '2025-01-06', installment: 'Frequente', status: 'Pago' },
-                { description: 'Luz', type: 'Pagar', value: 118.03, date: '2025-01-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-01-07', installment: '03/10', status: 'Pago' },
-                { description: 'Youtube Premium', type: 'Pagar', value: 41.90, date: '2025-01-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Internet Cachoeira', type: 'Pagar', value: 110.00, date: '2025-01-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-01-08', installment: '2/10', status: 'Pago' },
-                { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-01-08', installment: '10/18', status: 'Pago' },
-                { description: 'Consórcio3110 Moto', type: 'Pagar', value: 316.15, date: '2025-01-08', installment: '10/51', status: 'Pago' },
-                { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-01-11', installment: 'Frequente', status: 'Pago' },
-                { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-01-12', installment: 'Frequente', status: 'Pago' },
-                { description: 'Consórcio3111 Moto', type: 'Pagar', value: 230.15, date: '2025-01-16', installment: '10/53', status: 'Pago' },
-                { description: 'Acordo Inter', type: 'Pagar', value: 160.00, date: '2025-01-19', installment: '2/3', status: 'Pago' },
-                { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-01-29', installment: 'Frequente', status: 'Pago' },
-                { description: 'Claro Móvel Day', type: 'Pagar', value: 44.99, date: '2025-01-31', installment: 'Frequente', status: 'Pago' },
-                { description: 'Claro Móvel Chris', type: 'Pagar', value: 44.99, date: '2025-01-31', installment: 'Frequente', status: 'Pago' },
-                { description: 'Água', type: 'Pagar', value: 31.75, date: '2025-02-02', installment: 'Frequente', status: 'Pago' },
-                { description: 'Claro Flex Crhis', type: 'Pagar', value: 44.99, date: '2025-02-03', installment: 'Frequente', status: 'Pago' },
-                { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-02-03', installment: 'Frequente', status: 'Pago' },
-                { description: 'Móveis Jufap', type: 'Pagar', value: 250.00, date: '2025-02-05', installment: '5/6', status: 'Pago' },
-                { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-02-06', installment: 'Frequente', status: 'Pago' },
-                { description: 'Luz', type: 'Pagar', value: 202.65, date: '2025-02-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-02-07', installment: '03/10', status: 'Pago' },
-                { description: 'Youtube Premium', type: 'Pagar', value: 41.90, date: '2025-02-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Internet', type: 'Pagar', value: 110.00, date: '2025-02-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-02-08', installment: '3/10', status: 'Pago' },
-                { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-02-08', installment: '11/18', status: 'Pago' },
-                { description: 'Consórcio3110 Moto', type: 'Pagar', value: 315.96, date: '2025-02-08', installment: '11/51', status: 'Pago' },
-                { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-02-11', installment: 'Frequente', status: 'Pago' },
-                { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-02-12', installment: 'Frequente', status: 'Pago' },
-                { description: 'Consórcio3111 Moto', type: 'Pagar', value: 235.42, date: '2025-02-16', installment: '11/53', status: 'Pago' },
-                { description: 'Acordo Inter', type: 'Pagar', value: 160.00, date: '2025-02-19', installment: '3/3', status: 'Pago' },
-                { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-02-28', installment: 'Frequente', status: 'Pago' },
-                { description: 'Van Chris', type: 'Pagar', value: 300.00, date: '2025-02-01', installment: 'Frequente', status: 'Pago' },
-                { description: 'Uniforme Chris', type: 'Pagar', value: 43.90, date: '2025-02-01', installment: 'Frequente', status: 'Pago' },
-                { description: 'Uniforme Kim', type: 'Pagar', value: 25.99, date: '2025-02-01', installment: 'Frequente', status: 'Pago' },
-                { description: 'PGFN', type: 'Pagar', value: 37.71, date: '2025-02-28', installment: '2/28', status: 'Pago' },
-                { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-02-28', installment: '2/31', status: 'Pago' },
-                { description: 'Água', type: 'Pagar', value: 32.30, date: '2025-03-02', installment: 'Frequente', status: 'Pago' },
-                { description: 'Móveis Jufap', type: 'Pagar', value: 250.00, date: '2025-03-05', installment: '6/6', status: 'Pago' },
-                { description: 'Claro Flex Marcelo', type: 'Pagar', value: 54.99, date: '2025-03-13', installment: 'Frequente', status: 'Pago' },
-                { description: 'Luz', type: 'Pagar', value: 211.74, date: '2025-03-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-03-07', installment: '04/10', status: 'Pago' },
-                { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-03-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Claro Flex Chris', type: 'Pagar', value: 34.99, date: '2025-03-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Youtube Premium', type: 'Pagar', value: 41.90, date: '2025-03-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Internet', type: 'Pagar', value: 110.00, date: '2025-03-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Carro', type: 'Pagar', value: 700.00, date: '2025-03-08', installment: '1/23', status: 'Pago' },
-                { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-03-08', installment: '4/10', status: 'Pago' },
-                { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-03-08', installment: '12/18', status: 'Pago' },
-                { description: 'Consórcio3110 Moto', type: 'Pagar', value: 315.78, date: '2025-03-08', installment: '12/51', status: 'Pago' },
-                { description: 'Futebol', type: 'Pagar', value: 50.00, date: '2025-03-11', installment: 'Frequente', status: 'Pago' },
-                { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-03-12', installment: 'Frequente', status: 'Pago' },
-                { description: 'Consórcio3111 Moto', type: 'Pagar', value: 235.33, date: '2025-03-16', installment: '12/53', status: 'Pago' },
-                { description: 'IPVA Moto 2025', type: 'Pagar', value: 550.82, date: '2025-03-16', installment: 'Frequente', status: 'Pago' },
-                { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-03-29', installment: 'Frequente', status: 'Pago' },
-                { description: 'CRTR', type: 'Pagar', value: 373.85, date: '2025-03-10', installment: 'Frequente', status: 'Pago' },
-                { description: 'Van Kim Tio Robson', type: 'Pagar', value: 400.00, date: '2025-03-01', installment: 'Frequente', status: 'Pago' },
-                { description: 'Van Chris Tio Cleberson', type: 'Pagar', value: 300.00, date: '2025-03-01', installment: 'Frequente', status: 'Pago' },
-                { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-03-31', installment: '3/28', status: 'Pago' },
-                { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-03-31', installment: '3/31', status: 'Pago' },
-                { description: 'Aliexpress', type: 'Pagar', value: 23.74, date: '2025-03-26', installment: 'Frequente', status: 'Pago' },
-                { description: 'Água', type: 'Pagar', value: 49.05, date: '2025-04-02', installment: 'Frequente', status: 'Pago' },
-                { description: 'Claro Flex Marcelo', type: 'Pagar', value: 54.99, date: '2025-04-06', installment: 'Frequente', status: 'Pago' },
-                { description: 'Luz', type: 'Pagar', value: 241.59, date: '2025-04-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-04-07', installment: '05/10', status: 'Pago' },
-                { description: 'Claro Flex Day', type: 'Pagar', value: 54.99, date: '2025-04-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Claro Flex Chris', type: 'Pagar', value: 44.99, date: '2025-04-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Youtube Premium', type: 'Pagar', value: 41.90, date: '2025-04-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Internet', type: 'Pagar', value: 110.00, date: '2025-04-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Microsoft 365 Anuidade', type: 'Pagar', value: 0, date: '2025-04-11', installment: 'Frequente', status: 'Pago' },
-                { description: 'Carro', type: 'Pagar', value: 700.00, date: '2025-04-08', installment: '2/23', status: 'Pago' },
-                { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-04-08', installment: '5/10', status: 'Pago' },
-                { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-04-08', installment: '13/18', status: 'Pago' },
-                { description: 'Consórcio3110 Moto', type: 'Pagar', value: 310.77, date: '2025-04-08', installment: '13/51', status: 'Pago' },
-                { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-04-11', installment: 'Frequente', status: 'Pago' },
-                { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-04-12', installment: 'Frequente', status: 'Pago' },
-                { description: 'Consórcio3111 Moto', type: 'Pagar', value: 225.63, date: '2025-04-16', installment: '13/53', status: 'Pago' },
-                { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-04-29', installment: 'Frequente', status: 'Pago' },
-                { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-04-30', installment: '4/28', status: 'Pago' },
-                { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-04-30', installment: '4/31', status: 'Pago' },
-                { description: 'Van Kim Tio Robson', type: 'Pagar', value: 350.00, date: '2025-04-01', installment: 'Frequente', status: 'Pago' },
-                { description: 'Van Chris Tio Cleberson', type: 'Pagar', value: 300.00, date: '2025-04-01', installment: 'Frequente', status: 'Pago' },
-                { description: 'Aliexpress Marcelo', type: 'Pagar', value: 23.74, date: '2025-04-10', installment: 'Frequente', status: 'Pago' },
-                { description: 'Aliexpress Marcelo', type: 'Pagar', value: 23.74, date: '2025-04-25', installment: 'Frequente', status: 'Pago' },
-                { description: 'Academia Chris', type: 'Pagar', value: 155.00, date: '2025-04-04', installment: 'Frequente', status: 'Pago' },
-                { description: 'Água', type: 'Pagar', value: 49.05, date: '2025-05-02', installment: 'Frequente', status: 'Pago' },
-                { description: 'Água', type: 'Pagar', value: 30.78, date: '2025-05-02', installment: 'Frequente', status: 'Pago' },
-                { description: 'Chris', type: 'Pagar', value: 30.00, date: '2025-05-05', installment: 'Frequente', status: 'Pago' },
-                { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-05-06', installment: 'Frequente', status: 'Pago' },
-                { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-05-07', installment: '06/10', status: 'Pago' },
-                { description: 'Luz', type: 'Pagar', value: 241.59, date: '2025-05-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Luz', type: 'Pagar', value: 252.95, date: '2025-05-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-05-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Youtube Premium', type: 'Pagar', value: 53.90, date: '2025-05-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Internet', type: 'Pagar', value: 129.90, date: '2025-05-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Cartão Tio Edson Carro', type: 'Pagar', value: 700.00, date: '2025-05-08', installment: '3/23', status: 'Pago' },
-                { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-05-08', installment: '6/10', status: 'Pago' },
-                { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-05-08', installment: '14/18', status: 'Pago' },
-                { description: 'Consórcio3110 Moto', type: 'Pagar', value: 317.64, date: '2025-05-08', installment: '13/51', status: 'Pago' },
-                { description: 'Consórcio3110 Moto', type: 'Pagar', value: 315.59, date: '2025-05-08', installment: '14/51', status: 'Pago' },
-                { description: 'Van Chris', type: 'Pagar', value: 300.00, date: '2025-05-10', installment: 'Frequente', status: 'Pago' },
-                { description: 'Van Kim', type: 'Pagar', value: 350.00, date: '2025-05-10', installment: 'Frequente', status: 'Pago' },
-                { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-05-11', installment: 'Frequente', status: 'Pago' },
-                { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-05-12', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-05-12', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Consórcio3111 Moto', type: 'Pagar', value: 238.38, date: '2025-05-16', installment: '13/53', status: 'Pago' },
-                { description: 'Consórcio3111 Moto', type: 'Pagar', value: 235.24, date: '2025-05-16', installment: '14/53', status: 'Pago' },
-                { description: 'Gás', type: 'Pagar', value: 110.00, date: '2025-05-17', installment: 'Frequente', status: 'Pago' },
-                { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-05-29', installment: 'Frequente', status: 'Pago' },
-                { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-05-30', installment: '4/28', status: 'Pendente' },
-                { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-05-30', installment: '5/28', status: 'Pendente' },
-                { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-05-30', installment: '4/31', status: 'Pendente' },
-                { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-05-30', installment: '5/31', status: 'Pendente' },
-                { description: 'Água', type: 'Pagar', value: 57.14, date: '2025-06-02', installment: 'Frequente', status: 'Pago' },
-                { description: 'Edmilson Pedreiro', type: 'Pagar', value: 330.00, date: '2025-06-03', installment: 'Frequente', status: 'Pago' },
-                { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-06-06', installment: 'Frequente', status: 'Pago' },
-                { description: 'Luz', type: 'Pagar', value: 171.70, date: '2025-06-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-06-07', installment: '07/10', status: 'Pago' },
-                { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-06-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Youtube Premium', type: 'Pagar', value: 53.90, date: '2025-06-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Internet', type: 'Pagar', value: 129.90, date: '2025-06-07', installment: 'Frequente', status: 'Pago' },
-                { description: 'Cartão Tio Edson Óculos Chris', type: 'Pagar', value: 462.00, date: '2025-06-08', installment: '1/3', status: 'Pago' },
-                { description: 'Cartão Tio Edson Carro', type: 'Pagar', value: 700.00, date: '2025-06-08', installment: '4/23', status: 'Pago' },
-                { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-06-08', installment: '7/10', status: 'Pago' },
-                { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-06-08', installment: '15/18', status: 'Pago' },
-                { description: 'Consórcio3110 Moto', type: 'Pagar', value: 325.99, date: '2025-06-08', installment: '15/51', status: 'Pago' },
-                { description: 'Academia Chris', type: 'Pagar', value: 155.00, date: '2025-06-10', installment: 'Frequente', status: 'Pago' },
-                { description: 'Van Kim e Chris', type: 'Pagar', value: 600.00, date: '2025-06-10', installment: 'Frequente', status: 'Pago' },
-                { description: 'Crédito Celular Kim', type: 'Pagar', value: 20.00, date: '2025-06-10', installment: 'Frequente', status: 'Pago' },
-                { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-06-11', installment: 'Frequente', status: 'Pago' },
-                { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-06-12', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Consórcio3111 Moto', type: 'Pagar', value: 234.96, date: '2025-06-16', installment: '15/53', status: 'Pago' },
-                { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-06-29', installment: 'Frequente', status: 'Pago' },
-                { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-06-30', installment: '6/28', status: 'Pendente' },
-                { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-06-30', installment: '6/31', status: 'Pendente' },
-                { description: 'Água', type: 'Pagar', value: 0, date: '2025-07-02', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-07-06', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Luz', type: 'Pagar', value: 0, date: '2025-07-07', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-07-07', installment: '08/10', status: 'Pendente' },
-                { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-07-07', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Youtube Premium', type: 'Pagar', value: 53.90, date: '2025-07-07', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Internet', type: 'Pagar', value: 129.90, date: '2025-07-07', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Cartão Tio Edson Carro', type: 'Pagar', value: 700.00, date: '2025-07-08', installment: '5/23', status: 'Pendente' },
-                { description: 'Cartão Tio Edson Óculos Chris', type: 'Pagar', value: 462.00, date: '2025-07-08', installment: '2/3', status: 'Pendente' },
-                { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-07-08', installment: '8/10', status: 'Pendente' },
-                { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-07-08', installment: '16/18', status: 'Pendente' },
-                { description: 'Consórcio3110 Moto', type: 'Pagar', value: 325.99, date: '2025-07-08', installment: '16/51', status: 'Pendente' },
-                { description: 'Academia Chris', type: 'Pagar', value: 155.00, date: '2025-07-10', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Van Kim e Chris', type: 'Pagar', value: 600.00, date: '2025-07-10', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-07-11', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-07-12', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Consórcio3111 Moto', type: 'Pagar', value: 234.96, date: '2025-07-16', installment: '16/53', status: 'Pendente' },
-                { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-07-29', installment: 'Frequente', status: 'Pendente' },
-                { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-07-31', installment: '7/28', status: 'Pendente' },
-                { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-07-31', installment: '7/31', status: 'Pendente' },
-                { description: 'Água', type: 'Pagar', value: 0, date: '2025-08-02', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-08-06', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Luz', type: 'Pagar', value: 0, date: '2025-08-07', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-08-07', installment: '09/10', status: 'Pendente' },
-                { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-08-07', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Youtube Premium', type: 'Pagar', value: 53.90, date: '2025-08-07', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Internet', type: 'Pagar', value: 129.90, date: '2025-08-07', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Cartão Tio Edson Carro', type: 'Pagar', value: 700.00, date: '2025-08-08', installment: '6/23', status: 'Pendente' },
-                { description: 'Cartão Tio Edson Óculos Chris', type: 'Pagar', value: 462.00, date: '2025-08-08', installment: '3/3', status: 'Pendente' },
-                { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-08-08', installment: '9/10', status: 'Pendente' },
-                { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-08-08', installment: '17/18', status: 'Pendente' },
-                { description: 'Consórcio3110 Moto', type: 'Pagar', value: 325.99, date: '2025-08-08', installment: '17/51', status: 'Pendente' },
-                { description: 'Academia Chris', type: 'Pagar', value: 155.00, date: '2025-08-10', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Van Kim e Chris', type: 'Pagar', value: 600.00, date: '2025-08-10', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-08-11', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-08-12', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Consórcio3111 Moto', type: 'Pagar', value: 234.96, date: '2025-08-16', installment: '17/53', status: 'Pendente' },
-                { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-08-29', installment: 'Frequente', status: 'Pendente' },
-                { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-08-29', installment: '8/28', status: 'Pendente' },
-                { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-08-29', installment: '8/31', status: 'Pendente' },
-                { description: 'Água', type: 'Pagar', value: 0, date: '2025-09-02', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-09-06', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Luz', type: 'Pagar', value: 0, date: '2025-09-07', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-09-07', installment: '10/10', status: 'Pendente' },
-                { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-09-07', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Youtube Premium', type: 'Pagar', value: 53.90, date: '2025-09-07', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Internet', type: 'Pagar', value: 129.90, date: '2025-09-07', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Cartão Tio Edson Carro', type: 'Pagar', value: 700.00, date: '2025-09-08', installment: '7/23', status: 'Pendente' },
-                { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-09-08', installment: '10/10', status: 'Pendente' },
-                { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-09-08', installment: '18/18', status: 'Pendente' },
-                { description: 'Consórcio3110 Moto', type: 'Pagar', value: 325.99, date: '2025-09-08', installment: '18/51', status: 'Pendente' },
-                { description: 'Academia Chris', type: 'Pagar', value: 155.00, date: '2025-09-10', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Van Kim e Chris', type: 'Pagar', value: 600.00, date: '2025-09-10', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Crédito Celular Kim', type: 'Pagar', value: 20.00, date: '2025-09-10', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-09-11', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-09-12', installment: 'Frequente', status: 'Pendente' },
-                { description: 'Consórcio3111 Moto', type: 'Pagar', value: 234.96, date: '2025-09-16', installment: '18/53', status: 'Pendente' },
-                { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-09-29', installment: 'Frequente', status: 'Pendente' },
-                { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-09 
+        // --- Real-time Data Listener ---
+        function listenForAccountChanges() {
+            if (unsubscribe) unsubscribe();
+
+            unsubscribe = onSnapshot(accountsCollection, (snapshot) => {
+                if (snapshot.empty) {
+                    // Se estiver vazio, mostra a mensagem e o botão de importação
+                    showEmptyMessage();
+                } else {
+                    // Se já tiver dados, esconde o botão de importação e renderiza as contas
+                    const importButton = document.getElementById('import-button');
+                    if (importButton) importButton.remove();
+                    
+                    const accounts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderAccounts(accounts);
+                }
+            }, (error) => {
+                console.error("Error fetching collection:", error);
+                showError("Erro ao carregar os dados. Verifique a consola e as regras de segurança do Firestore.");
+            });
+        }
+        
+        // --- UI Rendering Functions ---
+        function applyStatusClass(element, status) {
+            element.classList.remove(`status-${STATUS_PENDENTE}`, `status-${STATUS_PAGO}`, `status-${STATUS_RECEBIDO}`);
+            if (status) {
+                element.classList.add(`status-${status}`);
+            }
+        }
+
+        function createInputElement(type, value, placeholder, changeHandler) {
+            const input = document.createElement('input');
+            input.type = type;
+            input.value = value;
+            if (placeholder) input.placeholder = placeholder;
+            if (type === 'number') input.step = '0.01';
+            input.addEventListener('change', changeHandler);
+            return input;
+        }
+
+        function createSelectElement(options, selectedValue, changeHandler) {
+            const select = document.createElement('select');
+            select.innerHTML = options.map(opt => `<option value="${opt}" ${selectedValue === opt ? 'selected' : ''}>${opt}</option>`).join('');
+            select.addEventListener('change', changeHandler);
+            return select;
+        }
+
+        function createDeleteButton(onClick) {
+            const deleteButton = document.createElement('button');
+            deleteButton.innerHTML = '&times;';
+            deleteButton.title = 'Excluir conta';
+            deleteButton.classList.add('btn-delete-custom');
+            deleteButton.addEventListener('click', onClick);
+            return deleteButton;
+        }
+
+        function createAccountRow(account) {
+            const row = document.createElement('tr');
+            const createCellWithChild = (child) => {
+                const cell = row.insertCell();
+                cell.appendChild(child);
+            };
+
+            createCellWithChild(createInputElement('text', account.description || '', 'Descrição', (e) => updateAccount(account.id, { description: e.target.value })));
+            const typeSelect = createSelectElement([TIPO_PAGAR, TIPO_RECEBER], account.type, (e) => updateAccount(account.id, { type: e.target.value }));
+            createCellWithChild(typeSelect);
+            createCellWithChild(createInputElement('number', (account.value || 0).toFixed(2), 'Valor', (e) => updateAccount(account.id, { value: parseFloat(e.target.value) || 0 })));
+            createCellWithChild(createInputElement('date', account.date || '', null, (e) => updateAccount(account.id, { date: e.target.value })));
+            createCellWithChild(createInputElement('text', account.installment || '', 'Ex: 1/12', (e) => updateAccount(account.id, { installment: e.target.value })));
+            const statusSelect = createSelectElement([STATUS_PENDENTE, STATUS_PAGO, STATUS_RECEBIDO], account.status, (e) => updateAccount(account.id, { status: e.target.value }));
+            statusSelect.classList.add('status-select');
+            applyStatusClass(statusSelect, account.status);
+            statusSelect.addEventListener('change', (e) => {
+                applyStatusClass(e.target, e.target.value);
+                updateAccount(account.id, { status: e.target.value });
+            });
+            createCellWithChild(statusSelect);
+            const actionsCell = row.insertCell();
+            actionsCell.classList.add('flex', 'flex-row', 'gap-2', 'items-center', 'justify-center');
+            actionsCell.appendChild(createDeleteButton(() => deleteAccount(account.id)));
+            return row;
+        }
+
+        function renderAccounts(accounts) {
+            accountsTableBody.innerHTML = '';
+            const accountsByMonth = groupAccountsByMonth(accounts);
+            const sortedMonthKeys = Object.keys(accountsByMonth).sort((a, b) => {
+                const [monthA, yearA] = a.split('/');
+                const [monthB, yearB] = b.split('/');
+                return new Date(yearA, monthNames.indexOf(monthA)) - new Date(yearB, monthNames.indexOf(monthB));
+            });
+            const currentMonthKey = `${monthNames[new Date().getMonth()]}/${new Date().getFullYear()}`;
+            sortedMonthKeys.forEach(monthKey => {
+                const monthAccounts = accountsByMonth[monthKey];
+                const isCurrentMonth = monthKey === currentMonthKey;
+                appendMonthSection(monthKey, monthAccounts, isCurrentMonth);
+            });
+        }
+        
+        function groupAccountsByMonth(accounts) {
+            const grouped = {};
+            accounts.forEach(account => {
+                if (account.date) {
+                    const dateObj = new Date(account.date + 'T00:00:00');
+                    const monthYearKey = `${monthNames[dateObj.getMonth()]}/${dateObj.getFullYear()}`;
+                    if (!grouped[monthYearKey]) grouped[monthYearKey] = [];
+                    grouped[monthYearKey].push(account);
+                }
+            });
+            return grouped;
+        }
+
+        function appendMonthSection(monthKey, monthAccounts, isCurrentMonth) {
+            const contentRowsClassName = `content-${monthKey.replace(/[^a-zA-Z0-9]/g, '-')}`;
+            const monthlyTotals = calculateMonthlyTotals(monthAccounts);
+            const headerRow = accountsTableBody.insertRow();
+            headerRow.className = 'month-separator-row';
+            if(isCurrentMonth) headerRow.classList.add('current-month-header');
+            if(monthlyTotals.allPaid) headerRow.classList.add('month-paid-header');
+            if(!isCurrentMonth) headerRow.classList.add('collapsed');
+            const headerCell = headerRow.insertCell();
+            headerCell.colSpan = 7;
+            headerCell.innerHTML = `${monthKey} <span class="toggle-icon">▼</span>`;
+            monthAccounts.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(account => {
+                const row = createAccountRow(account);
+                row.className = `${contentRowsClassName} ${!isCurrentMonth ? 'hidden-row' : ''}`;
+                accountsTableBody.appendChild(row);
+            });
+            const totalsRow = createTotalsRow(monthKey, monthAccounts);
+            totalsRow.className = `${contentRowsClassName} ${!isCurrentMonth ? 'hidden-row' : ''}`;
+            accountsTableBody.appendChild(totalsRow);
+            headerRow.addEventListener('click', (e) => {
+                e.currentTarget.classList.toggle('collapsed');
+                document.querySelectorAll(`.${contentRowsClassName}`).forEach(row => {
+                    row.classList.toggle('hidden-row');
+                });
+            });
+        }
+
+        function createTotalsRow(monthKey, monthAccounts) {
+            const totalsRow = document.createElement('tr');
+            totalsRow.className = 'monthly-totals-row';
+            const totalsCell = totalsRow.insertCell();
+            totalsCell.colSpan = 7;
+            const flexContainer = document.createElement('div');
+            flexContainer.className = 'flex-container flex flex-row justify-between items-center w-full p-1 flex-wrap';
+            const totalsTextContainer = document.createElement('div');
+            totalsTextContainer.className = 'totals-text text-xs md:text-sm';
+            const monthlyTotals = calculateMonthlyTotals(monthAccounts);
+            totalsTextContainer.innerHTML = `
+                <div><strong>Pendentes:</strong> A Pagar <span class="text-red-600">R$ ${monthlyTotals.toPay.toFixed(2).replace('.', ',')}</span></div>
+                <div><strong>Quitados:</strong> Pago <span class="text-green-700">R$ ${monthlyTotals.paidAmount.toFixed(2).replace('.', ',')}</span> | Recebido <span class="text-yellow-600">R$ ${monthlyTotals.receivedAmount.toFixed(2).replace('.', ',')}</span></div>
+            `;
+            const buttonsContainer = document.createElement('div');
+            buttonsContainer.className = 'buttons-container flex gap-2';
+            const addBtn = document.createElement('button');
+            addBtn.textContent = 'Adicionar Conta';
+            addBtn.className = 'btn btn-primary';
+            addBtn.addEventListener('click', () => {
+                const [monthStr, yearStr] = monthKey.split('/');
+                const newDate = new Date(yearStr, monthNames.indexOf(monthStr), 2).toISOString().split('T')[0];
+                addAccount({ description: '', type: TIPO_PAGAR, value: 0, date: newDate, installment: '', status: STATUS_PENDENTE });
+            });
+            buttonsContainer.appendChild(addBtn);
+            flexContainer.appendChild(totalsTextContainer);
+            flexContainer.appendChild(buttonsContainer);
+            totalsCell.appendChild(flexContainer);
+            return totalsRow;
+        }
+
+        function calculateMonthlyTotals(accountsList) {
+            const totals = { toPay: 0, toReceive: 0, paidAmount: 0, receivedAmount: 0, pendingCount: 0 };
+            accountsList.forEach(account => {
+                const value = account.value || 0;
+                switch(account.status) {
+                    case STATUS_PENDENTE:
+                        totals.pendingCount++;
+                        if (account.type === TIPO_PAGAR) totals.toPay += value;
+                        else if (account.type === TIPO_RECEBER) totals.toReceive += value;
+                        break;
+                    case STATUS_PAGO:
+                        totals.paidAmount += value;
+                        break;
+                    case STATUS_RECEBIDO:
+                        totals.receivedAmount += value;
+                        break;
+                }
+            });
+            totals.allPaid = totals.pendingCount === 0 && accountsList.length > 0;
+            return totals;
+        }
+
+        // --- UI Messages ---
+        function showError(message) {
+            accountsTableBody.innerHTML = `<tr><td colspan="7" class="text-center text-red-600 font-bold p-4">${message}</td></tr>`;
+        }
+
+        function showEmptyMessage() {
+            accountsTableBody.innerHTML = `<tr><td colspan="7" class="text-center text-gray-500 py-8">Nenhuma conta encontrada. Adicione uma para começar.</td></tr>`;
+            const firstAddRow = accountsTableBody.insertRow();
+            const cell = firstAddRow.insertCell();
+            cell.colSpan = 7;
+            cell.classList.add('text-center', 'py-4');
+            const addBtn = document.createElement('button');
+            addBtn.textContent = 'Adicionar Primeira Conta';
+            addBtn.classList.add('btn', 'btn-primary');
+            addBtn.addEventListener('click', () => {
+                const today = new Date();
+                const newDate = new Date(today.getFullYear(), today.getMonth(), 2).toISOString().split('T')[0];
+                addAccount({ description: '', type: TIPO_PAGAR, value: 0, date: newDate, installment: '', status: STATUS_PENDENTE });
+            });
+            cell.appendChild(addBtn);
+        }
+
+        // --- Firestore Actions ---
+        async function addAccount(accountData) {
+            if (!accountsCollection) return;
+            try {
+                await addDoc(accountsCollection, { ...accountData, createdAt: serverTimestamp() });
+            } catch (error) {
+                console.error("Error adding account: ", error);
+            }
+        }
+
+        async function updateAccount(docId, dataToUpdate) {
+            if (!accountsCollection) return;
+            const accountDocRef = doc(accountsCollection, docId);
+            try {
+                await updateDoc(accountDocRef, dataToUpdate);
+            } catch (error) {
+                console.error("Error updating account: ", error);
+            }
+        }
+
+        async function deleteAccount(docId) {
+            if (!accountsCollection || !confirm('Tem a certeza de que quer apagar esta conta?')) return;
+            const accountDocRef = doc(accountsCollection, docId);
+            try {
+                await deleteDoc(accountDocRef);
+            } catch (error) {
+                console.error("Error deleting account: ", error);
+            }
+        }
+
+        // Start the application
+        initializeAppAndConnect();
+    </script>
 </body>
 </html>
