@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minha Planilha de Contas</title>
+    <title>CONTROLE FINANCEIRO</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -85,11 +85,42 @@
             .month-separator-row td, .monthly-totals-row td { text-align: center; padding-left: 1rem; }
             .month-separator-row td:before, .monthly-totals-row td:before { content: none; }
         }
+        /* CÓDIGO PARA ADICIONAR (6.B) - ESTILOS DO MODO ESCURO */
+.dark body { background-color: #111827; color: #d1d5db; }
+.dark .container { background-color: #1f2937; }
+.dark .dashboard { background-color: #374151; }
+.dark h1, .dark h2 { color: #f9fafb; }
+.dark p, .dark label, .dark span, .dark .text-gray-700 { color: #d1d5db; }
+.dark .text-gray-500, .dark #user-id-display { color: #9ca3af; }
+.dark table th { background-color: #3730a3; color: #e0e7ff; }
+.dark table td { background-color: #374151; border-bottom-color: #4b5563; }
+.dark input, .dark select { background-color: #4b5563; border-color: #6b7280; color: #f9fafb; }
+.dark input:focus, .dark select:focus { border-color: #818cf8; box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.3); }
+.dark .modal-content { background-color: #374151; }
+.dark .modal-close-btn { color: #d1d5db; }
+.dark .month-separator-row { background-color: #374151; color: #e0e7ff; }
+.dark .month-separator-row.current-month-header td { background-color: #4338ca !important; }
+.dark .monthly-totals-row, .dark .monthly-totals-row td { background-color: #4b5563; border-top-color: #4338ca; border-bottom-color: #4f46e5; }
+.dark .chart-container { background-color: #374151; }
+.dark #category-chart { color: white; }
+.dark .chartjs-legend-text-color { color: #f3f4f6; }
+.dark #theme-toggle-btn { color: #9ca3af; }
+.dark #theme-toggle-btn:hover { background-color: #4b5563; }
+.dark .btn-secondary { background-color: #4b5563; color: #f3f4f6; }
+.dark .btn-secondary:hover { background-color: #6b7280; }
+.dark ::-webkit-calendar-picker-indicator { filter: invert(1); }
     </style>
 </head>
 <body class="p-4">
-    <div class="container mx-auto bg-gray-50 p-6 rounded-xl shadow-lg">
-        <h1 class="text-3xl font-bold text-center text-indigo-700 mb-8">Controle Financeiro</h1>
+    <div class="container mx-auto bg-gray-50 p-6 rounded-xl shadow-lg relative">
+        <div class="absolute top-6 right-6">
+    <button id="theme-toggle-btn" title="Alternar tema" class="p-2 rounded-full text-gray-500 hover:bg-gray-200 focus:outline-none">
+        </button>
+</div>
+        <h1 class="text-3xl font-bold text-center text-indigo-700 mb-8">CONTROLE FINANCEIRO</h1>
+        <div class="text-center mb-6">
+    <button id="manage-categories-btn" class="btn btn-secondary text-sm">Gerenciar Categorias</button>
+</div>
         <div class="dashboard">
             <div class="dashboard-card card-yellow"><h3>A Receber (Mês)</h3><p id="dashboard-to-receive">R$ 0,00</p></div>
             <div class="dashboard-card card-red"><h3>A Pagar (Mês)</h3><p id="dashboard-to-pay">R$ 0,00</p></div>
@@ -101,6 +132,11 @@
                 <canvas id="category-chart"></canvas>
             </div>
             <div class="chart-and-table-container">
+            <div class="flex gap-2 sm:gap-4 mb-4 justify-center items-center flex-wrap">
+                <label for="month-selector" class="font-semibold text-gray-700">Visualizar Período:</label>
+                <select id="month-selector" class="p-2 rounded-lg shadow-sm border focus:ring-2 focus:ring-indigo-500"></select>
+                <select id="year-selector" class="p-2 rounded-lg shadow-sm border focus:ring-2 focus:ring-indigo-500"></select>
+            </div>
                 <div class="mb-4">
                     <input type="text" id="search-input" placeholder="🔎 Digite para buscar pela descrição..." class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
@@ -145,777 +181,568 @@
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, serverTimestamp, setLogLevel, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        
-        const firebaseConfig = {
-            apiKey: "AIzaSyCaGjxtY3zdrWpH05TQqS2v6eNQWuZfkRE",
-  	    authDomain: "contas-1eb87.firebaseapp.com",
-  	    projectId: "contas-1eb87",
-  	    storageBucket: "contas-1eb87.firebasestorage.app",
-  	    messagingSenderId: "463381541875",
-  	    appId: "1:463381541875:web:1f15a1fd384a3b510b5886"
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, serverTimestamp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // --- CONFIGURAÇÃO E CONSTANTES GLOBAIS ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyCaGjxtY3zdrWpH05TQqS2v6eNQWuZfkRE",
+        authDomain: "contas-1eb87.firebaseapp.com",
+        projectId: "contas-1eb87",
+        storageBucket: "contas-1eb87.firebasestorage.app",
+        messagingSenderId: "463381541875",
+        appId: "1:463381541875:web:1f15a1fd384a3b510b5886"
+    };
+
+    const STATUS_PENDENTE = 'Pendente';
+    const STATUS_PAGO = 'Pago';
+    const STATUS_RECEBIDO = 'Recebido';
+    const TIPO_PAGAR = 'Pagar';
+    const TIPO_RECEBER = 'Receber';
+    const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+
+    // --- ELEMENTOS DO DOM (HTML) ---
+    const accountsTableBody = document.querySelector('#accounts-table-body');
+    const userIdDisplay = document.getElementById('user-id-display');
+    const modal = document.getElementById('add-account-modal');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+    const modalCancelBtn = document.getElementById('modal-cancel-btn');
+    const addAccountForm = document.getElementById('add-account-form');
+    const formTypeSelect = document.getElementById('form-type');
+    const formStatusSelect = document.getElementById('form-status');
+    const searchInput = document.getElementById('search-input');
+    const monthSelector = document.getElementById('month-selector');
+    const yearSelector = document.getElementById('year-selector');
+    const fabAddButton = document.getElementById('fab-add-account');
+    const manageCategoriesBtn = document.getElementById('manage-categories-btn');
+    const categoryModal = document.getElementById('manage-categories-modal');
+    const categoryModalCloseBtn = document.getElementById('category-modal-close-btn');
+    const addCategoryForm = document.getElementById('add-category-form');
+    const newCategoryNameInput = document.getElementById('form-new-category-name');
+    const categoryListContainer = document.getElementById('category-list-container');
+
+    // --- VARIÁVEIS DE ESTADO ---
+    let db;
+    let accountsCollection;
+    let unsubscribe;
+    let allAccounts = [];
+    let categoryChart = null;
+    let availablePeriods = new Set();
+    let categoriesCollection;
+    let userCategories = []; // Substitui a constante CATEGORIES
+    let unsubscribeCategories;
+    // CÓDIGO PARA ADICIONAR (6.C) - Nova seção de lógica
+// --- LÓGICA DO TEMA (DARK MODE) ---
+const themeToggleBtn = document.getElementById('theme-toggle-btn');
+
+// Ícones de Sol e Lua em formato SVG para o botão
+const sunIcon = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>`;
+const moonIcon = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>`;
+
+// Função que aplica o tema e atualiza o botão e o localStorage
+function applyTheme(theme) {
+    if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+        themeToggleBtn.innerHTML = sunIcon;
+        localStorage.setItem('theme', 'dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+        themeToggleBtn.innerHTML = moonIcon;
+        localStorage.setItem('theme', 'light');
+    }
+    // Atualiza o gráfico para que as cores da legenda se ajustem ao novo tema
+    if(categoryChart) {
+        categoryChart.options.plugins.legend.labels.color = theme === 'dark' ? '#f3f4f6' : '#374151';
+        categoryChart.update();
+    }
+}
+
+// Evento de clique no botão para alternar o tema
+themeToggleBtn.addEventListener('click', () => {
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    applyTheme(currentTheme === 'light' ? 'dark' : 'light');
+});
+
+// Aplica o tema salvo assim que a página carrega
+function loadTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'light'; // 'light' é o padrão
+    applyTheme(savedTheme);
+}
+
+    // --- LÓGICA DO MODAL (FORMULÁRIO) ---
+    function openModal() {
+        addAccountForm.reset();
+        document.getElementById('form-date').value = new Date().toISOString().split('T')[0];
+        const categorySelect = document.getElementById('form-category');
+        categorySelect.innerHTML = '<option value="Outros">Outros</option>' + userCategories.map(cat => `<option value="${cat.name}">${cat.name}</option>`).join('');
+        modal.classList.add('visible');
+        formTypeSelect.dispatchEvent(new Event('change'));
+    }
+// CÓDIGO PARA ADICIONAR (5.B.4) - Lógica do Modal de Categorias
+function openCategoryModal() { categoryModal.classList.add('visible'); }
+function closeCategoryModal() { categoryModal.classList.remove('visible'); }
+
+manageCategoriesBtn.addEventListener('click', openCategoryModal);
+categoryModalCloseBtn.addEventListener('click', closeCategoryModal);
+    function closeModal() {
+        modal.classList.remove('visible');
+    }
+
+    modalCloseBtn.addEventListener('click', closeModal);
+    modalCancelBtn.addEventListener('click', closeModal);
+    fabAddButton.addEventListener('click', openModal);
+
+    addAccountForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const newAccount = {
+            description: document.getElementById('form-description').value,
+            category: document.getElementById('form-category').value,
+            value: parseFloat(document.getElementById('form-value').value) || 0,
+            date: document.getElementById('form-date').value,
+            installment: document.getElementById('form-installment').value || 'N/A',
+            type: document.getElementById('form-type').value,
+            status: document.getElementById('form-status').value
         };
+        await addAccount(newAccount);
+        closeModal();
+    });
 
-        const STATUS_PENDENTE = 'Pendente';
-        const STATUS_PAGO = 'Pago';
-        const STATUS_RECEBIDO = 'Recebido';
-        const TIPO_PAGAR = 'Pagar';
-        const TIPO_RECEBER = 'Receber';
-        const CATEGORIES = ["Outros", "Moradia", "Transporte", "Alimentação", "Saúde", "Lazer", "Educação", "Dívidas", "Investimentos", "Salário"];
+    formTypeSelect.addEventListener('change', (e) => {
+        const type = e.target.value;
+        formStatusSelect.innerHTML = (type === TIPO_RECEBER)
+            ? `<option value="${STATUS_PENDENTE}">${STATUS_PENDENTE}</option><option value="${STATUS_RECEBIDO}">${STATUS_RECEBIDO}</option>`
+            : `<option value="${STATUS_PENDENTE}">${STATUS_PENDENTE}</option><option value="${STATUS_PAGO}">${STATUS_PAGO}</option>`;
+    });
 
-        const accountsTableBody = document.querySelector('#accounts-table-body');
-        const userIdDisplay = document.getElementById('user-id-display');
-        const modal = document.getElementById('add-account-modal');
-        const modalCloseBtn = document.getElementById('modal-close-btn');
-        const modalCancelBtn = document.getElementById('modal-cancel-btn');
-        const addAccountForm = document.getElementById('add-account-form');
-        const formTypeSelect = document.getElementById('form-type');
-const formStatusSelect = document.getElementById('form-status');
+    // --- LÓGICA DE FILTROS E BUSCA ---
+    searchInput.addEventListener('input', () => renderAll());
+    yearSelector.addEventListener('change', () => {
+        populateMonthsForSelectedYear();
+        renderAll();
+    });
+    monthSelector.addEventListener('change', () => renderAll());
 
-formTypeSelect.addEventListener('change', (e) => {
-    const type = e.target.value;
-    if (type === TIPO_RECEBER) {
-        formStatusSelect.innerHTML = `
-            <option value="${STATUS_PENDENTE}">${STATUS_PENDENTE}</option>
-            <option value="${STATUS_RECEBIDO}">${STATUS_RECEBIDO}</option>
-        `;
-    } else { // TIPO_PAGAR
-        formStatusSelect.innerHTML = `
-            <option value="${STATUS_PENDENTE}">${STATUS_PENDENTE}</option>
-            <option value="${STATUS_PAGO}">${STATUS_PAGO}</option>
-        `;
+    // --- FUNÇÃO PRINCIPAL DE RENDERIZAÇÃO ---
+    function renderAll() {
+        if (!allAccounts) return;
+
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedYear = yearSelector.value;
+        const selectedMonth = monthSelector.value;
+
+        if (!selectedYear || !selectedMonth) return; // Guarda de segurança
+
+        const accountsFromSearch = searchTerm
+            ? allAccounts.filter(account => account.description.toLowerCase().includes(searchTerm))
+            : allAccounts;
+
+        const accountsForPeriod = allAccounts.filter(account => {
+            return account.date && account.date.startsWith(`${selectedYear}-${selectedMonth}`);
+        });
+
+        updateDashboard(accountsForPeriod);
+        renderCategoryChart(accountsForPeriod);
+        renderTable(accountsFromSearch);
+    }
+
+    // --- RENDERIZAÇÃO DA TABELA ---
+    function renderTable(accountsToRender) {
+        accountsTableBody.innerHTML = '';
+        if (accountsToRender.length === 0) {
+            if (searchInput.value) {
+                showError(`Nenhuma conta encontrada para "${searchInput.value}".`);
+            } else {
+                showEmptyMessage();
+            }
+            return;
+        }
+
+        const accountsByMonth = groupAccountsByMonth(accountsToRender);
+        const sortedMonthKeys = Object.keys(accountsByMonth).sort((a, b) => new Date(b.split('/')[1], monthNames.indexOf(b.split('/')[0])) - new Date(a.split('/')[1], monthNames.indexOf(a.split('/')[0])));
+
+        const now = new Date();
+        const currentMonthKey = `${monthNames[now.getMonth()]}/${now.getFullYear()}`;
+
+        sortedMonthKeys.forEach(monthKey => {
+            const monthAccounts = accountsByMonth[monthKey];
+            const isCurrentMonth = monthKey === currentMonthKey;
+            appendMonthSection(monthKey, monthAccounts, isCurrentMonth);
+        });
+    }
+
+    // --- INICIALIZAÇÃO E AUTENTICAÇÃO FIREBASE ---
+    function initializeAppAndConnect() {
+        if (!firebaseConfig || !firebaseConfig.apiKey) {
+            showError("ERRO: As chaves do Firebase não foram configuradas.");
+            return;
+        }
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            const auth = getAuth(app);
+            setLogLevel('error');
+            handleAuthentication(auth);
+        } catch (error) {
+            console.error("Firebase initialization failed:", error);
+            showError("Falha ao iniciar o Firebase.");
+        }
+    }
+
+// CÓDIGO PARA SUBSTITUIR (5.C.2) - handleAuthentication
+function handleAuthentication(auth) {
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            userIdDisplay.textContent = `Conectado (ID: ${user.uid.substring(0, 6)}...)`;
+            // Coleções principais
+            accountsCollection = collection(db, 'contas', user.uid, 'items');
+            categoriesCollection = collection(db, 'contas', user.uid, 'user_categories'); // NOVA LINHA
+
+            // Inicia os "ouvintes"
+            listenForAccountChanges();
+            listenForCategoryChanges(); // NOVA LINHA
+        } else {
+            try {
+                await signInAnonymously(auth);
+            } catch (error) {
+                showError("Falha na autenticação anônima.");
+            }
+        }
+    });
+}
+    // --- LEITURA DE DADOS DO FIREBASE ---
+    function listenForAccountChanges() {
+        if (unsubscribe) unsubscribe();
+        unsubscribe = onSnapshot(accountsCollection, (snapshot) => {
+            allAccounts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            updatePeriodSelectors();
+            renderAll();
+        }, (error) => {
+            console.error("Error fetching collection:", error);
+            showError("Erro ao carregar os dados do Firestore.");
+        });
+    }
+
+    // --- LÓGICA DO DASHBOARD E GRÁFICOS ---
+    function updateDashboard(accounts) {
+        const totals = calculateMonthlyTotals(accounts);
+        const balance = totals.receivedAmount - totals.paidAmount;
+        const formatCurrency = (value) => `R$ ${value.toFixed(2).replace('.', ',')}`;
+        document.getElementById('dashboard-to-receive').textContent = formatCurrency(totals.toReceive);
+        document.getElementById('dashboard-to-pay').textContent = formatCurrency(totals.toPay);
+        document.getElementById('dashboard-paid').textContent = formatCurrency(totals.receivedAmount);
+        document.getElementById('dashboard-balance').textContent = formatCurrency(balance);
+        const balanceElement = document.getElementById('dashboard-balance').parentElement;
+        balanceElement.classList.remove('card-blue', 'card-red');
+        balanceElement.classList.add(balance < 0 ? 'card-red' : 'card-blue');
+    }
+
+    function renderCategoryChart(accounts) {
+        const ctx = document.getElementById('category-chart').getContext('2d');
+        const expensesByCategory = accounts
+            .filter(acc => acc.type === TIPO_PAGAR && acc.status !== STATUS_PENDENTE)
+            .reduce((acc, current) => {
+                const category = current.category || 'Outros';
+                acc[category] = (acc[category] || 0) + current.value;
+                return acc;
+            }, {});
+
+        const labels = Object.keys(expensesByCategory);
+        const data = Object.values(expensesByCategory);
+
+        if (categoryChart) categoryChart.destroy();
+        
+        if (labels.length === 0) {
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            ctx.font = "16px Inter"; ctx.fillStyle = "#6b7280"; ctx.textAlign = "center";
+            ctx.fillText("Sem gastos para exibir no período.", ctx.canvas.width / 2, ctx.canvas.height / 2);
+            return;
+        }
+
+        categoryChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Gastos por Categoria', data: data,
+                    backgroundColor: ['#ef4444','#f97316','#f59e0b','#eab308','#84cc16','#22c55e','#10b981','#14b8a6','#06b6d4','#0ea5e9','#3b82f6','#6366f1','#8b5cf6','#a855f7'],
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { position: 'top' }, title: { display: true, text: 'Distribuição de Gastos' } }
+            }
+        });
+    }
+
+    // --- FUNÇÕES AUXILIARES DE RENDERIZAÇÃO ---
+    function updatePeriodSelectors() {
+        availablePeriods.clear();
+        allAccounts.forEach(acc => {
+            if (acc.date) {
+                const [year, month] = acc.date.split('-');
+                availablePeriods.add(`${year}-${month}`);
+            }
+        });
+
+        const sortedPeriods = Array.from(availablePeriods).sort().reverse();
+        const uniqueYears = [...new Set(sortedPeriods.map(p => p.split('-')[0]))];
+        
+        const currentYearValue = yearSelector.value;
+        yearSelector.innerHTML = uniqueYears.map(y => `<option value="${y}">${y}</option>`).join('');
+        
+        if (uniqueYears.includes(currentYearValue)) {
+            yearSelector.value = currentYearValue;
+        } else if (uniqueYears.length > 0) {
+            yearSelector.value = uniqueYears[0];
+        }
+
+        populateMonthsForSelectedYear();
+    }
+    
+    function populateMonthsForSelectedYear() {
+        const selectedYear = yearSelector.value;
+        if (!selectedYear) return;
+
+        const sortedPeriods = Array.from(availablePeriods).sort().reverse();
+        const monthsForYear = [...new Set(sortedPeriods.filter(p => p.startsWith(selectedYear)).map(p => p.split('-')[1]))];
+        
+        const currentMonthValue = monthSelector.value;
+        monthSelector.innerHTML = monthsForYear.map(m => `<option value="${m}">${monthNames[parseInt(m, 10) - 1]}</option>`).join('');
+
+        if(monthsForYear.includes(currentMonthValue)){
+            monthSelector.value = currentMonthValue;
+        } else if (monthsForYear.length > 0){
+            monthSelector.value = monthsForYear[0];
+        }
+    }
+
+    function appendMonthSection(monthKey, monthAccounts, isCurrentMonth) {
+        const contentRowsClassName = `content-${monthKey.replace(/[^a-zA-Z0-9]/g, '-')}`;
+        const headerRow = accountsTableBody.insertRow();
+        headerRow.className = 'month-separator-row';
+        if (isCurrentMonth) headerRow.classList.add('current-month-header');
+        if (!isCurrentMonth) headerRow.classList.add('collapsed');
+
+        const headerCell = headerRow.insertCell();
+        headerCell.colSpan = 8;
+        headerCell.innerHTML = `${monthKey} <span class="toggle-icon">▼</span>`;
+
+        monthAccounts.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(account => {
+            const row = createAccountRow(account);
+            row.className = `${contentRowsClassName} ${!isCurrentMonth ? 'hidden-row' : ''}`;
+            accountsTableBody.appendChild(row);
+        });
+
+        const totalsRow = createTotalsRow(monthAccounts);
+        totalsRow.className = `monthly-totals-row ${contentRowsClassName} ${!isCurrentMonth ? 'hidden-row' : ''}`;
+        accountsTableBody.appendChild(totalsRow);
+
+        headerRow.addEventListener('click', () => {
+            headerRow.classList.toggle('collapsed');
+            document.querySelectorAll(`.${contentRowsClassName}`).forEach(row => row.classList.toggle('hidden-row'));
+        });
+    }
+
+// VERSÃO CORRIGIDA PARA SUBSTITUIR (5.D)
+function createAccountRow(account) {
+    const row = document.createElement('tr');
+    const createCell = (child) => { const cell = row.insertCell(); cell.appendChild(child); };
+    
+    // --- Células da Tabela ---
+    createCell(createInputElement('text', account.description, (e) => updateAccount(account.id, { description: e.target.value })));
+    
+    // CORREÇÃO APLICADA AQUI:
+    // Agora o seletor de categoria na tabela também usa a sua lista personalizada.
+    const categoryOptions = ['Outros', ...userCategories.map(c => c.name)];
+    createCell(createSelectElement(categoryOptions, account.category || 'Outros', (e) => updateAccount(account.id, { category: e.target.value })));
+    
+    createCell(createSelectElement([TIPO_PAGAR, TIPO_RECEBER], account.type, (e) => updateAccount(account.id, { type: e.target.value })));
+    createCell(createInputElement('number', account.value, (e) => updateAccount(account.id, { value: parseFloat(e.target.value) || 0 })));
+    createCell(createInputElement('date', account.date, (e) => updateAccount(account.id, { date: e.target.value })));
+    createCell(createInputElement('text', account.installment, (e) => updateAccount(account.id, { installment: e.target.value })));
+    
+    const statusSelect = createSelectElement([STATUS_PENDENTE, STATUS_PAGO, STATUS_RECEBIDO], account.status, (e) => {
+        applyStatusClass(e.target, e.target.value);
+        updateAccount(account.id, { status: e.target.value });
+    });
+    statusSelect.className = 'status-select';
+    applyStatusClass(statusSelect, account.status);
+    createCell(statusSelect);
+
+    const actionsCell = row.insertCell();
+    actionsCell.appendChild(createDeleteButton(() => deleteAccount(account.id)));
+    return row;
+}
+    function createInputElement(type, value, changeHandler) {
+        const input = document.createElement('input');
+        input.type = type;
+        input.value = (type === 'number') ? (value || 0).toFixed(2) : value;
+        if (type === 'number') input.step = '0.01';
+        input.addEventListener('change', changeHandler);
+        return input;
+    }
+
+    function createSelectElement(options, selectedValue, changeHandler) {
+        const select = document.createElement('select');
+        select.innerHTML = options.map(opt => `<option value="${opt}" ${selectedValue === opt ? 'selected' : ''}>${opt}</option>`).join('');
+        select.addEventListener('change', changeHandler);
+        return select;
+    }
+    
+    function createTotalsRow(monthAccounts) {
+        const totalsRow = document.createElement('tr');
+        const totalsCell = totalsRow.insertCell();
+        totalsCell.colSpan = 8;
+        const monthlyTotals = calculateMonthlyTotals(monthAccounts);
+        totalsCell.innerHTML = `<div class="flex-container flex flex-row justify-between items-center w-full p-1 flex-wrap text-xs md:text-sm"><div><span><strong>Pendentes:</strong> A Pagar <span class="text-red-600">R$ ${monthlyTotals.toPay.toFixed(2).replace('.', ',')}</span></span></div><div><span><strong>Quitados:</strong> Pago <span class="text-green-700">R$ ${monthlyTotals.paidAmount.toFixed(2).replace('.', ',')}</span> | Recebido <span class="text-yellow-600">R$ ${monthlyTotals.receivedAmount.toFixed(2).replace('.', ',')}</span></span></div></div>`;
+        return totalsRow;
+    }
+
+    function createDeleteButton(onClick) {
+        const button = document.createElement('button');
+        button.innerHTML = '&times;'; button.title = 'Excluir conta'; button.className = 'btn-delete-custom';
+        button.addEventListener('click', onClick);
+        return button;
+    }
+    
+    function applyStatusClass(element, status) {
+        element.classList.remove(`status-${STATUS_PENDENTE}`, `status-${STATUS_PAGO}`, `status-${STATUS_RECEBIDO}`);
+        if (status) element.classList.add(`status-${status}`);
+    }
+
+    function groupAccountsByMonth(accounts) {
+        return accounts.reduce((acc, account) => {
+            if (account.date) {
+                const dateObj = new Date(account.date + 'T00:00:00');
+                const key = `${monthNames[dateObj.getMonth()]}/${dateObj.getFullYear()}`;
+                if (!acc[key]) acc[key] = [];
+                acc[key].push(account);
+            }
+            return acc;
+        }, {});
+    }
+
+    function calculateMonthlyTotals(accounts) {
+        return accounts.reduce((totals, account) => {
+            const value = account.value || 0;
+            if (account.type === TIPO_PAGAR && account.status === STATUS_PENDENTE) totals.toPay += value;
+            if (account.type === TIPO_RECEBER && account.status === STATUS_PENDENTE) totals.toReceive += value;
+            if (account.status === STATUS_PAGO) totals.paidAmount += value;
+            if (account.status === STATUS_RECEBIDO) totals.receivedAmount += value;
+            return totals;
+        }, { toPay: 0, toReceive: 0, paidAmount: 0, receivedAmount: 0 });
+    }
+
+    function showError(message) {
+        accountsTableBody.innerHTML = `<tr><td colspan="8" class="text-center text-red-600 font-bold p-4">${message}</td></tr>`;
+    }
+
+    function showEmptyMessage() {
+        accountsTableBody.innerHTML = `<tr><td colspan="8" class="text-center text-gray-500 py-8">Nenhuma conta encontrada. <button onclick="openModal()" class="text-indigo-600 hover:underline">Adicione uma</button> para começar.</td></tr>`;
+    }
+
+    // --- OPERAÇÕES COM O FIREBASE (CRUD) ---
+    async function addAccount(accountData) {
+        if (!accountsCollection) return;
+        try { await addDoc(accountsCollection, { ...accountData, createdAt: serverTimestamp() }); }
+        catch (error) { console.error("Error adding account: ", error); }
+    }
+
+    async function updateAccount(docId, dataToUpdate) {
+        if (!accountsCollection) return;
+        const accountDocRef = doc(accountsCollection, docId);
+        try { await updateDoc(accountDocRef, dataToUpdate); }
+        catch (error) { console.error("Error updating account: ", error); }
+    }
+
+    async function deleteAccount(docId) {
+        if (!accountsCollection || !confirm('Tem certeza de que quer apagar esta conta?')) return;
+        const accountDocRef = doc(accountsCollection, docId);
+        try { await deleteDoc(accountDocRef); }
+        catch (error) { console.error("Error deleting account: ", error); }
+    }
+    // CÓDIGO PARA ADICIONAR (5.C.1) - Nova seção de lógica
+// --- OPERAÇÕES COM CATEGORIAS (CRUD) ---
+
+function listenForCategoryChanges() {
+    if (unsubscribeCategories) unsubscribeCategories();
+
+    unsubscribeCategories = onSnapshot(categoriesCollection, (snapshot) => {
+        userCategories = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        userCategories.sort((a, b) => a.name.localeCompare(b.name)); // Ordena alfabeticamente
+        renderCategoryList();
+    });
+}
+
+function renderCategoryList() {
+    categoryListContainer.innerHTML = '';
+    if (userCategories.length === 0) {
+        categoryListContainer.innerHTML = `<p class="text-gray-500 text-center">Nenhuma categoria personalizada. Adicione uma acima.</p>`;
+        return;
+    }
+    userCategories.forEach(cat => {
+        const categoryDiv = document.createElement('div');
+        categoryDiv.className = 'flex justify-between items-center p-2 bg-gray-100 rounded-md';
+        categoryDiv.innerHTML = `<span>${cat.name}</span>`;
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.innerHTML = '&times;';
+        deleteBtn.title = 'Excluir categoria';
+        deleteBtn.className = 'btn-delete-custom';
+        deleteBtn.onclick = () => deleteCategory(cat.id);
+
+        categoryDiv.appendChild(deleteBtn);
+        categoryListContainer.appendChild(categoryDiv);
+    });
+}
+
+addCategoryForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const categoryName = newCategoryNameInput.value.trim();
+    if (categoryName) {
+        await addCategory({ name: categoryName });
+        newCategoryNameInput.value = '';
     }
 });
-        const searchInput = document.getElementById('search-input');
-        const mainContainer = document.querySelector('.container');
 
-        const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-        let db;
-        let accountsCollection;
-        let unsubscribe;
-        let allAccounts = [];
-        let categoryChart = null;
+async function addCategory(categoryData) {
+    if (!categoriesCollection) return;
+    try { await addDoc(categoriesCollection, categoryData); }
+    catch (error) { console.error("Error adding category: ", error); }
+}
 
-        // --- LÓGICA DE IMPORTAÇÃO (TEMPORÁRIA) ---
-        function createAndInjectImportButton() {
-            if (document.getElementById('import-button')) return;
-            const importButton = document.createElement('button');
-            importButton.id = 'import-button';
-            importButton.textContent = 'Importar Histórico (Clique Apenas 1 Vez)';
-            importButton.classList.add('btn');
-            importButton.style.backgroundColor = '#ef4444';
-            importButton.style.color = 'white';
-            importButton.style.display = 'block';
-            importButton.style.margin = '0 auto 1.5rem auto';
-            importButton.addEventListener('click', async () => {
-                if (!accountsCollection) { alert('A conexão com o Firebase ainda não está pronta.'); return; }
-                if (!confirm('Tem a certeza de que quer importar o seu histórico? Esta ação só deve ser feita uma vez.')) { return; }
-                importButton.textContent = 'A importar...';
-                importButton.disabled = true;
-                
-             const historicalData = [
-  { description: 'Internet', type: 'Pagar', value: 99.90, date: '2024-09-10', installment: 'Frequente', status: 'Pago' },
-  { description: 'Aluguel', type: 'Pagar', value: 1320.00, date: '2024-09-10', installment: 'Frequente', status: 'Pago' },
-  { description: 'Água', type: 'Pagar', value: 198.00, date: '2024-09-20', installment: 'Frequente', status: 'Pago' },
-  { description: 'Luz', type: 'Pagar', value: 0, date: '2024-09-10', installment: 'Frequente', status: 'Pago' },
-  { description: 'Van Kim', type: 'Pagar', value: 200.00, date: '2024-09-10', installment: 'Frequente', status: 'Pago' },
-  { description: 'Van Kim', type: 'Pagar', value: 200.00, date: '2024-10-10', installment: 'Frequente', status: 'Pago' },
-  { description: 'Internet', type: 'Pagar', value: 99.90, date: '2024-10-10', installment: 'Frequente', status: 'Pago' },
-  { description: 'Aluguel', type: 'Pagar', value: 1320.00, date: '2024-10-10', installment: 'Frequente', status: 'Pago' },
-  { description: 'Luz Outra Casa', type: 'Pagar', value: 151.96, date: '2024-10-28', installment: 'Frequente', status: 'Pago' },
-  { description: 'Van Kim', type: 'Pagar', value: 200.00, date: '2024-11-10', installment: 'Frequente', status: 'Pago' },
-  { description: 'Internet', type: 'Pagar', value: 99.90, date: '2024-11-10', installment: 'Frequente', status: 'Pago' },
-  { description: 'Calça Wanessa', type: 'Pagar', value: 159.00, date: '2024-11-05', installment: 'Frequente', status: 'Pago' },
-  { description: 'Cartão Tio Edson', type: 'Pagar', value: 946.58, date: '2024-11-05', installment: 'Frequente', status: 'Pago' },
-  { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2024-11-07', installment: '01/10', status: 'Pago' },
-  { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2024-11-12', installment: 'Frequente', status: 'Pago' },
-  { description: 'Água 08/2024', type: 'Pagar', value: 197.88, date: '2024-11-20', installment: 'Frequente', status: 'Pago' },
-  { description: 'Aluguel', type: 'Pagar', value: 1320.00, date: '2024-11-10', installment: 'Frequente', status: 'Pago' },
-  { description: 'Max', type: 'Pagar', value: 19.95, date: '2024-11-29', installment: 'Frequente', status: 'Pago' },
-  { description: 'Consórcio3111 Moto', type: 'Pagar', value: 233.05, date: '2024-11-16', installment: '8/53', status: 'Pago' },
-  { description: 'Água Cachoeira', type: 'Pagar', value: 44.67, date: '2024-12-02', installment: 'Frequente', status: 'Pago' },
-  { description: 'Móveis Jufap', type: 'Pagar', value: 250.00, date: '2024-12-05', installment: '3/6', status: 'Pago' },
-  { description: 'Luz Jenifer', type: 'Pagar', value: 387.00, date: '2024-12-05', installment: 'Frequente', status: 'Pago' },
-  { description: 'Well', type: 'Pagar', value: 20.00, date: '2024-12-05', installment: 'Frequente', status: 'Pago' },
-  { description: 'Água Colombo 20/09', type: 'Pagar', value: 198.99, date: '2024-12-05', installment: 'Frequente', status: 'Pago' },
-  { description: 'Água Colombo 20/10', type: 'Pagar', value: 167.71, date: '2024-12-05', installment: 'Frequente', status: 'Pago' },
-  { description: 'Água Colombo 20/11', type: 'Pagar', value: 120.78, date: '2024-12-05', installment: 'Frequente', status: 'Pago' },
-  { description: 'Multa Moto', type: 'Pagar', value: 234.78, date: '2024-12-05', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Multa HR-V', type: 'Pagar', value: 262.92, date: '2024-12-05', installment: 'Frequente', status: 'Pago' },
-  { description: 'Claro Móvel Marcelo', type: 'Pagar', value: 44.99, date: '2024-12-06', installment: 'Frequente', status: 'Pago' },
-  { description: 'Claro Móvel Day', type: 'Pagar', value: 44.99, date: '2024-12-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Internet Cachoeira', type: 'Pagar', value: 110.00, date: '2024-12-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Luz Cachoeira', type: 'Pagar', value: 61.47, date: '2024-12-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2024-12-07', installment: '02/10', status: 'Pago' },
-  { description: 'Youtube Premium', type: 'Pagar', value: 41.90, date: '2024-12-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2024-12-08', installment: '1/10', status: 'Pago' },
-  { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2024-12-08', installment: '9/18', status: 'Pago' },
-  { description: 'Consórcio3110 Moto', type: 'Pagar', value: 316.33, date: '2024-12-08', installment: '9/51', status: 'Pago' },
-  { description: 'Sofá Armário', type: 'Pagar', value: 552.00, date: '2024-12-08', installment: 'Frequente', status: 'Pago' },
-  { description: 'Internet Colombo', type: 'Pagar', value: 99.90, date: '2024-12-10', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Van Kim', type: 'Pagar', value: 200.00, date: '2024-12-10', installment: 'Frequente', status: 'Pago' },
-  { description: 'Aluguel', type: 'Pagar', value: 1320.00, date: '2024-12-10', installment: 'Frequente', status: 'Pago' },
-  { description: 'Amazon Prime Vídeo Anual', type: 'Pagar', value: 166.80, date: '2024-12-10', installment: 'Frequente', status: 'Pago' },
-  { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2024-12-11', installment: 'Frequente', status: 'Pago' },
-  { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2024-12-12', installment: 'Frequente', status: 'Pago' },
-  { description: 'Pegar Certidão Divórcio', type: 'Pagar', value: 70.00, date: '2024-12-15', installment: 'Frequente', status: 'Pago' },
-  { description: 'Consórcio3111 Moto', type: 'Pagar', value: 230.42, date: '2024-12-16', installment: '9/53', status: 'Pago' },
-  { description: 'Acordo Inter', type: 'Pagar', value: 160.00, date: '2024-12-19', installment: '1/3', status: 'Pago' },
-  { description: 'Max', type: 'Pagar', value: 19.95, date: '2024-12-29', installment: 'Frequente', status: 'Pago' },
-  { description: 'Rafa', type: 'Pagar', value: 154.00, date: '2025-01-01', installment: 'Frequente', status: 'Pago' },
-  { description: 'Água', type: 'Pagar', value: 43.73, date: '2025-01-02', installment: 'Frequente', status: 'Pago' },
-  { description: 'Móveis Jufap', type: 'Pagar', value: 250.00, date: '2025-01-05', installment: '4/6', status: 'Pago' },
-  { description: 'Claro Móvel Marcelo', type: 'Pagar', value: 44.99, date: '2025-01-06', installment: 'Frequente', status: 'Pago' },
-  { description: 'Luz', type: 'Pagar', value: 118.03, date: '2025-01-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-01-07', installment: '03/10', status: 'Pago' },
-  { description: 'Youtube Premium', type: 'Pagar', value: 41.90, date: '2025-01-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Internet Cachoeira', type: 'Pagar', value: 110.00, date: '2025-01-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-01-08', installment: '2/10', status: 'Pago' },
-  { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-01-08', installment: '10/18', status: 'Pago' },
-  { description: 'Consórcio3110 Moto', type: 'Pagar', value: 316.15, date: '2025-01-08', installment: '10/51', status: 'Pago' },
-  { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-01-11', installment: 'Frequente', status: 'Pago' },
-  { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-01-12', installment: 'Frequente', status: 'Pago' },
-  { description: 'Consórcio3111 Moto', type: 'Pagar', value: 230.15, date: '2025-01-16', installment: '10/53', status: 'Pago' },
-  { description: 'Acordo Inter', type: 'Pagar', value: 160.00, date: '2025-01-19', installment: '2/3', status: 'Pago' },
-  { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-01-29', installment: 'Frequente', status: 'Pago' },
-  { description: 'Claro Móvel Day', type: 'Pagar', value: 44.99, date: '2025-01-31', installment: 'Frequente', status: 'Pago' },
-  { description: 'Claro Móvel Chris', type: 'Pagar', value: 44.99, date: '2025-01-31', installment: 'Frequente', status: 'Pago' },
-  { description: 'Água', type: 'Pagar', value: 31.75, date: '2025-02-02', installment: 'Frequente', status: 'Pago' },
-  { description: 'Claro Flex Crhis', type: 'Pagar', value: 44.99, date: '2025-02-03', installment: 'Frequente', status: 'Pago' },
-  { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-02-03', installment: 'Frequente', status: 'Pago' },
-  { description: 'Móveis Jufap', type: 'Pagar', value: 250.00, date: '2025-02-05', installment: '5/6', status: 'Pago' },
-  { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-02-06', installment: 'Frequente', status: 'Pago' },
-  { description: 'Luz', type: 'Pagar', value: 202.65, date: '2025-02-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-02-07', installment: '03/10', status: 'Pago' },
-  { description: 'Youtube Premium', type: 'Pagar', value: 41.90, date: '2025-02-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Internet', type: 'Pagar', value: 110.00, date: '2025-02-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-02-08', installment: '3/10', status: 'Pago' },
-  { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-02-08', installment: '11/18', status: 'Pago' },
-  { description: 'Consórcio3110 Moto', type: 'Pagar', value: 315.96, date: '2025-02-08', installment: '11/51', status: 'Pago' },
-  { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-02-11', installment: 'Frequente', status: 'Pago' },
-  { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-02-12', installment: 'Frequente', status: 'Pago' },
-  { description: 'Consórcio3111 Moto', type: 'Pagar', value: 235.42, date: '2025-02-16', installment: '11/53', status: 'Pago' },
-  { description: 'Acordo Inter', type: 'Pagar', value: 160.00, date: '2025-02-19', installment: '3/3', status: 'Pago' },
-  { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-02-28', installment: 'Frequente', status: 'Pago' },
-  { description: 'Van Chris', type: 'Pagar', value: 300.00, date: '2025-02-01', installment: 'Frequente', status: 'Pago' },
-  { description: 'Uniforme Chris', type: 'Pagar', value: 43.90, date: '2025-02-01', installment: 'Frequente', status: 'Pago' },
-  { description: 'Uniforme Kim', type: 'Pagar', value: 25.99, date: '2025-02-01', installment: 'Frequente', status: 'Pago' },
-  { description: 'PGFN', type: 'Pagar', value: 37.71, date: '2025-02-28', installment: '2/28', status: 'Pago' },
-  { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-02-28', installment: '2/31', status: 'Pago' },
-  { description: 'Água', type: 'Pagar', value: 32.30, date: '2025-03-02', installment: 'Frequente', status: 'Pago' },
-  { description: 'Móveis Jufap', type: 'Pagar', value: 250.00, date: '2025-03-05', installment: '6/6', status: 'Pago' },
-  { description: 'Claro Flex Marcelo', type: 'Pagar', value: 54.99, date: '2025-03-13', installment: 'Frequente', status: 'Pago' },
-  { description: 'Luz', type: 'Pagar', value: 211.74, date: '2025-03-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-03-07', installment: '04/10', status: 'Pago' },
-  { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-03-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Claro Flex Chris', type: 'Pagar', value: 34.99, date: '2025-03-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Youtube Premium', type: 'Pagar', value: 41.90, date: '2025-03-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Internet', type: 'Pagar', value: 110.00, date: '2025-03-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Carro', type: 'Pagar', value: 700.00, date: '2025-03-08', installment: '1/23', status: 'Pago' },
-  { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-03-08', installment: '4/10', status: 'Pago' },
-  { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-03-08', installment: '12/18', status: 'Pago' },
-  { description: 'Consórcio3110 Moto', type: 'Pagar', value: 315.78, date: '2025-03-08', installment: '12/51', status: 'Pago' },
-  { description: 'Futebol', type: 'Pagar', value: 50.00, date: '2025-03-11', installment: 'Frequente', status: 'Pago' },
-  { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-03-12', installment: 'Frequente', status: 'Pago' },
-  { description: 'Consórcio3111 Moto', type: 'Pagar', value: 235.33, date: '2025-03-16', installment: '12/53', status: 'Pago' },
-  { description: 'IPVA Moto 2025', type: 'Pagar', value: 550.82, date: '2025-03-16', installment: 'Frequente', status: 'Pago' },
-  { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-03-29', installment: 'Frequente', status: 'Pago' },
-  { description: 'CRTR', type: 'Pagar', value: 373.85, date: '2025-03-10', installment: 'Frequente', status: 'Pago' },
-  { description: 'Van Kim Tio Robson', type: 'Pagar', value: 400.00, date: '2025-03-01', installment: 'Frequente', status: 'Pago' },
-  { description: 'Van Chris Tio Cleberson', type: 'Pagar', value: 300.00, date: '2025-03-01', installment: 'Frequente', status: 'Pago' },
-  { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-03-31', installment: '3/28', status: 'Pago' },
-  { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-03-31', installment: '3/31', status: 'Pago' },
-  { description: 'Aliexpress', type: 'Pagar', value: 23.74, date: '2025-03-26', installment: 'Frequente', status: 'Pago' },
-  { description: 'Água', type: 'Pagar', value: 49.05, date: '2025-04-02', installment: 'Frequente', status: 'Pago' },
-  { description: 'Claro Flex Marcelo', type: 'Pagar', value: 54.99, date: '2025-04-06', installment: 'Frequente', status: 'Pago' },
-  { description: 'Luz', type: 'Pagar', value: 241.59, date: '2025-04-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-04-07', installment: '05/10', status: 'Pago' },
-  { description: 'Claro Flex Day', type: 'Pagar', value: 54.99, date: '2025-04-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Claro Flex Chris', type: 'Pagar', value: 44.99, date: '2025-04-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Youtube Premium', type: 'Pagar', value: 41.90, date: '2025-04-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Internet', type: 'Pagar', value: 110.00, date: '2025-04-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Microsoft 365 Anuidade', type: 'Pagar', value: 0, date: '2025-04-11', installment: 'Frequente', status: 'Pago' },
-  { description: 'Carro', type: 'Pagar', value: 700.00, date: '2025-04-08', installment: '2/23', status: 'Pago' },
-  { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-04-08', installment: '5/10', status: 'Pago' },
-  { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-04-08', installment: '13/18', status: 'Pago' },
-  { description: 'Consórcio3110 Moto', type: 'Pagar', value: 310.77, date: '2025-04-08', installment: '13/51', status: 'Pago' },
-  { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-04-11', installment: 'Frequente', status: 'Pago' },
-  { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2024-04-12', installment: 'Frequente', status: 'Pago' },
-  { description: 'Consórcio3111 Moto', type: 'Pagar', value: 225.63, date: '2025-04-16', installment: '13/53', status: 'Pago' },
-  { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-04-29', installment: 'Frequente', status: 'Pago' },
-  { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-04-30', installment: '4/28', status: 'Pago' },
-  { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-04-30', installment: '4/31', status: 'Pago' },
-  { description: 'Van Kim Tio Robson', type: 'Pagar', value: 350.00, date: '2025-04-01', installment: 'Frequente', status: 'Pago' },
-  { description: 'Van Chris Tio Cleberson', type: 'Pagar', value: 300.00, date: '2025-04-01', installment: 'Frequente', status: 'Pago' },
-  { description: 'Aliexpress Marcelo', type: 'Pagar', value: 23.74, date: '2025-04-10', installment: 'Frequente', status: 'Pago' },
-  { description: 'Aliexpress Marcelo', type: 'Pagar', value: 23.74, date: '2025-04-25', installment: 'Frequente', status: 'Pago' },
-  { description: 'Academia Chris', type: 'Pagar', value: 155.00, date: '2025-04-04', installment: 'Frequente', status: 'Pago' },
-  { description: 'Água', type: 'Pagar', value: 49.05, date: '2025-05-02', installment: 'Frequente', status: 'Pago' },
-  { description: 'Água', type: 'Pagar', value: 30.78, date: '2025-05-02', installment: 'Frequente', status: 'Pago' },
-  { description: 'Chris', type: 'Pagar', value: 30.00, date: '2025-05-05', installment: 'Frequente', status: 'Pago' },
-  { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-05-06', installment: 'Frequente', status: 'Pago' },
-  { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-05-07', installment: '06/10', status: 'Pago' },
-  { description: 'Luz', type: 'Pagar', value: 241.59, date: '2025-05-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Luz', type: 'Pagar', value: 252.95, date: '2025-05-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-05-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Youtube Premium', type: 'Pagar', value: 53.90, date: '2025-05-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Internet', type: 'Pagar', value: 129.90, date: '2025-05-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Cartão Tio Edson Carro', type: 'Pagar', value: 700.00, date: '2025-05-08', installment: '3/23', status: 'Pago' },
-  { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-05-08', installment: '6/10', status: 'Pago' },
-  { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-05-08', installment: '14/18', status: 'Pago' },
-  { description: 'Consórcio3110 Moto', type: 'Pagar', value: 317.64, date: '2025-05-08', installment: '13/51', status: 'Pago' },
-  { description: 'Consórcio3110 Moto', type: 'Pagar', value: 315.59, date: '2025-05-08', installment: '14/51', status: 'Pago' },
-  { description: 'Van Chris', type: 'Pagar', value: 300.00, date: '2025-05-10', installment: 'Frequente', status: 'Pago' },
-  { description: 'Van Kim', type: 'Pagar', value: 350.00, date: '2025-05-10', installment: 'Frequente', status: 'Pago' },
-  { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-05-11', installment: 'Frequente', status: 'Pago' },
-  { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-05-12', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-05-12', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Consórcio3111 Moto', type: 'Pagar', value: 238.38, date: '2025-05-16', installment: '13/53', status: 'Pago' },
-  { description: 'Consórcio3111 Moto', type: 'Pagar', value: 235.24, date: '2025-05-16', installment: '14/53', status: 'Pago' },
-  { description: 'Gás', type: 'Pagar', value: 110.00, date: '2025-05-17', installment: 'Frequente', status: 'Pago' },
-  { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-05-29', installment: 'Frequente', status: 'Pago' },
-  { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-05-30', installment: '4/28', status: 'Pendente' },
-  { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-05-30', installment: '5/28', status: 'Pendente' },
-  { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-05-30', installment: '4/31', status: 'Pendente' },
-  { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-05-30', installment: '5/31', status: 'Pendente' },
-  { description: 'Água', type: 'Pagar', value: 57.14, date: '2025-06-02', installment: 'Frequente', status: 'Pago' },
-  { description: 'Edmilson Pedreiro', type: 'Pagar', value: 330.00, date: '2025-06-03', installment: 'Frequente', status: 'Pago' },
-  { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-06-06', installment: 'Frequente', status: 'Pago' },
-  { description: 'Luz', type: 'Pagar', value: 171.70, date: '2025-06-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-06-07', installment: '07/10', status: 'Pago' },
-  { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-06-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Youtube Premium', type: 'Pagar', value: 53.90, date: '2025-06-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Internet', type: 'Pagar', value: 129.90, date: '2025-06-07', installment: 'Frequente', status: 'Pago' },
-  { description: 'Cartão Tio Edson Óculos Chris', type: 'Pagar', value: 462.00, date: '2025-06-08', installment: '1/3', status: 'Pago' },
-  { description: 'Cartão Tio Edson Carro', type: 'Pagar', value: 700.00, date: '2025-06-08', installment: '4/23', status: 'Pago' },
-  { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-06-08', installment: '7/10', status: 'Pago' },
-  { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-06-08', installment: '15/18', status: 'Pago' },
-  { description: 'Consórcio3110 Moto', type: 'Pagar', value: 325.99, date: '2025-06-08', installment: '15/51', status: 'Pago' },
-  { description: 'Academia Chris', type: 'Pagar', value: 155.00, date: '2025-06-10', installment: 'Frequente', status: 'Pago' },
-  { description: 'Van Kim e Chris', type: 'Pagar', value: 600.00, date: '2025-06-10', installment: 'Frequente', status: 'Pago' },
-  { description: 'Crédito Celular Kim', type: 'Pagar', value: 20.00, date: '2025-06-10', installment: 'Frequente', status: 'Pago' },
-  { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-06-11', installment: 'Frequente', status: 'Pago' },
-  { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-06-12', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Consórcio3111 Moto', type: 'Pagar', value: 234.96, date: '2025-06-16', installment: '15/53', status: 'Pago' },
-  { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-06-29', installment: 'Frequente', status: 'Pago' },
-  { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-06-30', installment: '6/28', status: 'Pendente' },
-  { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-06-30', installment: '6/31', status: 'Pendente' },
-  { description: 'Água', type: 'Pagar', value: 0, date: '2025-07-02', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-07-06', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Luz', type: 'Pagar', value: 0, date: '2025-07-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-07-07', installment: '08/10', status: 'Pendente' },
-  { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-07-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Youtube Premium', type: 'Pagar', value: 53.90, date: '2025-07-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Internet', type: 'Pagar', value: 129.90, date: '2025-07-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Cartão Tio Edson Carro', type: 'Pagar', value: 700.00, date: '2025-07-08', installment: '5/23', status: 'Pendente' },
-  { description: 'Cartão Tio Edson Óculos Chris', type: 'Pagar', value: 462.00, date: '2025-07-08', installment: '2/3', status: 'Pendente' },
-  { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-07-08', installment: '8/10', status: 'Pendente' },
-  { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-07-08', installment: '16/18', status: 'Pendente' },
-  { description: 'Consórcio3110 Moto', type: 'Pagar', value: 325.99, date: '2025-07-08', installment: '16/51', status: 'Pendente' },
-  { description: 'Academia Chris', type: 'Pagar', value: 155.00, date: '2025-07-10', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Van Kim e Chris', type: 'Pagar', value: 600.00, date: '2025-07-10', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-07-11', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-07-12', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Consórcio3111 Moto', type: 'Pagar', value: 234.96, date: '2025-07-16', installment: '16/53', status: 'Pendente' },
-  { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-07-29', installment: 'Frequente', status: 'Pendente' },
-  { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-07-31', installment: '7/28', status: 'Pendente' },
-  { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-07-31', installment: '7/31', status: 'Pendente' },
-  { description: 'Água', type: 'Pagar', value: 0, date: '2025-08-02', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-08-06', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Luz', type: 'Pagar', value: 0, date: '2025-08-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-08-07', installment: '09/10', status: 'Pendente' },
-  { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-08-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Youtube Premium', type: 'Pagar', value: 53.90, date: '2025-08-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Internet', type: 'Pagar', value: 129.90, date: '2025-08-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Cartão Tio Edson Carro', type: 'Pagar', value: 700.00, date: '2025-08-08', installment: '6/23', status: 'Pendente' },
-  { description: 'Cartão Tio Edson Óculos Chris', type: 'Pagar', value: 462.00, date: '2025-08-08', installment: '3/3', status: 'Pendente' },
-  { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-08-08', installment: '9/10', status: 'Pendente' },
-  { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-08-08', installment: '17/18', status: 'Pendente' },
-  { description: 'Consórcio3110 Moto', type: 'Pagar', value: 325.99, date: '2025-08-08', installment: '17/51', status: 'Pendente' },
-  { description: 'Academia Chris', type: 'Pagar', value: 155.00, date: '2025-08-10', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Van Kim e Chris', type: 'Pagar', value: 600.00, date: '2025-08-10', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-08-11', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-08-12', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Consórcio3111 Moto', type: 'Pagar', value: 234.96, date: '2025-08-16', installment: '17/53', status: 'Pendente' },
-  { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-08-29', installment: 'Frequente', status: 'Pendente' },
-  { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-08-29', installment: '8/28', status: 'Pendente' },
-  { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-08-29', installment: '8/31', status: 'Pendente' },
-  { description: 'Água', type: 'Pagar', value: 0, date: '2025-09-02', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-09-06', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Luz', type: 'Pagar', value: 0, date: '2025-09-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Pensão', type: 'Pagar', value: 400.00, date: '2025-09-07', installment: '10/10', status: 'Pendente' },
-  { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-09-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Youtube Premium', type: 'Pagar', value: 53.90, date: '2025-09-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Internet', type: 'Pagar', value: 129.90, date: '2025-09-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Cartão Tio Edson Carro', type: 'Pagar', value: 700.00, date: '2025-09-08', installment: '7/23', status: 'Pendente' },
-  { description: 'Cartão Tio Edson Móveis', type: 'Pagar', value: 552.00, date: '2025-09-08', installment: '10/10', status: 'Pendente' },
-  { description: 'Cartão Tio Edson Moto', type: 'Pagar', value: 416.40, date: '2025-09-08', installment: '18/18', status: 'Pendente' },
-  { description: 'Consórcio3110 Moto', type: 'Pagar', value: 325.99, date: '2025-09-08', installment: '18/51', status: 'Pendente' },
-  { description: 'Academia Chris', type: 'Pagar', value: 155.00, date: '2025-09-10', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Van Kim e Chris', type: 'Pagar', value: 600.00, date: '2025-09-10', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Crédito Celular Kim', type: 'Pagar', value: 20.00, date: '2025-09-10', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-09-11', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-09-12', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Consórcio3111 Moto', type: 'Pagar', value: 234.96, date: '2025-09-16', installment: '18/53', status: 'Pendente' },
-  { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-09-29', installment: 'Frequente', status: 'Pendente' },
-  { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-09-30', installment: '9/28', status: 'Pendente' },
-  { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-09-30', installment: '9/31', status: 'Pendente' },
-  { description: 'Água', type: 'Pagar', value: 0, date: '2025-10-02', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-10-06', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Luz', type: 'Pagar', value: 0, date: '2025-10-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-10-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Youtube Premium', type: 'Pagar', value: 53.90, date: '2025-10-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Internet', type: 'Pagar', value: 110.00, date: '2025-10-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Consórcio3110 Moto', type: 'Pagar', value: 325.99, date: '2025-10-08', installment: '19/51', status: 'Pendente' },
-  { description: 'Van Kim e Chris', type: 'Pagar', value: 600.00, date: '2025-10-10', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-10-11', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-10-12', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Consórcio3111 Moto', type: 'Pagar', value: 234.96, date: '2025-10-16', installment: '19/53', status: 'Pendente' },
-  { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-10-29', installment: 'Frequente', status: 'Pendente' },
-  { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-10-31', installment: '10/28', status: 'Pendente' },
-  { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-10-31', installment: '10/31', status: 'Pendente' },
-  { description: 'Preventivo Day', type: 'Pagar', value: 0, date: '2025-10-10', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Água', type: 'Pagar', value: 0, date: '2025-11-02', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-11-06', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Luz', type: 'Pagar', value: 0, date: '2025-11-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-11-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Youtube Premium', type: 'Pagar', value: 53.90, date: '2025-11-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Internet', type: 'Pagar', value: 110.00, date: '2025-11-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Consórcio3110 Moto', type: 'Pagar', value: 325.99, date: '2025-11-08', installment: '20/51', status: 'Pendente' },
-  { description: 'Van Kim e Chris', type: 'Pagar', value: 600.00, date: '2025-11-10', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-11-11', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-11-12', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Consórcio3111 Moto', type: 'Pagar', value: 234.96, date: '2025-11-16', installment: '20/53', status: 'Pendente' },
-  { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-11-29', installment: 'Frequente', status: 'Pendente' },
-  { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-11-28', installment: '11/28', status: 'Pendente' },
-  { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-11-28', installment: '11/31', status: 'Pendente' },
-  { description: 'Água', type: 'Pagar', value: 0, date: '2025-12-02', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Claro Flex Marcelo', type: 'Pagar', value: 44.99, date: '2025-12-06', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Amazon Prime Anuidade', type: 'Pagar', value: 166.80, date: '2025-12-06', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Luz', type: 'Pagar', value: 0, date: '2025-12-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Claro Flex Day', type: 'Pagar', value: 44.99, date: '2025-12-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Youtube Premium', type: 'Pagar', value: 53.90, date: '2025-12-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Internet', type: 'Pagar', value: 129.90, date: '2025-12-07', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Consórcio3110 Moto', type: 'Pagar', value: 325.99, date: '2025-12-08', installment: '21/51', status: 'Pendente' },
-  { description: 'Van Kim e Chris', type: 'Pagar', value: 600.00, date: '2025-12-10', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Crédito Celular Kim', type: 'Pagar', value: 0, date: '2025-12-10', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Futebol', type: 'Pagar', value: 40.00, date: '2025-12-11', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Sulamérica Odonto', type: 'Pagar', value: 82.62, date: '2025-12-12', installment: 'Frequente', status: 'Pendente' },
-  { description: 'Consórcio3111 Moto', type: 'Pagar', value: 234.96, date: '2025-12-16', installment: '21/53', status: 'Pendente' },
-  { description: 'Max', type: 'Pagar', value: 19.95, date: '2025-12-29', installment: 'Frequente', status: 'Pendente' },
-  { description: 'PGFN', type: 'Pagar', value: 25.75, date: '2025-12-30', installment: '12/28', status: 'Pendente' },
-  { description: 'Parcelamento Simei', type: 'Pagar', value: 51.08, date: '2025-12-30', installment: '12/31', status: 'Pendente' }
-];  
-                const batch = writeBatch(db);
-                historicalData.forEach(account => {
-                    const dataToSet = { ...account };
-                    if (dataToSet.installment === '') {
-                        dataToSet.installment = 'Frequente';
-                    }
-                    const docRef = doc(accountsCollection);
-                    batch.set(docRef, { ...dataToSet, createdAt: serverTimestamp() });
-                });
+async function deleteCategory(docId) {
+    if (!categoriesCollection || !confirm('Tem certeza que quer apagar esta categoria?')) return;
+    try { await deleteDoc(doc(categoriesCollection, docId)); }
+    catch (error) { console.error("Error deleting category: ", error); }
+}
 
-                try {
-                    await batch.commit();
-                    alert(`Sucesso! ${historicalData.length} contas foram importadas para a sua planilha.`);
-                    importButton.remove();
-                } catch (error) {
-                    console.error("Erro ao importar dados históricos:", error);
-                    alert('Ocorreu um erro ao importar os dados. Verifique o console para mais detalhes.');
-                    importButton.textContent = 'Tentar Importar Novamente';
-                    importButton.disabled = false;
-                }
-            });
-            mainContainer.prepend(importButton);
-        }
-        
-        // --- LÓGICA DO MODAL (FORMULÁRIO) ---
-        function openModal() {
-            document.getElementById('form-date').value = new Date().toISOString().split('T')[0];
-            const categorySelect = document.getElementById('form-category');
-            categorySelect.innerHTML = CATEGORIES.map(cat => `<option value="${cat}">${cat}</option>`).join('');
-            modal.classList.add('visible');
-            formTypeSelect.dispatchEvent(new Event('change')); // Dispara o evento para definir o status inicial
-        }
-        function closeModal() {
-            modal.classList.remove('visible');
-            addAccountForm.reset();
-        }
-        modalCloseBtn.addEventListener('click', closeModal);
-        modalCancelBtn.addEventListener('click', closeModal);
-        addAccountForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const newAccount = {
-                description: document.getElementById('form-description').value,
-                category: document.getElementById('form-category').value,
-                value: parseFloat(document.getElementById('form-value').value) || 0,
-                date: document.getElementById('form-date').value,
-                installment: document.getElementById('form-installment').value,
-                type: document.getElementById('form-type').value,
-                status: document.getElementById('form-status').value
-            };
-            await addAccount(newAccount);
-            closeModal();
-        });
+    // --- INICIA A APLICAÇÃO ---
+    loadTheme();
+    initializeAppAndConnect();
 
-        // --- LÓGICA DA BUSCA ---
-        searchInput.addEventListener('input', () => {
-            renderFilteredAccounts();
-        });
-
-        // --- INICIALIZAÇÃO ---
-        function initializeAppAndConnect() {
-            if (!firebaseConfig || !firebaseConfig.apiKey || firebaseConfig.apiKey.includes("SUA_API_KEY")) { 
-                showError("ERRO: As chaves do Firebase não foram preenchidas neste arquivo."); 
-                return; 
-            }
-            try {
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                const auth = getAuth(app);
-                setLogLevel('error');
-                handleAuthentication(auth);
-            } catch (error) {
-                console.error("Firebase initialization failed:", error);
-                showError("Falha ao iniciar o Firebase. Verifique a sua configuração.");
-            }
-        }
-
-        // --- AUTENTICAÇÃO ---
-        function handleAuthentication(auth) {
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    userIdDisplay.textContent = `Conectado (ID: ${user.uid.substring(0, 6)}...)`;
-                    accountsCollection = collection(db, 'contas', user.uid, 'items');
-                    listenForAccountChanges();
-                } else {
-                    userIdDisplay.textContent = "Autenticando...";
-                    try { await signInAnonymously(auth); } catch (error) { console.error("Authentication failed:", error); userIdDisplay.textContent = "Falha na autenticação."; }
-                }
-            });
-        }
-
-        // --- LEITOR DE DADOS EM TEMPO REAL ---
-        function listenForAccountChanges() {
-            if (unsubscribe) unsubscribe();
-            unsubscribe = onSnapshot(accountsCollection, (snapshot) => {
-                if (snapshot.empty) {
-                    showEmptyMessage();
-                    createAndInjectImportButton(); 
-                } else {
-                    const importButton = document.getElementById('import-button');
-                    if (importButton) importButton.remove();
-                    allAccounts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    renderFilteredAccounts();
-                }
-            }, (error) => {
-                console.error("Error fetching collection:", error);
-                showError("Erro ao carregar os dados. Verifique o console e as regras de segurança do Firestore.");
-            });
-        }
-        
-        // --- LÓGICA PRINCIPAL DE RENDERIZAÇÃO ---
-        function renderFilteredAccounts() {
-            const searchTerm = searchInput.value.toLowerCase();
-            if (!allAccounts) return;
-            const filteredAccounts = allAccounts.filter(account => account.description.toLowerCase().includes(searchTerm));
-            
-            if (filteredAccounts.length === 0) {
-                if (searchTerm) {
-                    accountsTableBody.innerHTML = `<tr><td colspan="8" class="text-center text-gray-500 py-8">Nenhuma conta encontrada para "${searchInput.value}".</td></tr>`;
-                } else {
-                    showEmptyMessage();
-                }
-                updateDashboard([]);
-                renderCategoryChart([]);
-            } else {
-                renderScreen(filteredAccounts);
-            }
-        }
-
-        function renderScreen(accountsToRender) {
-            accountsTableBody.innerHTML = '';
-            const accountsByMonth = groupAccountsByMonth(accountsToRender);
-            const sortedMonthKeys = Object.keys(accountsByMonth).sort((a, b) => new Date(b.split('/')[1], monthNames.indexOf(b.split('/')[0])) - new Date(a.split('/')[1], monthNames.indexOf(a.split('/')[0])));
-            
-            const now = new Date();
-            const currentMonthKey = `${monthNames[now.getMonth()]}/${now.getFullYear()}`;
-            
-            const searchTerm = searchInput.value;
-            if(!searchTerm) {
-                const currentMonthAccounts = accountsByMonth[currentMonthKey] || [];
-                updateDashboard(currentMonthAccounts);
-                renderCategoryChart(currentMonthAccounts);
-            } else {
-                updateDashboard([]);
-                renderCategoryChart([]);
-            }
-
-            sortedMonthKeys.forEach(monthKey => {
-                const monthAccounts = accountsByMonth[monthKey];
-                const isCurrentMonth = monthKey === currentMonthKey;
-                appendMonthSection(monthKey, monthAccounts, isCurrentMonth);
-            });
-        }
-
-        // --- LÓGICA DO GRÁFICO ---
-        function renderCategoryChart(accounts) {
-            const ctx = document.getElementById('category-chart').getContext('2d');
-            const expensesByCategory = accounts
-                .filter(acc => acc.type === TIPO_PAGAR && acc.status !== STATUS_PENDENTE)
-                .reduce((acc, current) => {
-                    const category = current.category || 'Outros';
-                    acc[category] = (acc[category] || 0) + current.value;
-                    return acc;
-                }, {});
-
-            const labels = Object.keys(expensesByCategory);
-            const data = Object.values(expensesByCategory);
-
-            if (categoryChart) {
-                categoryChart.destroy();
-            }
-            
-            if(labels.length === 0) {
-                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-                ctx.font = "16px Inter";
-                ctx.fillStyle = "#6b7280";
-                ctx.textAlign = "center";
-                ctx.fillText("Sem dados de gastos para exibir.", ctx.canvas.width / 2, ctx.canvas.height / 2);
-                return;
-            }
-
-            categoryChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Gastos por Categoria',
-                        data: data,
-                        backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', '#22c55e', '#10b981', '#14b8a6', '#06b6d4', '#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7'],
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'top', },
-                        title: { display: true, text: 'Distribuição de Gastos (Mês Atual)' }
-                    }
-                }
-            });
-        }
-
-        // --- FUNÇÕES DE RENDERIZAÇÃO E CÁLCULO ---
-        function updateDashboard(accountsForCurrentMonth) {
-            const totals = calculateMonthlyTotals(accountsForCurrentMonth);
-            const balance = totals.receivedAmount - totals.paidAmount;
-            const formatCurrency = (value) => `R$ ${value.toFixed(2).replace('.', ',')}`;
-            document.getElementById('dashboard-to-receive').textContent = formatCurrency(totals.toReceive);
-            document.getElementById('dashboard-to-pay').textContent = formatCurrency(totals.toPay);
-            document.getElementById('dashboard-paid').textContent = formatCurrency(totals.receivedAmount);
-            document.getElementById('dashboard-balance').textContent = formatCurrency(balance);
-            const balanceElement = document.getElementById('dashboard-balance').parentElement;
-            balanceElement.classList.remove('card-blue', 'card-red');
-            if (balance < 0) { balanceElement.classList.add('card-red'); } else { balanceElement.classList.add('card-blue'); }
-        }
-
-        function createAccountRow(account) {
-            const row = document.createElement('tr');
-            const createCellWithChild = (child) => {
-                const cell = row.insertCell();
-                cell.appendChild(child);
-            };
-            createCellWithChild(createInputElement('text', account.description || '', 'Descrição', (e) => updateAccount(account.id, { description: e.target.value })));
-            const categorySelectOptions = ['Selecionar...', ...CATEGORIES];
-            const selectedCategory = account.category && CATEGORIES.includes(account.category) ? account.category : 'Selecionar...';
-            const categorySelect = createSelectElement(categorySelectOptions, selectedCategory, (e) => updateAccount(account.id, { category: e.target.value }));
-            createCellWithChild(categorySelect);
-            const typeSelect = createSelectElement([TIPO_PAGAR, TIPO_RECEBER], account.type, (e) => updateAccount(account.id, { type: e.target.value }));
-            createCellWithChild(typeSelect);
-            createCellWithChild(createInputElement('number', (account.value || 0).toFixed(2), 'Valor', (e) => updateAccount(account.id, { value: parseFloat(e.target.value) || 0 })));
-            createCellWithChild(createInputElement('date', account.date || '', null, (e) => updateAccount(account.id, { date: e.target.value })));
-            createCellWithChild(createInputElement('text', account.installment || '', 'Ex: 1/12', (e) => updateAccount(account.id, { installment: e.target.value })));
-            const statusSelect = createSelectElement([STATUS_PENDENTE, STATUS_PAGO, STATUS_RECEBIDO], account.status, (e) => updateAccount(account.id, { status: e.target.value }));
-            statusSelect.classList.add('status-select');
-            applyStatusClass(statusSelect, account.status);
-            statusSelect.addEventListener('change', (e) => {
-                applyStatusClass(e.target, e.target.value);
-                updateAccount(account.id, { status: e.target.value });
-            });
-            createCellWithChild(statusSelect);
-            const actionsCell = row.insertCell();
-            actionsCell.classList.add('flex', 'flex-row', 'gap-2', 'items-center', 'justify-center');
-            actionsCell.appendChild(createDeleteButton(() => deleteAccount(account.id)));
-            return row;
-        }
-        
-        function applyStatusClass(element, status) {
-            element.classList.remove(`status-${STATUS_PENDENTE}`, `status-${STATUS_PAGO}`, `status-${STATUS_RECEBIDO}`);
-            if (status) { element.classList.add(`status-${status}`); }
-        }
-        function createInputElement(type, value, placeholder, changeHandler) {
-            const input = document.createElement('input');
-            input.type = type;
-            input.value = value;
-            if (placeholder) input.placeholder = placeholder;
-            if (type === 'number') input.step = '0.01';
-            input.addEventListener('change', changeHandler);
-            return input;
-        }
-        function createSelectElement(options, selectedValue, changeHandler) {
-            const select = document.createElement('select');
-            select.innerHTML = options.map(opt => `<option value="${opt}" ${selectedValue === opt ? 'selected' : ''}>${opt}</option>`).join('');
-            select.addEventListener('change', changeHandler);
-            return select;
-        }
-        function createDeleteButton(onClick) {
-            const deleteButton = document.createElement('button');
-            deleteButton.innerHTML = '&times;';
-            deleteButton.title = 'Excluir conta';
-            deleteButton.classList.add('btn-delete-custom');
-            deleteButton.addEventListener('click', onClick);
-            return deleteButton;
-        }
-        function groupAccountsByMonth(accounts) {
-            const grouped = {};
-            accounts.forEach(account => {
-                if (account.date) {
-                    const dateObj = new Date(account.date + 'T00:00:00');
-                    const monthYearKey = `${monthNames[dateObj.getMonth()]}/${dateObj.getFullYear()}`;
-                    if (!grouped[monthYearKey]) grouped[monthYearKey] = [];
-                    grouped[monthYearKey].push(account);
-                }
-            });
-            return grouped;
-        }
-        function appendMonthSection(monthKey, monthAccounts, isCurrentMonth) {
-            const contentRowsClassName = `content-${monthKey.replace(/[^a-zA-Z0-9]/g, '-')}`;
-            const monthlyTotals = calculateMonthlyTotals(monthAccounts);
-            const headerRow = accountsTableBody.insertRow();
-            headerRow.className = 'month-separator-row';
-            if(isCurrentMonth) headerRow.classList.add('current-month-header');
-            if(monthlyTotals.allPaid) headerRow.classList.add('month-paid-header');
-            if(!isCurrentMonth) headerRow.classList.add('collapsed');
-            const headerCell = headerRow.insertCell();
-            headerCell.colSpan = 8;
-            headerCell.innerHTML = `${monthKey} <span class="toggle-icon">▼</span>`;
-            monthAccounts.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(account => {
-                const row = createAccountRow(account);
-                row.className = `${contentRowsClassName} ${!isCurrentMonth ? 'hidden-row' : ''}`;
-                accountsTableBody.appendChild(row);
-            });
-            const totalsRow = createTotalsRow(monthKey, monthAccounts);
-            totalsRow.className = `${contentRowsClassName} ${!isCurrentMonth ? 'hidden-row' : ''}`;
-            accountsTableBody.appendChild(totalsRow);
-            headerRow.addEventListener('click', (e) => {
-                e.currentTarget.classList.toggle('collapsed');
-                document.querySelectorAll(`.${contentRowsClassName}`).forEach(row => {
-                    row.classList.toggle('hidden-row');
-                });
-            });
-        }
-        function createTotalsRow(monthKey, monthAccounts) {
-    const totalsRow = document.createElement('tr');
-    totalsRow.className = 'monthly-totals-row';
-    const totalsCell = totalsRow.insertCell();
-    totalsCell.colSpan = 8;
-
-    const flexContainer = document.createElement('div');
-    flexContainer.className = 'flex-container flex flex-row justify-between items-center w-full p-1 flex-wrap';
-
-    const totalsTextContainer = document.createElement('div');
-    totalsTextContainer.className = 'totals-text text-xs md:text-sm';
-    const monthlyTotals = calculateMonthlyTotals(monthAccounts);
-
-    totalsTextContainer.innerHTML = `
-        <div class="flex flex-col md:flex-row md:gap-4">
-            <span><strong>Pendentes:</strong> A Pagar <span class="text-red-600">R$ ${monthlyTotals.toPay.toFixed(2).replace('.', ',')}</span></span>
-            <span><strong>Quitados:</strong> Pago <span class="text-green-700">R$ ${monthlyTotals.paidAmount.toFixed(2).replace('.', ',')}</span> | Recebido <span class="text-yellow-600">R$ ${monthlyTotals.receivedAmount.toFixed(2).replace('.', ',')}</span></span>
-        </div>
-    `;
-
-    flexContainer.appendChild(totalsTextContainer);
-    totalsCell.appendChild(flexContainer);
-            return totalsRow;
-        }
-        function calculateMonthlyTotals(accountsList) {
-            const totals = { toPay: 0, toReceive: 0, paidAmount: 0, receivedAmount: 0, pendingCount: 0 };
-            accountsList.forEach(account => {
-                const value = account.value || 0;
-                switch(account.status) {
-                    case STATUS_PENDENTE:
-                        totals.pendingCount++;
-                        if (account.type === TIPO_PAGAR) totals.toPay += value;
-                        else if (account.type === TIPO_RECEBER) totals.toReceive += value;
-                        break;
-                    case STATUS_PAGO:
-                        totals.paidAmount += value;
-                        break;
-                    case STATUS_RECEBIDO:
-                        totals.receivedAmount += value;
-                        break;
-                }
-            });
-            totals.allPaid = totals.pendingCount === 0 && accountsList.length > 0;
-            return totals;
-        }
-        function showError(message) {
-            accountsTableBody.innerHTML = `<tr><td colspan="8" class="text-center text-red-600 font-bold p-4">${message}</td></tr>`;
-        }
-        function showEmptyMessage() {
-            accountsTableBody.innerHTML = `<tr><td colspan="8" class="text-center text-gray-500 py-8">Nenhuma conta encontrada. Adicione uma para começar.</td></tr>`;
-            const firstAddRow = accountsTableBody.insertRow();
-            const cell = firstAddRow.insertCell();
-            cell.colSpan = 8;
-            cell.classList.add('text-center', 'py-4');
-            const addBtn = document.createElement('button');
-            addBtn.textContent = 'Adicionar Primeira Conta';
-            addBtn.classList.add('btn', 'btn-primary');
-            addBtn.addEventListener('click', openModal);
-            cell.appendChild(addBtn);
-        }
-        async function addAccount(accountData) {
-            if (!accountsCollection) return;
-            try {
-                const dataToSave = { ...accountData };
-                if (dataToSave.installment === '') {
-                    dataToSave.installment = 'Frequente';
-                }
-                await addDoc(accountsCollection, { ...dataToSave, createdAt: serverTimestamp() });
-            } catch (error) {
-                console.error("Error adding account: ", error);
-            }
-        }
-        async function updateAccount(docId, dataToUpdate) {
-            if (!accountsCollection) return;
-            const accountDocRef = doc(accountsCollection, docId);
-            try {
-                await updateDoc(accountDocRef, dataToUpdate);
-            } catch (error) {
-                console.error("Error updating account: ", error);
-            }
-        }
-        async function deleteAccount(docId) {
-            if (!accountsCollection || !confirm('Tem certeza de que quer apagar esta conta?')) return;
-            const accountDocRef = doc(accountsCollection, docId);
-            try {
-                await deleteDoc(accountDocRef);
-            } catch (error) {
-                console.error("Error deleting account: ", error);
-            }
-        }
-        initializeAppAndConnect();
-        // PASSO 2.2: Adicionar este código no final do seu script <script type="module">
-document.getElementById('fab-add-account').addEventListener('click', openModal);
-    </script>
+</script>
     <button id="fab-add-account" title="Adicionar Nova Conta" class="fixed bottom-8 right-8 bg-indigo-600 hover:bg-indigo-700 text-white w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-lg transform hover:scale-110 transition-transform duration-200 ease-in-out">
     +
 </button>
+<div id="manage-categories-modal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Gerenciar Categorias</h2>
+            <button id="category-modal-close-btn" class="modal-close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="add-category-form" class="flex gap-2 mb-4">
+                <input type="text" id="form-new-category-name" placeholder="Nome da nova categoria" class="flex-grow" required>
+                <button type="submit" class="btn btn-primary">Adicionar</button>
+            </form>
+            <div id="category-list-container" class="space-y-2 max-h-60 overflow-y-auto">
+                </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
