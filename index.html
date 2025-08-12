@@ -172,6 +172,23 @@
         const modalCloseBtn = document.getElementById('modal-close-btn');
         const modalCancelBtn = document.getElementById('modal-cancel-btn');
         const addAccountForm = document.getElementById('add-account-form');
+        const formTypeSelect = document.getElementById('form-type');
+const formStatusSelect = document.getElementById('form-status');
+
+formTypeSelect.addEventListener('change', (e) => {
+    const type = e.target.value;
+    if (type === TIPO_RECEBER) {
+        formStatusSelect.innerHTML = `
+            <option value="${STATUS_PENDENTE}">${STATUS_PENDENTE}</option>
+            <option value="${STATUS_RECEBIDO}">${STATUS_RECEBIDO}</option>
+        `;
+    } else { // TIPO_PAGAR
+        formStatusSelect.innerHTML = `
+            <option value="${STATUS_PENDENTE}">${STATUS_PENDENTE}</option>
+            <option value="${STATUS_PAGO}">${STATUS_PAGO}</option>
+        `;
+    }
+});
         const searchInput = document.getElementById('search-input');
         const mainContainer = document.querySelector('.container');
 
@@ -522,6 +539,7 @@
             const categorySelect = document.getElementById('form-category');
             categorySelect.innerHTML = CATEGORIES.map(cat => `<option value="${cat}">${cat}</option>`).join('');
             modal.classList.add('visible');
+            formTypeSelect.dispatchEvent(new Event('change')); // Dispara o evento para definir o status inicial
         }
         function closeModal() {
             modal.classList.remove('visible');
@@ -803,29 +821,27 @@
             });
         }
         function createTotalsRow(monthKey, monthAccounts) {
-            const totalsRow = document.createElement('tr');
-            totalsRow.className = 'monthly-totals-row';
-            const totalsCell = totalsRow.insertCell();
-            totalsCell.colSpan = 8;
-            const flexContainer = document.createElement('div');
-            flexContainer.className = 'flex-container flex flex-row justify-between items-center w-full p-1 flex-wrap';
-            const totalsTextContainer = document.createElement('div');
-            totalsTextContainer.className = 'totals-text text-xs md:text-sm';
-            const monthlyTotals = calculateMonthlyTotals(monthAccounts);
-            totalsTextContainer.innerHTML = `
-                <div><strong>Pendentes:</strong> A Pagar <span class="text-red-600">R$ ${monthlyTotals.toPay.toFixed(2).replace('.', ',')}</span></div>
-                <div><strong>Quitados:</strong> Pago <span class="text-green-700">R$ ${monthlyTotals.paidAmount.toFixed(2).replace('.', ',')}</span> | Recebido <span class="text-yellow-600">R$ ${monthlyTotals.receivedAmount.toFixed(2).replace('.', ',')}</span></div>
-            `;
-            const buttonsContainer = document.createElement('div');
-            buttonsContainer.className = 'buttons-container flex gap-2';
-            const addBtn = document.createElement('button');
-            addBtn.textContent = 'Adicionar Conta';
-            addBtn.className = 'btn btn-primary';
-            addBtn.addEventListener('click', openModal);
-            buttonsContainer.appendChild(addBtn);
-            flexContainer.appendChild(totalsTextContainer);
-            flexContainer.appendChild(buttonsContainer);
-            totalsCell.appendChild(flexContainer);
+    const totalsRow = document.createElement('tr');
+    totalsRow.className = 'monthly-totals-row';
+    const totalsCell = totalsRow.insertCell();
+    totalsCell.colSpan = 8;
+
+    const flexContainer = document.createElement('div');
+    flexContainer.className = 'flex-container flex flex-row justify-between items-center w-full p-1 flex-wrap';
+
+    const totalsTextContainer = document.createElement('div');
+    totalsTextContainer.className = 'totals-text text-xs md:text-sm';
+    const monthlyTotals = calculateMonthlyTotals(monthAccounts);
+
+    totalsTextContainer.innerHTML = `
+        <div class="flex flex-col md:flex-row md:gap-4">
+            <span><strong>Pendentes:</strong> A Pagar <span class="text-red-600">R$ ${monthlyTotals.toPay.toFixed(2).replace('.', ',')}</span></span>
+            <span><strong>Quitados:</strong> Pago <span class="text-green-700">R$ ${monthlyTotals.paidAmount.toFixed(2).replace('.', ',')}</span> | Recebido <span class="text-yellow-600">R$ ${monthlyTotals.receivedAmount.toFixed(2).replace('.', ',')}</span></span>
+        </div>
+    `;
+
+    flexContainer.appendChild(totalsTextContainer);
+    totalsCell.appendChild(flexContainer);
             return totalsRow;
         }
         function calculateMonthlyTotals(accountsList) {
@@ -895,6 +911,11 @@
             }
         }
         initializeAppAndConnect();
+        // PASSO 2.2: Adicionar este código no final do seu script <script type="module">
+document.getElementById('fab-add-account').addEventListener('click', openModal);
     </script>
+    <button id="fab-add-account" title="Adicionar Nova Conta" class="fixed bottom-8 right-8 bg-indigo-600 hover:bg-indigo-700 text-white w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-lg transform hover:scale-110 transition-transform duration-200 ease-in-out">
+    +
+</button>
 </body>
 </html>

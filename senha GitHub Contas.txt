@@ -1,5 +1,0 @@
-git config --global user.email 106563901+marcelodoprado@users.noreply.github.com
-
-
-
-106563901+marcelodoprado@users.noreply.github.com
