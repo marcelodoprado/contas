@@ -243,16 +243,26 @@
 
     // --- FUNÇÃO PRINCIPAL DE RENDERIZAÇÃO ---
     function renderAll() {
-        if (!allAccounts) return;
-        const searchTerm = searchInput.value.toLowerCase();
-        const selectedYear = yearSelector.value, selectedMonth = monthSelector.value;
-        if (!selectedYear || !selectedMonth) { showEmptyMessage(); return; }
-        const accountsFromSearch = searchTerm ? allAccounts.filter(account => account.description.toLowerCase().includes(searchTerm)) : allAccounts;
+    if (!allAccounts) return;
+    const searchTerm = searchInput.value.toLowerCase();
+    const accountsFromSearch = searchTerm ? allAccounts.filter(account => account.description.toLowerCase().includes(searchTerm)) : allAccounts;
+
+    // A lógica de renderização da tabela já lida com o caso de não haver contas.
+    renderTable(accountsFromSearch);
+
+    // Atualiza o dashboard e o gráfico com base na seleção atual, se houver uma.
+    const selectedYear = yearSelector.value;
+    const selectedMonth = monthSelector.value;
+    if (selectedYear && selectedMonth) {
         const accountsForPeriod = allAccounts.filter(account => account.date && account.date.startsWith(`${selectedYear}-${selectedMonth}`));
         updateDashboard(accountsForPeriod);
         renderCategoryChart(accountsForPeriod);
-        renderTable(accountsFromSearch);
+    } else {
+        // Se não houver período selecionado (porque não há dados), zera o dashboard.
+        updateDashboard([]);
+        renderCategoryChart([]);
     }
+}
 
     // --- RENDERIZAÇÃO DA TABELA ---
     function renderTable(accountsToRender) {
