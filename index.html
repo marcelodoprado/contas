@@ -222,56 +222,47 @@
     const addCategoryForm = document.getElementById('add-category-form');
     const newCategoryNameInput = document.getElementById('form-new-category-name');
     const categoryListContainer = document.getElementById('category-list-container');
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
 
     // --- VARIÁVEIS DE ESTADO ---
     let db;
-    let accountsCollection;
-    let unsubscribe;
-    let allAccounts = [];
+    let accountsCollection, categoriesCollection;
+    let unsubscribe, unsubscribeCategories;
+    let allAccounts = [], userCategories = [];
     let categoryChart = null;
     let availablePeriods = new Set();
-    let categoriesCollection;
-    let userCategories = []; // Substitui a constante CATEGORIES
-    let unsubscribeCategories;
-    // CÓDIGO PARA ADICIONAR (6.C) - Nova seção de lógica
-// --- LÓGICA DO TEMA (DARK MODE) ---
-const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    let isInitialLoad = true;
 
-// Ícones de Sol e Lua em formato SVG para o botão
-const sunIcon = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>`;
-const moonIcon = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>`;
+    // --- LÓGICA DO TEMA (DARK MODE) ---
+    const sunIcon = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>`;
+    const moonIcon = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>`;
 
-// Função que aplica o tema e atualiza o botão e o localStorage
-function applyTheme(theme) {
-    if (theme === 'dark') {
-        document.documentElement.classList.add('dark');
-        themeToggleBtn.innerHTML = sunIcon;
-        localStorage.setItem('theme', 'dark');
-    } else {
-        document.documentElement.classList.remove('dark');
-        themeToggleBtn.innerHTML = moonIcon;
-        localStorage.setItem('theme', 'light');
+    function applyTheme(theme) {
+        if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+            themeToggleBtn.innerHTML = sunIcon;
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+            themeToggleBtn.innerHTML = moonIcon;
+            localStorage.setItem('theme', 'light');
+        }
+        if (categoryChart) {
+            categoryChart.options.plugins.legend.labels.color = theme === 'dark' ? '#f3f4f6' : '#374151';
+            categoryChart.update();
+        }
     }
-    // Atualiza o gráfico para que as cores da legenda se ajustem ao novo tema
-    if(categoryChart) {
-        categoryChart.options.plugins.legend.labels.color = theme === 'dark' ? '#f3f4f6' : '#374151';
-        categoryChart.update();
+
+    themeToggleBtn.addEventListener('click', () => {
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        applyTheme(currentTheme === 'light' ? 'dark' : 'light');
+    });
+
+    function loadTheme() {
+        applyTheme(localStorage.getItem('theme') || 'light');
     }
-}
 
-// Evento de clique no botão para alternar o tema
-themeToggleBtn.addEventListener('click', () => {
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    applyTheme(currentTheme === 'light' ? 'dark' : 'light');
-});
-
-// Aplica o tema salvo assim que a página carrega
-function loadTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'light'; // 'light' é o padrão
-    applyTheme(savedTheme);
-}
-
-    // --- LÓGICA DO MODAL (FORMULÁRIO) ---
+    // --- LÓGICA DOS MODAIS E FORMULÁRIOS ---
     function openModal() {
         addAccountForm.reset();
         document.getElementById('form-date').value = new Date().toISOString().split('T')[0];
@@ -280,19 +271,16 @@ function loadTheme() {
         modal.classList.add('visible');
         formTypeSelect.dispatchEvent(new Event('change'));
     }
-// CÓDIGO PARA ADICIONAR (5.B.4) - Lógica do Modal de Categorias
-function openCategoryModal() { categoryModal.classList.add('visible'); }
-function closeCategoryModal() { categoryModal.classList.remove('visible'); }
 
-manageCategoriesBtn.addEventListener('click', openCategoryModal);
-categoryModalCloseBtn.addEventListener('click', closeCategoryModal);
-    function closeModal() {
-        modal.classList.remove('visible');
-    }
+    function closeModal() { modal.classList.remove('visible'); }
+    function openCategoryModal() { categoryModal.classList.add('visible'); }
+    function closeCategoryModal() { categoryModal.classList.remove('visible'); }
 
     modalCloseBtn.addEventListener('click', closeModal);
     modalCancelBtn.addEventListener('click', closeModal);
     fabAddButton.addEventListener('click', openModal);
+    manageCategoriesBtn.addEventListener('click', openCategoryModal);
+    categoryModalCloseBtn.addEventListener('click', closeCategoryModal);
 
     addAccountForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -327,12 +315,10 @@ categoryModalCloseBtn.addEventListener('click', closeCategoryModal);
     // --- FUNÇÃO PRINCIPAL DE RENDERIZAÇÃO ---
     function renderAll() {
         if (!allAccounts) return;
-
         const searchTerm = searchInput.value.toLowerCase();
         const selectedYear = yearSelector.value;
         const selectedMonth = monthSelector.value;
-
-        if (!selectedYear || !selectedMonth) return; // Guarda de segurança
+        if (!selectedYear || !selectedMonth) return;
 
         const accountsFromSearch = searchTerm
             ? allAccounts.filter(account => account.description.toLowerCase().includes(searchTerm))
@@ -358,13 +344,10 @@ categoryModalCloseBtn.addEventListener('click', closeCategoryModal);
             }
             return;
         }
-
         const accountsByMonth = groupAccountsByMonth(accountsToRender);
         const sortedMonthKeys = Object.keys(accountsByMonth).sort((a, b) => new Date(b.split('/')[1], monthNames.indexOf(b.split('/')[0])) - new Date(a.split('/')[1], monthNames.indexOf(a.split('/')[0])));
-
         const now = new Date();
         const currentMonthKey = `${monthNames[now.getMonth()]}/${now.getFullYear()}`;
-
         sortedMonthKeys.forEach(monthKey => {
             const monthAccounts = accountsByMonth[monthKey];
             const isCurrentMonth = monthKey === currentMonthKey;
@@ -385,45 +368,66 @@ categoryModalCloseBtn.addEventListener('click', closeCategoryModal);
             setLogLevel('error');
             handleAuthentication(auth);
         } catch (error) {
-            console.error("Firebase initialization failed:", error);
             showError("Falha ao iniciar o Firebase.");
         }
     }
 
-// CÓDIGO PARA SUBSTITUIR (5.C.2) - handleAuthentication
-function handleAuthentication(auth) {
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            userIdDisplay.textContent = `Conectado (ID: ${user.uid.substring(0, 6)}...)`;
-            // Coleções principais
-            accountsCollection = collection(db, 'contas', user.uid, 'items');
-            categoriesCollection = collection(db, 'contas', user.uid, 'user_categories'); // NOVA LINHA
-
-            // Inicia os "ouvintes"
-            listenForAccountChanges();
-            listenForCategoryChanges(); // NOVA LINHA
-        } else {
-            try {
-                await signInAnonymously(auth);
-            } catch (error) {
-                showError("Falha na autenticação anônima.");
+    function handleAuthentication(auth) {
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                isInitialLoad = true; // Reseta a flag a cada login
+                userIdDisplay.textContent = `Conectado (ID: ${user.uid.substring(0, 6)}...)`;
+                accountsCollection = collection(db, 'contas', user.uid, 'items');
+                categoriesCollection = collection(db, 'contas', user.uid, 'user_categories');
+                listenForAccountChanges();
+                listenForCategoryChanges();
+            } else {
+                try {
+                    await signInAnonymously(auth);
+                } catch (error) {
+                    showError("Falha na autenticação anônima.");
+                }
             }
-        }
-    });
-}
+        });
+    }
+
     // --- LEITURA DE DADOS DO FIREBASE ---
     function listenForAccountChanges() {
         if (unsubscribe) unsubscribe();
         unsubscribe = onSnapshot(accountsCollection, (snapshot) => {
+            const savedYear = yearSelector.value;
+            const savedMonth = monthSelector.value;
+
             allAccounts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             updatePeriodSelectors();
+
+            if (isInitialLoad && allAccounts.length > 0) {
+                setToCurrentMonth();
+                isInitialLoad = false;
+            } else {
+                if (Array.from(yearSelector.options).some(opt => opt.value === savedYear)) {
+                    yearSelector.value = savedYear;
+                }
+                populateMonthsForSelectedYear();
+                if (Array.from(monthSelector.options).some(opt => opt.value === savedMonth)) {
+                    monthSelector.value = savedMonth;
+                }
+            }
             renderAll();
         }, (error) => {
-            console.error("Error fetching collection:", error);
             showError("Erro ao carregar os dados do Firestore.");
         });
     }
 
+    function listenForCategoryChanges() {
+        if (unsubscribeCategories) unsubscribeCategories();
+        unsubscribeCategories = onSnapshot(categoriesCollection, (snapshot) => {
+            userCategories = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            userCategories.sort((a, b) => a.name.localeCompare(b.name));
+            renderCategoryList();
+        });
+    }
+    
     // --- LÓGICA DO DASHBOARD E GRÁFICOS ---
     function updateDashboard(accounts) {
         const totals = calculateMonthlyTotals(accounts);
@@ -450,34 +454,22 @@ function handleAuthentication(auth) {
 
         const labels = Object.keys(expensesByCategory);
         const data = Object.values(expensesByCategory);
-
         if (categoryChart) categoryChart.destroy();
-        
         if (labels.length === 0) {
+            const theme = localStorage.getItem('theme') || 'light';
             ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-            ctx.font = "16px Inter"; ctx.fillStyle = "#6b7280"; ctx.textAlign = "center";
+            ctx.font = "16px Inter"; ctx.fillStyle = theme === 'dark' ? '#9ca3af' : '#6b7280'; ctx.textAlign = "center";
             ctx.fillText("Sem gastos para exibir no período.", ctx.canvas.width / 2, ctx.canvas.height / 2);
             return;
         }
 
         categoryChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Gastos por Categoria', data: data,
-                    backgroundColor: ['#ef4444','#f97316','#f59e0b','#eab308','#84cc16','#22c55e','#10b981','#14b8a6','#06b6d4','#0ea5e9','#3b82f6','#6366f1','#8b5cf6','#a855f7'],
-                    hoverOffset: 4
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { position: 'top' }, title: { display: true, text: 'Distribuição de Gastos' } }
-            }
+            type: 'doughnut', data: { labels: labels, datasets: [{ label: 'Gastos por Categoria', data: data, backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', '#22c55e', '#10b981', '#14b8a6', '#06b6d4', '#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7'], hoverOffset: 4 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { color: '#374151' } }, title: { display: true, text: 'Distribuição de Gastos', color: '#374151' } } }
         });
     }
 
-    // --- FUNÇÕES AUXILIARES DE RENDERIZAÇÃO ---
+    // --- FUNÇÕES AUXILIARES ---
     function updatePeriodSelectors() {
         availablePeriods.clear();
         allAccounts.forEach(acc => {
@@ -486,36 +478,36 @@ function handleAuthentication(auth) {
                 availablePeriods.add(`${year}-${month}`);
             }
         });
-
         const sortedPeriods = Array.from(availablePeriods).sort().reverse();
         const uniqueYears = [...new Set(sortedPeriods.map(p => p.split('-')[0]))];
-        
         const currentYearValue = yearSelector.value;
         yearSelector.innerHTML = uniqueYears.map(y => `<option value="${y}">${y}</option>`).join('');
-        
-        if (uniqueYears.includes(currentYearValue)) {
-            yearSelector.value = currentYearValue;
-        } else if (uniqueYears.length > 0) {
-            yearSelector.value = uniqueYears[0];
-        }
-
+        if (uniqueYears.includes(currentYearValue)) yearSelector.value = currentYearValue;
+        else if (uniqueYears.length > 0) yearSelector.value = uniqueYears[0];
         populateMonthsForSelectedYear();
     }
-    
+
     function populateMonthsForSelectedYear() {
         const selectedYear = yearSelector.value;
-        if (!selectedYear) return;
-
+        if (!selectedYear) { monthSelector.innerHTML = ''; return; }
         const sortedPeriods = Array.from(availablePeriods).sort().reverse();
         const monthsForYear = [...new Set(sortedPeriods.filter(p => p.startsWith(selectedYear)).map(p => p.split('-')[1]))];
-        
         const currentMonthValue = monthSelector.value;
         monthSelector.innerHTML = monthsForYear.map(m => `<option value="${m}">${monthNames[parseInt(m, 10) - 1]}</option>`).join('');
+        if (monthsForYear.includes(currentMonthValue)) monthSelector.value = currentMonthValue;
+        else if (monthsForYear.length > 0) monthSelector.value = monthsForYear[0];
+    }
 
-        if(monthsForYear.includes(currentMonthValue)){
-            monthSelector.value = currentMonthValue;
-        } else if (monthsForYear.length > 0){
-            monthSelector.value = monthsForYear[0];
+    function setToCurrentMonth() {
+        const now = new Date();
+        const currentYear = now.getFullYear().toString();
+        const currentMonth = (now.getMonth() + 1).toString().padStart(2, '0');
+        if (Array.from(yearSelector.options).some(opt => opt.value === currentYear)) {
+            yearSelector.value = currentYear;
+            populateMonthsForSelectedYear();
+            if (Array.from(monthSelector.options).some(opt => opt.value === currentMonth)) {
+                monthSelector.value = currentMonth;
+            }
         }
     }
 
@@ -546,36 +538,28 @@ function handleAuthentication(auth) {
         });
     }
 
-// VERSÃO CORRIGIDA PARA SUBSTITUIR (5.D)
-function createAccountRow(account) {
-    const row = document.createElement('tr');
-    const createCell = (child) => { const cell = row.insertCell(); cell.appendChild(child); };
-    
-    // --- Células da Tabela ---
-    createCell(createInputElement('text', account.description, (e) => updateAccount(account.id, { description: e.target.value })));
-    
-    // CORREÇÃO APLICADA AQUI:
-    // Agora o seletor de categoria na tabela também usa a sua lista personalizada.
-    const categoryOptions = ['Outros', ...userCategories.map(c => c.name)];
-    createCell(createSelectElement(categoryOptions, account.category || 'Outros', (e) => updateAccount(account.id, { category: e.target.value })));
-    
-    createCell(createSelectElement([TIPO_PAGAR, TIPO_RECEBER], account.type, (e) => updateAccount(account.id, { type: e.target.value })));
-    createCell(createInputElement('number', account.value, (e) => updateAccount(account.id, { value: parseFloat(e.target.value) || 0 })));
-    createCell(createInputElement('date', account.date, (e) => updateAccount(account.id, { date: e.target.value })));
-    createCell(createInputElement('text', account.installment, (e) => updateAccount(account.id, { installment: e.target.value })));
-    
-    const statusSelect = createSelectElement([STATUS_PENDENTE, STATUS_PAGO, STATUS_RECEBIDO], account.status, (e) => {
-        applyStatusClass(e.target, e.target.value);
-        updateAccount(account.id, { status: e.target.value });
-    });
-    statusSelect.className = 'status-select';
-    applyStatusClass(statusSelect, account.status);
-    createCell(statusSelect);
+    function createAccountRow(account) {
+        const row = document.createElement('tr');
+        const createCell = (child) => { const cell = row.insertCell(); cell.appendChild(child); };
+        createCell(createInputElement('text', account.description, (e) => updateAccount(account.id, { description: e.target.value })));
+        const categoryOptions = ['Outros', ...userCategories.map(c => c.name)];
+        createCell(createSelectElement(categoryOptions, account.category || 'Outros', (e) => updateAccount(account.id, { category: e.target.value })));
+        createCell(createSelectElement([TIPO_PAGAR, TIPO_RECEBER], account.type, (e) => updateAccount(account.id, { type: e.target.value })));
+        createCell(createInputElement('number', account.value, (e) => updateAccount(account.id, { value: parseFloat(e.target.value) || 0 })));
+        createCell(createInputElement('date', account.date, (e) => updateAccount(account.id, { date: e.target.value })));
+        createCell(createInputElement('text', account.installment, (e) => updateAccount(account.id, { installment: e.target.value })));
+        const statusSelect = createSelectElement([STATUS_PENDENTE, STATUS_PAGO, STATUS_RECEBIDO], account.status, (e) => {
+            applyStatusClass(e.target, e.target.value);
+            updateAccount(account.id, { status: e.target.value });
+        });
+        statusSelect.className = 'status-select';
+        applyStatusClass(statusSelect, account.status);
+        createCell(statusSelect);
+        const actionsCell = row.insertCell();
+        actionsCell.appendChild(createDeleteButton(() => deleteAccount(account.id)));
+        return row;
+    }
 
-    const actionsCell = row.insertCell();
-    actionsCell.appendChild(createDeleteButton(() => deleteAccount(account.id)));
-    return row;
-}
     function createInputElement(type, value, changeHandler) {
         const input = document.createElement('input');
         input.type = type;
@@ -591,7 +575,7 @@ function createAccountRow(account) {
         select.addEventListener('change', changeHandler);
         return select;
     }
-    
+
     function createTotalsRow(monthAccounts) {
         const totalsRow = document.createElement('tr');
         const totalsCell = totalsRow.insertCell();
@@ -607,7 +591,7 @@ function createAccountRow(account) {
         button.addEventListener('click', onClick);
         return button;
     }
-    
+
     function applyStatusClass(element, status) {
         element.classList.remove(`status-${STATUS_PENDENTE}`, `status-${STATUS_PAGO}`, `status-${STATUS_RECEBIDO}`);
         if (status) element.classList.add(`status-${status}`);
@@ -644,7 +628,7 @@ function createAccountRow(account) {
         accountsTableBody.innerHTML = `<tr><td colspan="8" class="text-center text-gray-500 py-8">Nenhuma conta encontrada. <button onclick="openModal()" class="text-indigo-600 hover:underline">Adicione uma</button> para começar.</td></tr>`;
     }
 
-    // --- OPERAÇÕES COM O FIREBASE (CRUD) ---
+    // --- OPERAÇÕES CRUD COM CONTAS ---
     async function addAccount(accountData) {
         if (!accountsCollection) return;
         try { await addDoc(accountsCollection, { ...accountData, createdAt: serverTimestamp() }); }
@@ -664,61 +648,48 @@ function createAccountRow(account) {
         try { await deleteDoc(accountDocRef); }
         catch (error) { console.error("Error deleting account: ", error); }
     }
-    // CÓDIGO PARA ADICIONAR (5.C.1) - Nova seção de lógica
-// --- OPERAÇÕES COM CATEGORIAS (CRUD) ---
 
-function listenForCategoryChanges() {
-    if (unsubscribeCategories) unsubscribeCategories();
-
-    unsubscribeCategories = onSnapshot(categoriesCollection, (snapshot) => {
-        userCategories = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        userCategories.sort((a, b) => a.name.localeCompare(b.name)); // Ordena alfabeticamente
-        renderCategoryList();
-    });
-}
-
-function renderCategoryList() {
-    categoryListContainer.innerHTML = '';
-    if (userCategories.length === 0) {
-        categoryListContainer.innerHTML = `<p class="text-gray-500 text-center">Nenhuma categoria personalizada. Adicione uma acima.</p>`;
-        return;
+    // --- OPERAÇÕES CRUD COM CATEGORIAS ---
+    function renderCategoryList() {
+        categoryListContainer.innerHTML = '';
+        if (userCategories.length === 0) {
+            categoryListContainer.innerHTML = `<p class="text-gray-500 text-center">Nenhuma categoria personalizada.</p>`;
+            return;
+        }
+        userCategories.forEach(cat => {
+            const categoryDiv = document.createElement('div');
+            categoryDiv.className = 'flex justify-between items-center p-2 bg-gray-100 dark:bg-gray-600 rounded-md';
+            categoryDiv.innerHTML = `<span>${cat.name}</span>`;
+            const deleteBtn = document.createElement('button');
+            deleteBtn.innerHTML = '&times;';
+            deleteBtn.title = 'Excluir categoria';
+            deleteBtn.className = 'btn-delete-custom';
+            deleteBtn.onclick = () => deleteCategory(cat.id);
+            categoryDiv.appendChild(deleteBtn);
+            categoryListContainer.appendChild(categoryDiv);
+        });
     }
-    userCategories.forEach(cat => {
-        const categoryDiv = document.createElement('div');
-        categoryDiv.className = 'flex justify-between items-center p-2 bg-gray-100 rounded-md';
-        categoryDiv.innerHTML = `<span>${cat.name}</span>`;
 
-        const deleteBtn = document.createElement('button');
-        deleteBtn.innerHTML = '&times;';
-        deleteBtn.title = 'Excluir categoria';
-        deleteBtn.className = 'btn-delete-custom';
-        deleteBtn.onclick = () => deleteCategory(cat.id);
-
-        categoryDiv.appendChild(deleteBtn);
-        categoryListContainer.appendChild(categoryDiv);
+    addCategoryForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const categoryName = newCategoryNameInput.value.trim();
+        if (categoryName) {
+            await addCategory({ name: categoryName });
+            newCategoryNameInput.value = '';
+        }
     });
-}
 
-addCategoryForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const categoryName = newCategoryNameInput.value.trim();
-    if (categoryName) {
-        await addCategory({ name: categoryName });
-        newCategoryNameInput.value = '';
+    async function addCategory(categoryData) {
+        if (!categoriesCollection) return;
+        try { await addDoc(categoriesCollection, categoryData); }
+        catch (error) { console.error("Error adding category: ", error); }
     }
-});
 
-async function addCategory(categoryData) {
-    if (!categoriesCollection) return;
-    try { await addDoc(categoriesCollection, categoryData); }
-    catch (error) { console.error("Error adding category: ", error); }
-}
-
-async function deleteCategory(docId) {
-    if (!categoriesCollection || !confirm('Tem certeza que quer apagar esta categoria?')) return;
-    try { await deleteDoc(doc(categoriesCollection, docId)); }
-    catch (error) { console.error("Error deleting category: ", error); }
-}
+    async function deleteCategory(docId) {
+        if (!categoriesCollection || !confirm('Tem certeza que quer apagar esta categoria?')) return;
+        try { await deleteDoc(doc(categoriesCollection, docId)); }
+        catch (error) { console.error("Error deleting category: ", error); }
+    }
 
     // --- INICIA A APLICAÇÃO ---
     loadTheme();
