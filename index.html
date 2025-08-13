@@ -112,10 +112,15 @@
     </style>
 </head>
 <body class="p-4">
-    <div class="container mx-auto bg-gray-50 p-6 rounded-xl shadow-lg relative">
-        <div class="absolute top-6 right-6">
-    <button id="theme-toggle-btn" title="Alternar tema" class="p-2 rounded-full text-gray-500 hover:bg-gray-200 focus:outline-none">
+    <div id="app-container" class="container hidden mx-auto bg-gray-50 p-6 rounded-xl shadow-lg relative">
+       <div id="user-info-header" class="absolute top-6 right-6 flex items-center gap-4">
+    <span id="user-email-display" class="text-sm text-gray-600 dark:text-gray-300"></span>
+    <button id="logout-btn" title="Sair" class="p-2 rounded-full text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+    </button>
+    <button id="theme-toggle-btn" title="Alternar tema" class="p-2 rounded-full text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none">
         </button>
+</div>
 </div>
         <h1 class="text-3xl font-bold text-center text-indigo-700 mb-8">CONTROLE FINANCEIRO</h1>
         <div class="text-center mb-6">
@@ -183,237 +188,140 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, serverTimestamp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // --- CONFIGURAÇÃO E CONSTANTES GLOBAIS ---
-    const firebaseConfig = {
-        apiKey: "AIzaSyCaGjxtY3zdrWpH05TQqS2v6eNQWuZfkRE",
-        authDomain: "contas-1eb87.firebaseapp.com",
-        projectId: "contas-1eb87",
-        storageBucket: "contas-1eb87.firebasestorage.app",
-        messagingSenderId: "463381541875",
-        appId: "1:463381541875:web:1f15a1fd384a3b510b5886"
-    };
-    const STATUS_PENDENTE = 'Pendente', STATUS_PAGO = 'Pago', STATUS_RECEBIDO = 'Recebido';
-    const TIPO_PAGAR = 'Pagar', TIPO_RECEBER = 'Receber';
+    // --- CONFIGURAÇÃO E CONSTANTES ---
+    const firebaseConfig = { apiKey: "AIzaSyCaGjxtY3zdrWpH05TQqS2v6eNQWuZfkRE", authDomain: "contas-1eb87.firebaseapp.com", projectId: "contas-1eb87", storageBucket: "contas-1eb87.firebasestorage.app", messagingSenderId: "463381541875", appId: "1:463381541875:web:1f15a1fd384a3b510b5886" };
+    const STATUS_PENDENTE = 'Pendente', STATUS_PAGO = 'Pago', STATUS_RECEBIDO = 'Recebido', TIPO_PAGAR = 'Pagar', TIPO_RECEBER = 'Receber';
     const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
     // --- ELEMENTOS DO DOM (HTML) ---
-    const accountsTableBody = document.querySelector('#accounts-table-body'), userIdDisplay = document.getElementById('user-id-display'), modal = document.getElementById('add-account-modal'), modalCloseBtn = document.getElementById('modal-close-btn'), modalCancelBtn = document.getElementById('modal-cancel-btn'), addAccountForm = document.getElementById('add-account-form'), formTypeSelect = document.getElementById('form-type'), formStatusSelect = document.getElementById('form-status'), searchInput = document.getElementById('search-input'), monthSelector = document.getElementById('month-selector'), yearSelector = document.getElementById('year-selector'), fabAddButton = document.getElementById('fab-add-account'), manageCategoriesBtn = document.getElementById('manage-categories-btn'), categoryModal = document.getElementById('manage-categories-modal'), categoryModalCloseBtn = document.getElementById('category-modal-close-btn'), addCategoryForm = document.getElementById('add-category-form'), newCategoryNameInput = document.getElementById('form-new-category-name'), categoryListContainer = document.getElementById('category-list-container'), themeToggleBtn = document.getElementById('theme-toggle-btn');
+    const appContainer = document.getElementById('app-container');
+    const authScreen = document.getElementById('auth-screen');
+    const authForm = document.getElementById('auth-form');
+    const authEmailInput = document.getElementById('auth-email');
+    const authPasswordInput = document.getElementById('auth-password');
+    const authSubmitBtn = document.getElementById('auth-submit-btn');
+    const authToggleLink = document.getElementById('auth-toggle-link');
+    const authTitle = document.getElementById('auth-title');
+    const authError = document.getElementById('auth-error');
+    const logoutBtn = document.getElementById('logout-btn');
+    const userEmailDisplay = document.getElementById('user-email-display');
+    const accountsTableBody = document.querySelector('#accounts-table-body'), modal = document.getElementById('add-account-modal'), modalCloseBtn = document.getElementById('modal-close-btn'), modalCancelBtn = document.getElementById('modal-cancel-btn'), addAccountForm = document.getElementById('add-account-form'), formTypeSelect = document.getElementById('form-type'), formStatusSelect = document.getElementById('form-status'), searchInput = document.getElementById('search-input'), monthSelector = document.getElementById('month-selector'), yearSelector = document.getElementById('year-selector'), fabAddButton = document.getElementById('fab-add-account'), manageCategoriesBtn = document.getElementById('manage-categories-btn'), categoryModal = document.getElementById('manage-categories-modal'), categoryModalCloseBtn = document.getElementById('category-modal-close-btn'), addCategoryForm = document.getElementById('add-category-form'), newCategoryNameInput = document.getElementById('form-new-category-name'), categoryListContainer = document.getElementById('category-list-container'), themeToggleBtn = document.getElementById('theme-toggle-btn');
 
     // --- VARIÁVEIS DE ESTADO ---
-    let db, accountsCollection, categoriesCollection, unsubscribe, unsubscribeCategories;
+    let db, auth, accountsCollection, categoriesCollection, unsubscribe, unsubscribeCategories;
     let allAccounts = [], userCategories = [];
     let categoryChart = null;
     let isInitialLoad = true;
+    let isRegisterMode = false;
 
-    // --- LÓGICA DO TEMA (DARK MODE) ---
-    const sunIcon = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>`, moonIcon = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>`;
-    function applyTheme(theme) {
-        document.documentElement.classList.toggle('dark', theme === 'dark');
-        themeToggleBtn.innerHTML = theme === 'dark' ? sunIcon : moonIcon;
-        localStorage.setItem('theme', theme);
-        if (categoryChart) {
-            categoryChart.options.plugins.legend.labels.color = theme === 'dark' ? '#f3f4f6' : '#374151';
-            categoryChart.options.plugins.title.color = theme === 'dark' ? '#f3f4f6' : '#374151';
-            categoryChart.update();
+    // --- LÓGICA DE AUTENTICAÇÃO ---
+    function toggleAuthMode() {
+        isRegisterMode = !isRegisterMode;
+        authError.textContent = '';
+        authTitle.textContent = isRegisterMode ? 'Criar nova conta' : 'Entrar na sua conta';
+        authSubmitBtn.textContent = isRegisterMode ? 'Registar' : 'Entrar';
+        authToggleLink.textContent = isRegisterMode ? 'Já tem uma conta? Entre' : 'Não tem uma conta? Registre-se';
+    }
+
+    authToggleLink.addEventListener('click', (e) => { e.preventDefault(); toggleAuthMode(); });
+
+    authForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        authError.textContent = '';
+        const email = authEmailInput.value;
+        const password = authPasswordInput.value;
+
+        try {
+            if (isRegisterMode) {
+                await createUserWithEmailAndPassword(auth, email, password);
+            } else {
+                await signInWithEmailAndPassword(auth, email, password);
+            }
+            // onAuthStateChanged irá tratar do resto
+        } catch (error) {
+            console.error("Authentication error:", error.code);
+            authError.textContent = getAuthErrorMessage(error.code);
+        }
+    });
+
+    async function handleLogout() {
+        try {
+            await signOut(auth);
+            // onAuthStateChanged irá tratar do resto
+        } catch (error) {
+            console.error("Logout error:", error);
         }
     }
-    themeToggleBtn.addEventListener('click', () => applyTheme(localStorage.getItem('theme') === 'light' ? 'dark' : 'light'));
-    function loadTheme() { applyTheme(localStorage.getItem('theme') || 'light'); }
+    
+    logoutBtn.addEventListener('click', handleLogout);
 
-    // --- LÓGICA DOS MODAIS E FORMULÁRIOS ---
-    function openModal() { addAccountForm.reset(); document.getElementById('form-date').value = new Date().toISOString().split('T')[0]; const categorySelect = document.getElementById('form-category'); categorySelect.innerHTML = '<option value="Outros">Outros</option>' + userCategories.map(cat => `<option value="${cat.name}">${cat.name}</option>`).join(''); modal.classList.add('visible'); formTypeSelect.dispatchEvent(new Event('change')); }
-    function closeModal() { modal.classList.remove('visible'); }
-    function openCategoryModal() { categoryModal.classList.add('visible'); }
-    function closeCategoryModal() { categoryModal.classList.remove('visible'); }
-    modalCloseBtn.addEventListener('click', closeModal);
-    modalCancelBtn.addEventListener('click', closeModal);
-    fabAddButton.addEventListener('click', openModal);
-    manageCategoriesBtn.addEventListener('click', openCategoryModal);
-    categoryModalCloseBtn.addEventListener('click', closeCategoryModal);
-    addAccountForm.addEventListener('submit', async (e) => { e.preventDefault(); const newAccount = { description: document.getElementById('form-description').value, category: document.getElementById('form-category').value, value: parseFloat(document.getElementById('form-value').value) || 0, date: document.getElementById('form-date').value, installment: document.getElementById('form-installment').value || 'N/A', type: document.getElementById('form-type').value, status: document.getElementById('form-status').value }; await addAccount(newAccount); closeModal(); });
-    formTypeSelect.addEventListener('change', (e) => { const type = e.target.value; formStatusSelect.innerHTML = (type === TIPO_RECEBER) ? `<option value="${STATUS_PENDENTE}">${STATUS_PENDENTE}</option><option value="${STATUS_RECEBIDO}">${STATUS_RECEBIDO}</option>` : `<option value="${STATUS_PENDENTE}">${STATUS_PENDENTE}</option><option value="${STATUS_PAGO}">${STATUS_PAGO}</option>`; });
-
-    // --- LÓGICA DE FILTROS E BUSCA ---
-    searchInput.addEventListener('input', renderAll);
-    yearSelector.addEventListener('change', () => { populateMonthsForSelectedYear(true); renderAll(); });
-    monthSelector.addEventListener('change', renderAll);
-
-    // --- FUNÇÃO PRINCIPAL DE RENDERIZAÇÃO ---
-    function renderAll() {
-    if (!allAccounts) return;
-    const searchTerm = searchInput.value.toLowerCase();
-    const accountsFromSearch = searchTerm ? allAccounts.filter(account => account.description.toLowerCase().includes(searchTerm)) : allAccounts;
-
-    // A lógica de renderização da tabela já lida com o caso de não haver contas.
-    renderTable(accountsFromSearch);
-
-    // Atualiza o dashboard e o gráfico com base na seleção atual, se houver uma.
-    const selectedYear = yearSelector.value;
-    const selectedMonth = monthSelector.value;
-    if (selectedYear && selectedMonth) {
-        const accountsForPeriod = allAccounts.filter(account => account.date && account.date.startsWith(`${selectedYear}-${selectedMonth}`));
-        updateDashboard(accountsForPeriod);
-        renderCategoryChart(accountsForPeriod);
-    } else {
-        // Se não houver período selecionado (porque não há dados), zera o dashboard.
-        updateDashboard([]);
-        renderCategoryChart([]);
-    }
-}
-
-    // --- RENDERIZAÇÃO DA TABELA ---
-    function renderTable(accountsToRender) {
-        accountsTableBody.innerHTML = '';
-        if (accountsToRender.length === 0) {
-            if (searchInput.value) { showError(`Nenhuma conta encontrada para "${searchInput.value}".`); }
-            else { showEmptyMessage(); }
-            return;
+    function getAuthErrorMessage(errorCode) {
+        switch (errorCode) {
+            case 'auth/invalid-email': return 'Formato de e-mail inválido.';
+            case 'auth/user-not-found': return 'Nenhuma conta encontrada com este e-mail.';
+            case 'auth/wrong-password': return 'Senha incorreta. Tente novamente.';
+            case 'auth/weak-password': return 'A senha deve ter pelo menos 6 caracteres.';
+            case 'auth/email-already-in-use': return 'Este e-mail já está em uso por outra conta.';
+            default: return 'Ocorreu um erro. Tente novamente.';
         }
-        const accountsByMonth = groupAccountsByMonth(accountsToRender);
-        const sortedMonthKeys = Object.keys(accountsByMonth).sort((a, b) => new Date(b.split('/')[1], monthNames.indexOf(b.split('/')[0])) - new Date(a.split('/')[1], monthNames.indexOf(a.split('/')[0])));
-        const now = new Date(), currentMonthKey = `${monthNames[now.getMonth()]}/${now.getFullYear()}`;
-        sortedMonthKeys.forEach(monthKey => appendMonthSection(monthKey, accountsByMonth[monthKey], monthKey === currentMonthKey));
     }
-
-    // --- INICIALIZAÇÃO E AUTENTICAÇÃO FIREBASE ---
+    
+    // --- LÓGICA PRINCIPAL DO APP ---
     function initializeAppAndConnect() {
         try {
             const app = initializeApp(firebaseConfig);
             db = getFirestore(app);
-            handleAuthentication(getAuth(app));
-        } catch (error) { showError("Falha ao iniciar o Firebase."); }
-    }
+            auth = getAuth(app);
+            // A função principal agora é o onAuthStateChanged
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    // USUÁRIO LOGADO
+                    appContainer.classList.remove('hidden');
+                    authScreen.classList.add('hidden');
+                    userEmailDisplay.textContent = user.email;
 
-    function handleAuthentication(auth) {
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                isInitialLoad = true;
-                userIdDisplay.textContent = `Conectado (ID: ${user.uid.substring(0, 6)}...)`;
-                accountsCollection = collection(db, 'contas', user.uid, 'items');
-                categoriesCollection = collection(db, 'contas', user.uid, 'user_categories');
-                listenForAccountChanges();
-                listenForCategoryChanges();
-            } else {
-                try { await signInAnonymously(auth); } catch (error) { showError("Falha na autenticação."); }
-            }
-        });
-    }
-
-    // --- LEITURA DE DADOS DO FIREBASE ---
-    function listenForAccountChanges() {
-        if (unsubscribe) unsubscribe();
-        unsubscribe = onSnapshot(accountsCollection, (snapshot) => {
-            allAccounts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            updatePeriodSelectors(isInitialLoad);
-            renderAll();
-            if (isInitialLoad) isInitialLoad = false;
-        }, (error) => showError("Erro ao carregar os dados."));
-    }
-
-    function listenForCategoryChanges() {
-        if (unsubscribeCategories) unsubscribeCategories();
-        unsubscribeCategories = onSnapshot(categoriesCollection, (snapshot) => {
-            userCategories = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a, b) => a.name.localeCompare(b.name));
-            renderCategoryList();
-        });
+                    isInitialLoad = true;
+                    accountsCollection = collection(db, 'contas', user.uid, 'items');
+                    categoriesCollection = collection(db, 'contas', user.uid, 'user_categories');
+                    listenForAccountChanges();
+                    listenForCategoryChanges();
+                } else {
+                    // USUÁRIO DESLOGADO
+                    appContainer.classList.add('hidden');
+                    authScreen.classList.remove('hidden');
+                    userEmailDisplay.textContent = '';
+                    // Limpa os dados e listeners antigos para evitar erros
+                    if (unsubscribe) unsubscribe();
+                    if (unsubscribeCategories) unsubscribeCategories();
+                    allAccounts = [];
+                    userCategories = [];
+                    renderAll();
+                }
+            });
+        } catch (error) {
+            console.error("Falha ao iniciar o Firebase:", error);
+        }
     }
     
-    // --- LÓGICA DO DASHBOARD, GRÁFICOS E PERÍODOS ---
-    function updateDashboard(accounts) {
-        const totals = calculateMonthlyTotals(accounts), balance = totals.receivedAmount - totals.paidAmount;
-        const formatCurrency = (value) => `R$ ${value.toFixed(2).replace('.', ',')}`;
-        document.getElementById('dashboard-to-receive').textContent = formatCurrency(totals.toReceive);
-        document.getElementById('dashboard-to-pay').textContent = formatCurrency(totals.toPay);
-        document.getElementById('dashboard-paid').textContent = formatCurrency(totals.receivedAmount);
-        document.getElementById('dashboard-balance').textContent = formatCurrency(balance);
-        const balanceElement = document.getElementById('dashboard-balance').parentElement;
-        balanceElement.classList.toggle('card-red', balance < 0);
-        balanceElement.classList.toggle('card-blue', balance >= 0);
-    }
+    // ... (O restante das suas funções de renderização, CRUD, etc. permanece o mesmo) ...
+    // --- COLE AQUI TODAS AS SUAS OUTRAS FUNÇÕES ---
+    // (openModal, closeModal, renderAll, renderTable, updateDashboard, etc.)
 
-    function renderCategoryChart(accounts) {
-        const ctx = document.getElementById('category-chart').getContext('2d');
-        const expensesByCategory = accounts.filter(acc => acc.type === TIPO_PAGAR && acc.status !== STATUS_PENDENTE).reduce((acc, current) => { const category = current.category || 'Outros'; acc[category] = (acc[category] || 0) + current.value; return acc; }, {});
-        const labels = Object.keys(expensesByCategory), data = Object.values(expensesByCategory);
-        if (categoryChart) categoryChart.destroy();
-        if (labels.length === 0) { const theme = localStorage.getItem('theme') || 'light'; ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); ctx.font = "16px Inter"; ctx.fillStyle = theme === 'dark' ? '#9ca3af' : '#6b7280'; ctx.textAlign = "center"; ctx.fillText("Sem gastos para exibir no período.", ctx.canvas.width / 2, ctx.canvas.height / 2); return; }
-        categoryChart = new Chart(ctx, { type: 'doughnut', data: { labels, datasets: [{ data, backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', '#22c55e', '#10b981', '#14b8a6', '#06b6d4', '#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7'], hoverOffset: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: {} }, title: { display: true, text: 'Distribuição de Gastos' } } } });
-        applyTheme(localStorage.getItem('theme') || 'light');
-    }
-
-    function updatePeriodSelectors(isFirstRun) {
-        const savedYear = yearSelector.value, savedMonth = monthSelector.value;
-        const availablePeriods = new Set();
-        allAccounts.forEach(acc => acc.date && availablePeriods.add(acc.date.substring(0, 7)));
-        const sortedPeriods = Array.from(availablePeriods).sort().reverse();
-        const uniqueYears = [...new Set(sortedPeriods.map(p => p.split('-')[0]))];
-        yearSelector.innerHTML = uniqueYears.map(y => `<option value="${y}">${y}</option>`).join('');
-
-        if (isFirstRun) {
-            const currentYear = new Date().getFullYear().toString();
-            yearSelector.value = uniqueYears.includes(currentYear) ? currentYear : (uniqueYears[0] || '');
-        } else {
-            yearSelector.value = uniqueYears.includes(savedYear) ? savedYear : (uniqueYears[0] || '');
-        }
-        populateMonthsForSelectedYear(isFirstRun, savedMonth);
-    }
-
-    function populateMonthsForSelectedYear(isFirstRun, savedMonth) {
-        const selectedYear = yearSelector.value;
-        if (!selectedYear) { monthSelector.innerHTML = ''; return; }
-        const availablePeriods = new Set();
-        allAccounts.forEach(acc => acc.date && availablePeriods.add(acc.date.substring(0, 7)));
-        const monthsForYear = [...new Set(Array.from(availablePeriods).filter(p => p.startsWith(selectedYear)).map(p => p.split('-')[1]))].sort();
-        monthSelector.innerHTML = monthsForYear.map(m => `<option value="${m}">${monthNames[parseInt(m, 10) - 1]}</option>`).join('');
-
-        if (isFirstRun) {
-            const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, '0');
-            monthSelector.value = monthsForYear.includes(currentMonth) ? currentMonth : (monthsForYear[0] || '');
-        } else {
-            monthSelector.value = monthsForYear.includes(savedMonth) ? savedMonth : (monthsForYear[0] || '');
-        }
-    }
-
-    // --- FUNÇÕES AUXILIARES ---
-    function appendMonthSection(monthKey, monthAccounts, isCurrentMonth) {
-        const contentRowsClassName = `content-${monthKey.replace(/[^a-zA-Z0-9]/g, '-')}`;
-        const headerRow = accountsTableBody.insertRow();
-        headerRow.className = 'month-separator-row';
-        headerRow.classList.toggle('current-month-header', isCurrentMonth);
-        headerRow.classList.toggle('collapsed', !isCurrentMonth);
-        const headerCell = headerRow.insertCell();
-        headerCell.colSpan = 8;
-        headerCell.innerHTML = `${monthKey} <span class="toggle-icon">▼</span>`;
-        monthAccounts.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(account => { const row = createAccountRow(account); row.className = `${contentRowsClassName}`; row.classList.toggle('hidden-row', !isCurrentMonth); accountsTableBody.appendChild(row); });
-        const totalsRow = createTotalsRow(monthAccounts);
-        totalsRow.className = `monthly-totals-row ${contentRowsClassName}`;
-        totalsRow.classList.toggle('hidden-row', !isCurrentMonth);
-        accountsTableBody.appendChild(totalsRow);
-        headerRow.addEventListener('click', () => { headerRow.classList.toggle('collapsed'); document.querySelectorAll(`.${contentRowsClassName}`).forEach(row => row.classList.toggle('hidden-row')); });
-    }
-
-    function createAccountRow(account) {
-        const row = document.createElement('tr');
-        const createCell = (child) => { const cell = row.insertCell(); cell.appendChild(child); };
-        createCell(createInputElement('text', account.description, (e) => updateAccount(account.id, { description: e.target.value })));
-        const categoryOptions = ['Outros', ...userCategories.map(c => c.name)];
-        createCell(createSelectElement(categoryOptions, account.category || 'Outros', (e) => updateAccount(account.id, { category: e.target.value })));
-        createCell(createSelectElement([TIPO_PAGAR, TIPO_RECEBER], account.type, (e) => updateAccount(account.id, { type: e.target.value })));
-        createCell(createInputElement('number', account.value, (e) => updateAccount(account.id, { value: parseFloat(e.target.value) || 0 })));
-        createCell(createInputElement('date', account.date, (e) => updateAccount(account.id, { date: e.target.value })));
-        createCell(createInputElement('text', account.installment, (e) => updateAccount(account.id, { installment: e.target.value })));
-        const statusSelect = createSelectElement([STATUS_PENDENTE, STATUS_PAGO, STATUS_RECEBIDO], account.status, (e) => { applyStatusClass(e.target, e.target.value); updateAccount(account.id, { status: e.target.value }); });
-        statusSelect.className = 'status-select';
-        applyStatusClass(statusSelect, account.status);
-        createCell(statusSelect);
-        const actionsCell = row.insertCell();
-        actionsCell.appendChild(createDeleteButton(() => deleteAccount(account.id)));
-        return row;
-    }
-
+    // --- FUNÇÕES DE RENDERIZAÇÃO E LÓGICA (COPIE E COLE TODAS AS SUAS FUNÇÕES ANTIGAS AQUI) ---
+    const sunIcon = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>`, moonIcon = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>`; function applyTheme(theme) { document.documentElement.classList.toggle('dark', theme === 'dark'); themeToggleBtn.innerHTML = theme === 'dark' ? sunIcon : moonIcon; localStorage.setItem('theme', theme); if (categoryChart) { categoryChart.options.plugins.legend.labels.color = theme === 'dark' ? '#f3f4f6' : '#374151'; categoryChart.options.plugins.title.color = theme === 'dark' ? '#f3f4f6' : '#374151'; categoryChart.update(); } } themeToggleBtn.addEventListener('click', () => applyTheme(localStorage.getItem('theme') === 'light' ? 'dark' : 'light')); function loadTheme() { applyTheme(localStorage.getItem('theme') || 'light'); }
+    function renderAll() { if (!allAccounts) return; const searchTerm = searchInput.value.toLowerCase(); const accountsFromSearch = searchTerm ? allAccounts.filter(account => account.description.toLowerCase().includes(searchTerm)) : allAccounts; renderTable(accountsFromSearch); const selectedYear = yearSelector.value; const selectedMonth = monthSelector.value; if (selectedYear && selectedMonth) { const accountsForPeriod = allAccounts.filter(account => account.date && account.date.startsWith(`${selectedYear}-${selectedMonth}`)); updateDashboard(accountsForPeriod); renderCategoryChart(accountsForPeriod); } else { updateDashboard([]); renderCategoryChart([]); } }
+    function renderTable(accountsToRender) { accountsTableBody.innerHTML = ''; if (accountsToRender.length === 0) { if (searchInput.value) { showError(`Nenhuma conta encontrada para "${searchInput.value}".`); } else { showEmptyMessage(); } return; } const accountsByMonth = groupAccountsByMonth(accountsToRender); const sortedMonthKeys = Object.keys(accountsByMonth).sort((a, b) => new Date(b.split('/')[1], monthNames.indexOf(b.split('/')[0])) - new Date(a.split('/')[1], monthNames.indexOf(a.split('/')[0]))); const now = new Date(), currentMonthKey = `${monthNames[now.getMonth()]}/${now.getFullYear()}`; sortedMonthKeys.forEach(monthKey => appendMonthSection(monthKey, accountsByMonth[monthKey], monthKey === currentMonthKey)); }
+    function listenForAccountChanges() { if (unsubscribe) unsubscribe(); unsubscribe = onSnapshot(accountsCollection, (snapshot) => { allAccounts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); updatePeriodSelectors(isInitialLoad); renderAll(); if (isInitialLoad) isInitialLoad = false; }, (error) => showError("Erro ao carregar os dados.")); }
+    function listenForCategoryChanges() { if (unsubscribeCategories) unsubscribeCategories(); unsubscribeCategories = onSnapshot(categoriesCollection, (snapshot) => { userCategories = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a, b) => a.name.localeCompare(b.name)); renderCategoryList(); }); }
+    function updateDashboard(accounts) { const totals = calculateMonthlyTotals(accounts), balance = totals.receivedAmount - totals.paidAmount; const formatCurrency = (value) => `R$ ${value.toFixed(2).replace('.', ',')}`; document.getElementById('dashboard-to-receive').textContent = formatCurrency(totals.toReceive); document.getElementById('dashboard-to-pay').textContent = formatCurrency(totals.toPay); document.getElementById('dashboard-paid').textContent = formatCurrency(totals.receivedAmount); document.getElementById('dashboard-balance').textContent = formatCurrency(balance); const balanceElement = document.getElementById('dashboard-balance').parentElement; balanceElement.classList.toggle('card-red', balance < 0); balanceElement.classList.toggle('card-blue', balance >= 0); }
+    function renderCategoryChart(accounts) { const ctx = document.getElementById('category-chart').getContext('2d'); const expensesByCategory = accounts.filter(acc => acc.type === TIPO_PAGAR && acc.status !== STATUS_PENDENTE).reduce((acc, current) => { const category = current.category || 'Outros'; acc[category] = (acc[category] || 0) + current.value; return acc; }, {}); const labels = Object.keys(expensesByCategory), data = Object.values(expensesByCategory); if (categoryChart) categoryChart.destroy(); if (labels.length === 0) { const theme = localStorage.getItem('theme') || 'light'; ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); ctx.font = "16px Inter"; ctx.fillStyle = theme === 'dark' ? '#9ca3af' : '#6b7280'; ctx.textAlign = "center"; ctx.fillText("Sem gastos para exibir no período.", ctx.canvas.width / 2, ctx.canvas.height / 2); return; } categoryChart = new Chart(ctx, { type: 'doughnut', data: { labels, datasets: [{ data, backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', '#22c55e', '#10b981', '#14b8a6', '#06b6d4', '#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7'], hoverOffset: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: {} }, title: { display: true, text: 'Distribuição de Gastos' } } } }); applyTheme(localStorage.getItem('theme') || 'light'); }
+    function updatePeriodSelectors(isFirstRun) { const savedYear = yearSelector.value, savedMonth = monthSelector.value; const availablePeriods = new Set(); allAccounts.forEach(acc => acc.date && availablePeriods.add(acc.date.substring(0, 7))); const sortedPeriods = Array.from(availablePeriods).sort().reverse(); const uniqueYears = [...new Set(sortedPeriods.map(p => p.split('-')[0]))]; yearSelector.innerHTML = uniqueYears.map(y => `<option value="${y}">${y}</option>`).join(''); if (isFirstRun) { const currentYear = new Date().getFullYear().toString(); yearSelector.value = uniqueYears.includes(currentYear) ? currentYear : (uniqueYears[0] || ''); } else { yearSelector.value = uniqueYears.includes(savedYear) ? savedYear : (uniqueYears[0] || ''); } populateMonthsForSelectedYear(isFirstRun, savedMonth); }
+    function populateMonthsForSelectedYear(isFirstRun, savedMonth) { const selectedYear = yearSelector.value; if (!selectedYear) { monthSelector.innerHTML = ''; return; } const availablePeriods = new Set(); allAccounts.forEach(acc => acc.date && availablePeriods.add(acc.date.substring(0, 7))); const monthsForYear = [...new Set(Array.from(availablePeriods).filter(p => p.startsWith(selectedYear)).map(p => p.split('-')[1]))].sort(); monthSelector.innerHTML = monthsForYear.map(m => `<option value="${m}">${monthNames[parseInt(m, 10) - 1]}</option>`).join(''); if (isFirstRun) { const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, '0'); monthSelector.value = monthsForYear.includes(currentMonth) ? currentMonth : (monthsForYear[0] || ''); } else { monthSelector.value = monthsForYear.includes(savedMonth) ? savedMonth : (monthsForYear[0] || ''); } }
+    function appendMonthSection(monthKey, monthAccounts, isCurrentMonth) { const contentRowsClassName = `content-${monthKey.replace(/[^a-zA-Z0-9]/g, '-')}`; const headerRow = accountsTableBody.insertRow(); headerRow.className = 'month-separator-row'; headerRow.classList.toggle('current-month-header', isCurrentMonth); headerRow.classList.toggle('collapsed', !isCurrentMonth); const headerCell = headerRow.insertCell(); headerCell.colSpan = 8; headerCell.innerHTML = `${monthKey} <span class="toggle-icon">▼</span>`; monthAccounts.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(account => { const row = createAccountRow(account); row.className = `${contentRowsClassName}`; row.classList.toggle('hidden-row', !isCurrentMonth); accountsTableBody.appendChild(row); }); const totalsRow = createTotalsRow(monthAccounts); totalsRow.className = `monthly-totals-row ${contentRowsClassName}`; totalsRow.classList.toggle('hidden-row', !isCurrentMonth); accountsTableBody.appendChild(totalsRow); headerRow.addEventListener('click', () => { headerRow.classList.toggle('collapsed'); document.querySelectorAll(`.${contentRowsClassName}`).forEach(row => row.classList.toggle('hidden-row')); }); }
+    function createAccountRow(account) { const row = document.createElement('tr'); const createCell = (child) => { const cell = row.insertCell(); cell.appendChild(child); }; createCell(createInputElement('text', account.description, (e) => updateAccount(account.id, { description: e.target.value }))); const categoryOptions = ['Outros', ...userCategories.map(c => c.name)]; createCell(createSelectElement(categoryOptions, account.category || 'Outros', (e) => updateAccount(account.id, { category: e.target.value }))); createCell(createSelectElement([TIPO_PAGAR, TIPO_RECEBER], account.type, (e) => updateAccount(account.id, { type: e.target.value }))); createCell(createInputElement('number', account.value, (e) => updateAccount(account.id, { value: parseFloat(e.target.value) || 0 }))); createCell(createInputElement('date', account.date, (e) => updateAccount(account.id, { date: e.target.value }))); createCell(createInputElement('text', account.installment, (e) => updateAccount(account.id, { installment: e.target.value }))); const statusSelect = createSelectElement([STATUS_PENDENTE, STATUS_PAGO, STATUS_RECEBIDO], account.status, (e) => { applyStatusClass(e.target, e.target.value); updateAccount(account.id, { status: e.target.value }); }); statusSelect.className = 'status-select'; applyStatusClass(statusSelect, account.status); createCell(statusSelect); const actionsCell = row.insertCell(); actionsCell.appendChild(createDeleteButton(() => deleteAccount(account.id))); return row; }
     function createInputElement(type, value, changeHandler) { const input = document.createElement('input'); input.type = type; input.value = (type === 'number') ? (value || 0).toFixed(2) : value; if (type === 'number') input.step = '0.01'; input.addEventListener('change', changeHandler); return input; }
     function createSelectElement(options, selectedValue, changeHandler) { const select = document.createElement('select'); select.innerHTML = options.map(opt => `<option value="${opt}" ${selectedValue === opt ? 'selected' : ''}>${opt}</option>`).join(''); select.addEventListener('change', changeHandler); return select; }
     function createTotalsRow(monthAccounts) { const totalsRow = document.createElement('tr'); const totalsCell = totalsRow.insertCell(); totalsCell.colSpan = 8; const monthlyTotals = calculateMonthlyTotals(monthAccounts); totalsCell.innerHTML = `<div class="flex-container flex flex-row justify-between items-center w-full p-1 flex-wrap text-xs md:text-sm"><div><span><strong>Pendentes:</strong> A Pagar <span class="text-red-600">R$ ${monthlyTotals.toPay.toFixed(2).replace('.', ',')}</span></span></div><div><span><strong>Quitados:</strong> Pago <span class="text-green-700">R$ ${monthlyTotals.paidAmount.toFixed(2).replace('.', ',')}</span> | Recebido <span class="text-yellow-600">R$ ${monthlyTotals.receivedAmount.toFixed(2).replace('.', ',')}</span></span></div></div>`; return totalsRow; }
@@ -423,13 +331,9 @@
     function calculateMonthlyTotals(accounts) { return accounts.reduce((totals, account) => { const value = account.value || 0; if (account.type === TIPO_PAGAR && account.status === STATUS_PENDENTE) totals.toPay += value; if (account.type === TIPO_RECEBER && account.status === STATUS_PENDENTE) totals.toReceive += value; if (account.status === STATUS_PAGO) totals.paidAmount += value; if (account.status === STATUS_RECEBIDO) totals.receivedAmount += value; return totals; }, { toPay: 0, toReceive: 0, paidAmount: 0, receivedAmount: 0 }); }
     function showError(message) { accountsTableBody.innerHTML = `<tr><td colspan="8" class="text-center text-red-600 font-bold p-4">${message}</td></tr>`; }
     function showEmptyMessage() { accountsTableBody.innerHTML = `<tr><td colspan="8" class="text-center text-gray-500 py-8">Nenhuma conta encontrada. <button onclick="openModal()" class="text-indigo-600 hover:underline">Adicione uma</button> para começar.</td></tr>`; document.getElementById('dashboard-to-receive').textContent = 'R$ 0,00'; document.getElementById('dashboard-to-pay').textContent = 'R$ 0,00'; document.getElementById('dashboard-paid').textContent = 'R$ 0,00'; document.getElementById('dashboard-balance').textContent = 'R$ 0,00'; }
-
-    // --- OPERAÇÕES CRUD COM CONTAS ---
     async function addAccount(accountData) { try { await addDoc(accountsCollection, { ...accountData, createdAt: serverTimestamp() }); } catch (error) { console.error("Error adding account: ", error); } }
     async function updateAccount(docId, dataToUpdate) { const accountDocRef = doc(accountsCollection, docId); try { await updateDoc(accountDocRef, dataToUpdate); } catch (error) { console.error("Error updating account: ", error); } }
     async function deleteAccount(docId) { if (!confirm('Tem certeza de que quer apagar esta conta?')) return; const accountDocRef = doc(accountsCollection, docId); try { await deleteDoc(accountDocRef); } catch (error) { console.error("Error deleting account: ", error); } }
-
-    // --- OPERAÇÕES CRUD COM CATEGORIAS ---
     function renderCategoryList() { categoryListContainer.innerHTML = ''; if (userCategories.length === 0) { categoryListContainer.innerHTML = `<p class="text-gray-500 text-center">Nenhuma categoria personalizada.</p>`; return; } userCategories.forEach(cat => { const categoryDiv = document.createElement('div'); categoryDiv.className = 'flex justify-between items-center p-2 bg-gray-100 dark:bg-gray-600 rounded-md'; categoryDiv.innerHTML = `<span>${cat.name}</span>`; const deleteBtn = document.createElement('button'); deleteBtn.innerHTML = '&times;'; deleteBtn.title = 'Excluir categoria'; deleteBtn.className = 'btn-delete-custom'; deleteBtn.onclick = () => deleteCategory(cat.id); categoryDiv.appendChild(deleteBtn); categoryListContainer.appendChild(categoryDiv); }); }
     addCategoryForm.addEventListener('submit', async (e) => { e.preventDefault(); const categoryName = newCategoryNameInput.value.trim(); if (categoryName) { await addCategory({ name: categoryName }); newCategoryNameInput.value = ''; } });
     async function addCategory(categoryData) { try { await addDoc(categoriesCollection, categoryData); } catch (error) { console.error("Error adding category: ", error); } }
@@ -438,11 +342,42 @@
     // --- INICIA A APLICAÇÃO ---
     loadTheme();
     initializeAppAndConnect();
-
 </script>
     <button id="fab-add-account" title="Adicionar Nova Conta" class="fixed bottom-8 right-8 bg-indigo-600 hover:bg-indigo-700 text-white w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-lg transform hover:scale-110 transition-transform duration-200 ease-in-out">
     +
 </button>
+<div id="auth-screen" class="fixed inset-0 bg-gray-100 dark:bg-gray-900 flex items-center justify-center z-2000">
+    <div class="w-full max-w-md p-8 space-y-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+        <div>
+            <h2 id="auth-title" class="text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+                Entrar na sua conta
+            </h2>
+        </div>
+        <form id="auth-form" class="space-y-6" action="#" method="POST">
+            <div>
+                <label for="auth-email" class="sr-only">Endereço de e-mail</label>
+                <input id="auth-email" name="email" type="email" autocomplete="email" required class="w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" placeholder="Endereço de e-mail">
+            </div>
+            <div>
+                <label for="auth-password" class="sr-only">Senha</label>
+                <input id="auth-password" name="password" type="password" autocomplete="current-password" required class="w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" placeholder="Senha">
+            </div>
+
+            <p id="auth-error" class="text-sm text-red-500 text-center"></p>
+
+            <div>
+                <button id="auth-submit-btn" type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Entrar
+                </button>
+            </div>
+        </form>
+        <div class="text-sm text-center">
+            <a href="#" id="auth-toggle-link" class="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
+                Não tem uma conta? Registre-se
+            </a>
+        </div>
+    </div>
+</div>
 <div id="manage-categories-modal" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
