@@ -126,6 +126,9 @@
         <div class="text-center mb-6">
     <button id="manage-categories-btn" class="btn btn-secondary text-sm">Gerenciar Categorias</button>
 </div>
+<div class="text-center mb-6">
+    <button id="migrate-data-btn" class="btn bg-red-500 hover:bg-red-600 text-white text-sm">MIGRAR DADOS (USO ÚNICO)</button>
+</div>
         <div class="dashboard">
             <div class="dashboard-card card-yellow"><h3>A Receber (Mês)</h3><p id="dashboard-to-receive">R$ 0,00</p></div>
             <div class="dashboard-card card-red"><h3>A Pagar (Mês)</h3><p id="dashboard-to-pay">R$ 0,00</p></div>
@@ -338,6 +341,49 @@
     addCategoryForm.addEventListener('submit', async (e) => { e.preventDefault(); const categoryName = newCategoryNameInput.value.trim(); if (categoryName) { await addCategory({ name: categoryName }); newCategoryNameInput.value = ''; } });
     async function addCategory(categoryData) { try { await addDoc(categoriesCollection, categoryData); } catch (error) { console.error("Error adding category: ", error); } }
     async function deleteCategory(docId) { if (!confirm('Tem certeza que quer apagar esta categoria?')) return; try { await deleteDoc(doc(categoriesCollection, docId)); } catch (error) { console.error("Error deleting category: ", error); } }
+// PASSO 3.2: ADICIONAR FUNÇÃO DE MIGRAÇÃO TEMPORÁRIA
+const migrateDataBtn = document.getElementById('migrate-data-btn');
+
+async function migrateData() {
+    // !!! IMPORTANTE: PREENCHA OS IDs QUE VOCÊ COPIOU !!!
+    const OLD_ANONYMOUS_ID = oItgNZMiTkWlxWBrx7aHZRmZZsm2;
+    const NEW_USER_ID = kmntjxvNYmVYAy0Grkg6eFGZ4e42;
+
+    if (OLD_ANONYMOUS_ID.includes("AQUI") || NEW_USER_ID.includes("AQUI")) {
+        alert("ERRO: Por favor, edite o código e preencha os IDs antigo e novo na função migrateData.");
+        return;
+    }
+
+    if (!confirm("Isso irá copiar todos os dados do usuário antigo para o novo. Deseja continuar?")) return;
+
+    console.log("Iniciando a migração...");
+    alert("Iniciando a migração... Verifique o console do navegador (F12) para o status.");
+
+    try {
+        const oldCollectionRef = collection(db, 'contas', OLD_ANONYMOUS_ID, 'items');
+        const newCollectionRef = collection(db, 'contas', NEW_USER_ID, 'items');
+
+        // Importamos a função getDocs aqui porque só a usamos uma vez
+        const { getDocs } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+
+        const querySnapshot = await getDocs(oldCollectionRef);
+
+        let count = 0;
+        for (const doc of querySnapshot.docs) {
+            await addDoc(newCollectionRef, doc.data());
+            count++;
+            console.log(`Documento ${count} copiado...`);
+        }
+
+        console.log(`Migração concluída! ${count} documentos foram copiados com sucesso.`);
+        alert(`Migração concluída! ${count} documentos foram copiados com sucesso. Atualize a página.`);
+
+    } catch (error) {
+        console.error("Erro durante a migração: ", error);
+        alert("Ocorreu um erro durante a migração. Verifique o console.");
+    }
+}
+migrateDataBtn.addEventListener('click', migrateData);
 
     // --- INICIA A APLICAÇÃO ---
     loadTheme();
