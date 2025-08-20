@@ -341,46 +341,59 @@
     addCategoryForm.addEventListener('submit', async (e) => { e.preventDefault(); const categoryName = newCategoryNameInput.value.trim(); if (categoryName) { await addCategory({ name: categoryName }); newCategoryNameInput.value = ''; } });
     async function addCategory(categoryData) { try { await addDoc(categoriesCollection, categoryData); } catch (error) { console.error("Error adding category: ", error); } }
     async function deleteCategory(docId) { if (!confirm('Tem certeza que quer apagar esta categoria?')) return; try { await deleteDoc(doc(categoriesCollection, docId)); } catch (error) { console.error("Error deleting category: ", error); } }
-// PASSO 3.2: ADICIONAR FUNÇÃO DE MIGRAÇÃO TEMPORÁRIA
+// CÓDIGO CORRIGIDO PARA SUBSTITUIR A VERSÃO ANTERIOR
+
 const migrateDataBtn = document.getElementById('migrate-data-btn');
 
 async function migrateData() {
-    // !!! IMPORTANTE: PREENCHA OS IDs QUE VOCÊ COPIOU !!!
-    const OLD_ANONYMOUS_ID = oItgNZMiTkWlxWBrx7aHZRmZZsm2;
-    const NEW_USER_ID = kmntjxvNYmVYAy0Grkg6eFGZ4e42;
+    // CORREÇÃO: Os IDs devem estar entre aspas para serem lidos como texto.
+    const OLD_ANONYMOUS_ID = "oItgNZMiTkWlxWBrx7aHZRmZZsm2";
+    const NEW_USER_ID = "kmntjxvNYmVYAy0Grkg6eFGZ4e42";
 
-    if (OLD_ANONYMOUS_ID.includes("AQUI") || NEW_USER_ID.includes("AQUI")) {
-        alert("ERRO: Por favor, edite o código e preencha os IDs antigo e novo na função migrateData.");
+    // Verificação de segurança melhorada
+    if (!OLD_ANONYMOUS_ID || !NEW_USER_ID) {
+        alert("ERRO: Um ou ambos os IDs estão vazios no código. Verifique as variáveis OLD_ANONYMOUS_ID e NEW_USER_ID.");
         return;
     }
 
-    if (!confirm("Isso irá copiar todos os dados do usuário antigo para o novo. Deseja continuar?")) return;
+    if (!confirm("Isso irá copiar todos os dados do usuário antigo (" + OLD_ANONYMOUS_ID.substring(0,6) + "...) para o novo usuário (" + NEW_USER_ID.substring(0,6) + "...). Deseja continuar?")) return;
 
     console.log("Iniciando a migração...");
-    alert("Iniciando a migração... Verifique o console do navegador (F12) para o status.");
+    alert("Iniciando a migração... Verifique o console do navegador (pressione F12) para o status.");
+    migrateDataBtn.disabled = true; // Desativa o botão para evitar cliques duplos
+    migrateDataBtn.textContent = "Migrando...";
 
     try {
+        const { getDocs } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+        
         const oldCollectionRef = collection(db, 'contas', OLD_ANONYMOUS_ID, 'items');
         const newCollectionRef = collection(db, 'contas', NEW_USER_ID, 'items');
-
-        // Importamos a função getDocs aqui porque só a usamos uma vez
-        const { getDocs } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
-
+        
         const querySnapshot = await getDocs(oldCollectionRef);
+        
+        if (querySnapshot.empty) {
+            alert("Nenhum documento encontrado para o ID antigo. Verifique se o ID de origem está correto.");
+            migrateDataBtn.disabled = false;
+            migrateDataBtn.textContent = "MIGRAR DADOS (USO ÚNICO)";
+            return;
+        }
 
         let count = 0;
         for (const doc of querySnapshot.docs) {
             await addDoc(newCollectionRef, doc.data());
             count++;
-            console.log(`Documento ${count} copiado...`);
+            console.log(`Documento ${count} de ${querySnapshot.size} copiado...`);
         }
 
         console.log(`Migração concluída! ${count} documentos foram copiados com sucesso.`);
-        alert(`Migração concluída! ${count} documentos foram copiados com sucesso. Atualize a página.`);
+        alert(`Migração concluída! ${count} documentos foram copiados com sucesso. Por favor, atualize a página agora (pressione F5).`);
+        migrateDataBtn.textContent = "MIGRADO COM SUCESSO";
 
     } catch (error) {
         console.error("Erro durante a migração: ", error);
-        alert("Ocorreu um erro durante a migração. Verifique o console.");
+        alert("Ocorreu um erro durante a migração. Verifique o console (F12) para mais detalhes.");
+        migrateDataBtn.disabled = false;
+        migrateDataBtn.textContent = "TENTAR MIGRAÇÃO NOVAMENTE";
     }
 }
 migrateDataBtn.addEventListener('click', migrateData);
