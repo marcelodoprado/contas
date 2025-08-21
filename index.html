@@ -85,48 +85,54 @@
             .month-separator-row td, .monthly-totals-row td { text-align: center; padding-left: 1rem; }
             .month-separator-row td:before, .monthly-totals-row td:before { content: none; }
         }
-        /* CÓDIGO PARA ADICIONAR (6.B) - ESTILOS DO MODO ESCURO */
-.dark body { background-color: #111827; color: #d1d5db; }
-.dark .container { background-color: #1f2937; }
-.dark .dashboard { background-color: #374151; }
-.dark h1, .dark h2 { color: #f9fafb; }
-.dark p, .dark label, .dark span, .dark .text-gray-700 { color: #d1d5db; }
-.dark .text-gray-500, .dark #user-id-display { color: #9ca3af; }
-.dark table th { background-color: #3730a3; color: #e0e7ff; }
-.dark table td { background-color: #374151; border-bottom-color: #4b5563; }
-.dark input, .dark select { background-color: #4b5563; border-color: #6b7280; color: #f9fafb; }
-.dark input:focus, .dark select:focus { border-color: #818cf8; box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.3); }
-.dark .modal-content { background-color: #374151; }
-.dark .modal-close-btn { color: #d1d5db; }
-.dark .month-separator-row { background-color: #374151; color: #e0e7ff; }
-.dark .month-separator-row.current-month-header td { background-color: #4338ca !important; }
-.dark .monthly-totals-row, .dark .monthly-totals-row td { background-color: #4b5563; border-top-color: #4338ca; border-bottom-color: #4f46e5; }
-.dark .chart-container { background-color: #374151; }
-.dark #category-chart { color: white; }
-.dark .chartjs-legend-text-color { color: #f3f4f6; }
-.dark #theme-toggle-btn { color: #9ca3af; }
-.dark #theme-toggle-btn:hover { background-color: #4b5563; }
-.dark .btn-secondary { background-color: #4b5563; color: #f3f4f6; }
-.dark .btn-secondary:hover { background-color: #6b7280; }
-.dark ::-webkit-calendar-picker-indicator { filter: invert(1); }
+        .dark body { background-color: #111827; color: #d1d5db; }
+        .dark .container { background-color: #1f2937; }
+        .dark .dashboard { background-color: #374151; }
+        .dark h1, .dark h2 { color: #f9fafb; }
+        .dark p, .dark label, .dark span, .dark .text-gray-700 { color: #d1d5db; }
+        .dark .text-gray-500, .dark #user-id-display { color: #9ca3af; }
+        .dark table th { background-color: #3730a3; color: #e0e7ff; }
+        .dark table td { background-color: #374151; border-bottom-color: #4b5563; }
+        .dark input, .dark select { background-color: #4b5563; border-color: #6b7280; color: #f9fafb; }
+        .dark input:focus, .dark select:focus { border-color: #818cf8; box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.3); }
+        .dark .modal-content { background-color: #374151; }
+        .dark .modal-close-btn { color: #d1d5db; }
+        .dark .month-separator-row { background-color: #374151; color: #e0e7ff; }
+        .dark .month-separator-row.current-month-header td { background-color: #4338ca !important; }
+        .dark .monthly-totals-row, .dark .monthly-totals-row td { background-color: #4b5563; border-top-color: #4338ca; border-bottom-color: #4f46e5; }
+        .dark .chart-container { background-color: #374151; }
+        .dark #category-chart { color: white; }
+        .dark .chartjs-legend-text-color { color: #f3f4f6; }
+        .dark #theme-toggle-btn { color: #9ca3af; }
+        .dark #theme-toggle-btn:hover { background-color: #4b5563; }
+        .dark .btn-secondary { background-color: #4b5563; color: #f3f4f6; }
+        .dark .btn-secondary:hover { background-color: #6b7280; }
+        .dark ::-webkit-calendar-picker-indicator { filter: invert(1); }
+
+tbody tr.row-receber td {
+    background-color: #fffbeb;
+}
+.dark tbody tr.row-receber td {
+    background-color: #423406;
+}
     </style>
 </head>
 <body class="p-4">
     <div id="app-container" class="container hidden mx-auto bg-gray-50 p-6 rounded-xl shadow-lg relative">
        <div id="user-info-header" class="absolute top-6 right-6 flex items-center gap-4">
-    <span id="user-email-display" class="text-sm text-gray-600 dark:text-gray-300"></span>
-    <button id="logout-btn" title="Sair" class="p-2 rounded-full text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-    </button>
-    <button id="theme-toggle-btn" title="Alternar tema" class="p-2 rounded-full text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none">
-        </button>
-</div>
-</div>
+            <span id="user-email-display" class="text-sm text-gray-600 dark:text-gray-300"></span>
+            <button id="logout-btn" title="Sair" class="p-2 rounded-full text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+            </button>
+            <button id="theme-toggle-btn" title="Alternar tema" class="p-2 rounded-full text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none">
+            </button>
+        </div>
         <h1 class="text-3xl font-bold text-center text-indigo-700 mb-8">CONTROLE FINANCEIRO</h1>
 
-<div class="text-center mb-6">
-    <button id="migrate-data-btn" class="btn bg-red-500 hover:bg-red-600 text-white text-sm">MIGRAR DADOS (USO ÚNICO)</button>
-</div>
+        <div class="text-center mb-6">
+            <button id="manage-categories-btn" class="btn btn-secondary text-sm">Gerenciar Categorias</button>
+        </div>
+        
         <div class="dashboard">
             <div class="dashboard-card card-yellow"><h3>A Receber (Mês)</h3><p id="dashboard-to-receive">R$ 0,00</p></div>
             <div class="dashboard-card card-red"><h3>A Pagar (Mês)</h3><p id="dashboard-to-pay">R$ 0,00</p></div>
@@ -138,11 +144,11 @@
                 <canvas id="category-chart"></canvas>
             </div>
             <div class="chart-and-table-container">
-            <div class="flex gap-2 sm:gap-4 mb-4 justify-center items-center flex-wrap">
-                <label for="month-selector" class="font-semibold text-gray-700">Visualizar Período:</label>
-                <select id="month-selector" class="p-2 rounded-lg shadow-sm border focus:ring-2 focus:ring-indigo-500"></select>
-                <select id="year-selector" class="p-2 rounded-lg shadow-sm border focus:ring-2 focus:ring-indigo-500"></select>
-            </div>
+                <div class="flex gap-2 sm:gap-4 mb-4 justify-center items-center flex-wrap">
+                    <label for="month-selector" class="font-semibold text-gray-700">Visualizar Período:</label>
+                    <select id="month-selector" class="p-2 rounded-lg shadow-sm border focus:ring-2 focus:ring-indigo-500"></select>
+                    <select id="year-selector" class="p-2 rounded-lg shadow-sm border focus:ring-2 focus:ring-indigo-500"></select>
+                </div>
                 <div class="mb-4">
                     <input type="text" id="search-input" placeholder="🔎 Digite para buscar pela descrição..." class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
@@ -196,6 +202,7 @@
     const firebaseConfig = { apiKey: "AIzaSyCaGjxtY3zdrWpH05TQqS2v6eNQWuZfkRE", authDomain: "contas-1eb87.firebaseapp.com", projectId: "contas-1eb87", storageBucket: "contas-1eb87.firebasestorage.app", messagingSenderId: "463381541875", appId: "1:463381541875:web:1f15a1fd384a3b510b5886" };
     const STATUS_PENDENTE = 'Pendente', STATUS_PAGO = 'Pago', STATUS_RECEBIDO = 'Recebido', TIPO_PAGAR = 'Pagar', TIPO_RECEBER = 'Receber';
     const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+    const DEFAULT_CATEGORIES = ['Moradia', 'Transporte', 'Alimentação', 'Saúde', 'Lazer', 'Cuidados Pessoais', 'Educação', 'Compras', 'Dívidas e Empréstimos', 'Salário', 'Renda Extra'];
 
     // --- ELEMENTOS DO DOM (HTML) ---
     const appContainer = document.getElementById('app-container');
@@ -241,7 +248,6 @@
             } else {
                 await signInWithEmailAndPassword(auth, email, password);
             }
-            // onAuthStateChanged irá tratar do resto
         } catch (error) {
             console.error("Authentication error:", error.code);
             authError.textContent = getAuthErrorMessage(error.code);
@@ -251,7 +257,6 @@
     async function handleLogout() {
         try {
             await signOut(auth);
-            // onAuthStateChanged irá tratar do resto
         } catch (error) {
             console.error("Logout error:", error);
         }
@@ -276,10 +281,8 @@
             const app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
-            // A função principal agora é o onAuthStateChanged
             onAuthStateChanged(auth, (user) => {
                 if (user) {
-                    // USUÁRIO LOGADO
                     appContainer.classList.remove('hidden');
                     authScreen.classList.add('hidden');
                     userEmailDisplay.textContent = user.email;
@@ -290,11 +293,9 @@
                     listenForAccountChanges();
                     listenForCategoryChanges();
                 } else {
-                    // USUÁRIO DESLOGADO
                     appContainer.classList.add('hidden');
                     authScreen.classList.remove('hidden');
                     userEmailDisplay.textContent = '';
-                    // Limpa os dados e listeners antigos para evitar erros
                     if (unsubscribe) unsubscribe();
                     if (unsubscribeCategories) unsubscribeCategories();
                     allAccounts = [];
@@ -307,11 +308,78 @@
         }
     }
     
-    // ... (O restante das suas funções de renderização, CRUD, etc. permanece o mesmo) ...
-    // --- COLE AQUI TODAS AS SUAS OUTRAS FUNÇÕES ---
-    // (openModal, closeModal, renderAll, renderTable, updateDashboard, etc.)
+    // --- FUNÇÕES DE CONTROLE DO MODAL ---
+    function openModal() {
+        addAccountForm.reset();
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('form-date').value = today;
+        
+        const categorySelect = document.getElementById('form-category');
+        const userCategoryNames = userCategories.map(c => c.name);
+        // Junta as categorias padrão com as do usuário, remove duplicatas e ordena
+        const combinedCategories = [...new Set(['Outros', ...DEFAULT_CATEGORIES, ...userCategoryNames])].sort((a, b) => a.localeCompare(b));
+        categorySelect.innerHTML = combinedCategories.map(opt => `<option value="${opt}">${opt}</option>`).join('');
 
-    // --- FUNÇÕES DE RENDERIZAÇÃO E LÓGICA (COPIE E COLE TODAS AS SUAS FUNÇÕES ANTIGAS AQUI) ---
+        modal.classList.add('visible');
+    }
+
+    function closeModal() {
+        modal.classList.remove('visible');
+    }
+
+    // --- EVENT LISTENERS (OUVINTES DE EVENTOS) ---
+    fabAddButton.addEventListener('click', openModal);
+    modalCloseBtn.addEventListener('click', closeModal);
+    modalCancelBtn.addEventListener('click', closeModal);
+    
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
+    addAccountForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const accountData = {
+            description: document.getElementById('form-description').value,
+            category: document.getElementById('form-category').value,
+            value: parseFloat(document.getElementById('form-value').value),
+            date: document.getElementById('form-date').value,
+            installment: document.getElementById('form-installment').value,
+            type: document.getElementById('form-type').value,
+            status: document.getElementById('form-status').value,
+        };
+        await addAccount(accountData);
+        closeModal();
+    });
+
+    manageCategoriesBtn.addEventListener('click', () => {
+        categoryModal.classList.add('visible');
+    });
+
+    categoryModalCloseBtn.addEventListener('click', () => {
+        categoryModal.classList.remove('visible');
+    });
+
+    categoryModal.addEventListener('click', (e) => {
+        if (e.target === categoryModal) {
+            categoryModal.classList.remove('visible');
+        }
+    });
+
+    formTypeSelect.addEventListener('change', () => {
+        if (formTypeSelect.value === TIPO_RECEBER) {
+            formStatusSelect.innerHTML = `<option value="${STATUS_PENDENTE}">Pendente</option><option value="${STATUS_RECEBIDO}">Recebido</option>`;
+        } else {
+            formStatusSelect.innerHTML = `<option value="${STATUS_PENDENTE}">Pendente</option><option value="${STATUS_PAGO}">Pago</option>`;
+        }
+    });
+
+    yearSelector.addEventListener('change', () => populateMonthsForSelectedYear(false, monthSelector.value));
+    monthSelector.addEventListener('change', renderAll);
+    searchInput.addEventListener('input', renderAll);
+
+    // --- FUNÇÕES DE RENDERIZAÇÃO E LÓGICA ---
     const sunIcon = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>`, moonIcon = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>`; function applyTheme(theme) { document.documentElement.classList.toggle('dark', theme === 'dark'); themeToggleBtn.innerHTML = theme === 'dark' ? sunIcon : moonIcon; localStorage.setItem('theme', theme); if (categoryChart) { categoryChart.options.plugins.legend.labels.color = theme === 'dark' ? '#f3f4f6' : '#374151'; categoryChart.options.plugins.title.color = theme === 'dark' ? '#f3f4f6' : '#374151'; categoryChart.update(); } } themeToggleBtn.addEventListener('click', () => applyTheme(localStorage.getItem('theme') === 'light' ? 'dark' : 'light')); function loadTheme() { applyTheme(localStorage.getItem('theme') || 'light'); }
     function renderAll() { if (!allAccounts) return; const searchTerm = searchInput.value.toLowerCase(); const accountsFromSearch = searchTerm ? allAccounts.filter(account => account.description.toLowerCase().includes(searchTerm)) : allAccounts; renderTable(accountsFromSearch); const selectedYear = yearSelector.value; const selectedMonth = monthSelector.value; if (selectedYear && selectedMonth) { const accountsForPeriod = allAccounts.filter(account => account.date && account.date.startsWith(`${selectedYear}-${selectedMonth}`)); updateDashboard(accountsForPeriod); renderCategoryChart(accountsForPeriod); } else { updateDashboard([]); renderCategoryChart([]); } }
     function renderTable(accountsToRender) { accountsTableBody.innerHTML = ''; if (accountsToRender.length === 0) { if (searchInput.value) { showError(`Nenhuma conta encontrada para "${searchInput.value}".`); } else { showEmptyMessage(); } return; } const accountsByMonth = groupAccountsByMonth(accountsToRender); const sortedMonthKeys = Object.keys(accountsByMonth).sort((a, b) => new Date(b.split('/')[1], monthNames.indexOf(b.split('/')[0])) - new Date(a.split('/')[1], monthNames.indexOf(a.split('/')[0]))); const now = new Date(), currentMonthKey = `${monthNames[now.getMonth()]}/${now.getFullYear()}`; sortedMonthKeys.forEach(monthKey => appendMonthSection(monthKey, accountsByMonth[monthKey], monthKey === currentMonthKey)); }
@@ -322,7 +390,27 @@
     function updatePeriodSelectors(isFirstRun) { const savedYear = yearSelector.value, savedMonth = monthSelector.value; const availablePeriods = new Set(); allAccounts.forEach(acc => acc.date && availablePeriods.add(acc.date.substring(0, 7))); const sortedPeriods = Array.from(availablePeriods).sort().reverse(); const uniqueYears = [...new Set(sortedPeriods.map(p => p.split('-')[0]))]; yearSelector.innerHTML = uniqueYears.map(y => `<option value="${y}">${y}</option>`).join(''); if (isFirstRun) { const currentYear = new Date().getFullYear().toString(); yearSelector.value = uniqueYears.includes(currentYear) ? currentYear : (uniqueYears[0] || ''); } else { yearSelector.value = uniqueYears.includes(savedYear) ? savedYear : (uniqueYears[0] || ''); } populateMonthsForSelectedYear(isFirstRun, savedMonth); }
     function populateMonthsForSelectedYear(isFirstRun, savedMonth) { const selectedYear = yearSelector.value; if (!selectedYear) { monthSelector.innerHTML = ''; return; } const availablePeriods = new Set(); allAccounts.forEach(acc => acc.date && availablePeriods.add(acc.date.substring(0, 7))); const monthsForYear = [...new Set(Array.from(availablePeriods).filter(p => p.startsWith(selectedYear)).map(p => p.split('-')[1]))].sort(); monthSelector.innerHTML = monthsForYear.map(m => `<option value="${m}">${monthNames[parseInt(m, 10) - 1]}</option>`).join(''); if (isFirstRun) { const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, '0'); monthSelector.value = monthsForYear.includes(currentMonth) ? currentMonth : (monthsForYear[0] || ''); } else { monthSelector.value = monthsForYear.includes(savedMonth) ? savedMonth : (monthsForYear[0] || ''); } }
     function appendMonthSection(monthKey, monthAccounts, isCurrentMonth) { const contentRowsClassName = `content-${monthKey.replace(/[^a-zA-Z0-9]/g, '-')}`; const headerRow = accountsTableBody.insertRow(); headerRow.className = 'month-separator-row'; headerRow.classList.toggle('current-month-header', isCurrentMonth); headerRow.classList.toggle('collapsed', !isCurrentMonth); const headerCell = headerRow.insertCell(); headerCell.colSpan = 8; headerCell.innerHTML = `${monthKey} <span class="toggle-icon">▼</span>`; monthAccounts.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(account => { const row = createAccountRow(account); row.className = `${contentRowsClassName}`; row.classList.toggle('hidden-row', !isCurrentMonth); accountsTableBody.appendChild(row); }); const totalsRow = createTotalsRow(monthAccounts); totalsRow.className = `monthly-totals-row ${contentRowsClassName}`; totalsRow.classList.toggle('hidden-row', !isCurrentMonth); accountsTableBody.appendChild(totalsRow); headerRow.addEventListener('click', () => { headerRow.classList.toggle('collapsed'); document.querySelectorAll(`.${contentRowsClassName}`).forEach(row => row.classList.toggle('hidden-row')); }); }
-    function createAccountRow(account) { const row = document.createElement('tr'); const createCell = (child) => { const cell = row.insertCell(); cell.appendChild(child); }; createCell(createInputElement('text', account.description, (e) => updateAccount(account.id, { description: e.target.value }))); const categoryOptions = ['Outros', ...userCategories.map(c => c.name)]; createCell(createSelectElement(categoryOptions, account.category || 'Outros', (e) => updateAccount(account.id, { category: e.target.value }))); createCell(createSelectElement([TIPO_PAGAR, TIPO_RECEBER], account.type, (e) => updateAccount(account.id, { type: e.target.value }))); createCell(createInputElement('number', account.value, (e) => updateAccount(account.id, { value: parseFloat(e.target.value) || 0 }))); createCell(createInputElement('date', account.date, (e) => updateAccount(account.id, { date: e.target.value }))); createCell(createInputElement('text', account.installment, (e) => updateAccount(account.id, { installment: e.target.value }))); const statusSelect = createSelectElement([STATUS_PENDENTE, STATUS_PAGO, STATUS_RECEBIDO], account.status, (e) => { applyStatusClass(e.target, e.target.value); updateAccount(account.id, { status: e.target.value }); }); statusSelect.className = 'status-select'; applyStatusClass(statusSelect, account.status); createCell(statusSelect); const actionsCell = row.insertCell(); actionsCell.appendChild(createDeleteButton(() => deleteAccount(account.id))); return row; }
+    function createAccountRow(account) {
+    const row = document.createElement('tr');
+    if (account.type === TIPO_RECEBER) {
+        row.classList.add('row-receber');
+    }
+    const createCell = (child) => { const cell = row.insertCell(); cell.appendChild(child); };
+    
+    createCell(createInputElement('text', account.description, (e) => updateAccount(account.id, { description: e.target.value })));
+    
+    const userCategoryNames = userCategories.map(c => c.name);
+    const combinedCategories = [...new Set(['Outros', ...DEFAULT_CATEGORIES, ...userCategoryNames])].sort((a, b) => a.localeCompare(b));
+    createCell(createSelectElement(combinedCategories, account.category || 'Outros', (e) => updateAccount(account.id, { category: e.target.value })));
+    
+    createCell(createSelectElement([TIPO_PAGAR, TIPO_RECEBER], account.type, (e) => updateAccount(account.id, { type: e.target.value })));
+    
+    createCell(createInputElement('number', account.value, (e) => updateAccount(account.id, { value: parseFloat(e.target.value) || 0 })));
+    createCell(createInputElement('date', account.date, (e) => updateAccount(account.id, { date: e.target.value })));
+    createCell(createInputElement('text', account.installment, (e) => updateAccount(account.id, { installment: e.target.value })));
+    const statusSelect = createSelectElement([STATUS_PENDENTE, STATUS_PAGO, STATUS_RECEBIDO], account.status, (e) => { applyStatusClass(e.target, e.target.value); updateAccount(account.id, { status: e.target.value }); }); statusSelect.className = 'status-select'; applyStatusClass(statusSelect, account.status); createCell(statusSelect);
+    const actionsCell = row.insertCell(); actionsCell.appendChild(createDeleteButton(() => deleteAccount(account.id))); return row;
+}
     function createInputElement(type, value, changeHandler) { const input = document.createElement('input'); input.type = type; input.value = (type === 'number') ? (value || 0).toFixed(2) : value; if (type === 'number') input.step = '0.01'; input.addEventListener('change', changeHandler); return input; }
     function createSelectElement(options, selectedValue, changeHandler) { const select = document.createElement('select'); select.innerHTML = options.map(opt => `<option value="${opt}" ${selectedValue === opt ? 'selected' : ''}>${opt}</option>`).join(''); select.addEventListener('change', changeHandler); return select; }
     function createTotalsRow(monthAccounts) { const totalsRow = document.createElement('tr'); const totalsCell = totalsRow.insertCell(); totalsCell.colSpan = 8; const monthlyTotals = calculateMonthlyTotals(monthAccounts); totalsCell.innerHTML = `<div class="flex-container flex flex-row justify-between items-center w-full p-1 flex-wrap text-xs md:text-sm"><div><span><strong>Pendentes:</strong> A Pagar <span class="text-red-600">R$ ${monthlyTotals.toPay.toFixed(2).replace('.', ',')}</span></span></div><div><span><strong>Quitados:</strong> Pago <span class="text-green-700">R$ ${monthlyTotals.paidAmount.toFixed(2).replace('.', ',')}</span> | Recebido <span class="text-yellow-600">R$ ${monthlyTotals.receivedAmount.toFixed(2).replace('.', ',')}</span></span></div></div>`; return totalsRow; }
@@ -344,7 +432,8 @@
     loadTheme();
     initializeAppAndConnect();
 </script>
-    <button id="fab-add-account" title="Adicionar Nova Conta" class="fixed bottom-8 right-8 bg-indigo-600 hover:bg-indigo-700 text-white w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-lg transform hover:scale-110 transition-transform duration-200 ease-in-out">
+
+<button id="fab-add-account" title="Adicionar Nova Conta" class="fixed bottom-8 right-8 bg-indigo-600 hover:bg-indigo-700 text-white w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-lg transform hover:scale-110 transition-transform duration-200 ease-in-out">
     +
 </button>
 <div id="auth-screen" class="fixed inset-0 bg-gray-100 dark:bg-gray-900 flex items-center justify-center z-2000">
