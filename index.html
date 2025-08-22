@@ -189,7 +189,15 @@ tbody tr.row-receber td {
                     <div class="form-group"><label for="form-category">Categoria</label><select id="form-category"></select></div>
                     <div class="form-group"><label for="form-value">Valor</label><input type="number" id="form-value" step="0.01" required placeholder="0.00"></div>
                     <div class="form-group"><label for="form-date">Data</label><input type="date" id="form-date" required></div>
-                    <div class="form-group"><label for="form-installment">Parcela</label><input type="text" id="form-installment" placeholder="Ex: 1/12"></div>
+                    <div class="form-group">
+    <label for="form-repeat-option">Repetir Lançamento?</label>
+    <select id="form-repeat-option" class="w-full p-2 border rounded">
+        <option value="none" selected>Não repetir (lançamento único)</option>
+        <option value="monthly">Repetir mensalmente (até o fim do ano)</option>
+        <option value="installments">Lançar parcelas restantes</option>
+    </select>
+</div>
+<div id="installment-group" class="form-group hidden"><label for="form-installment">Parcela</label><input type="text" id="form-installment" placeholder="Ex: 1/12"></div>
                     <div class="form-group"><label for="form-type">Tipo</label><select id="form-type"><option value="Pagar">Pagar</option><option value="Receber">Receber</option></select></div>
                     <div class="form-group"><label for="form-status">Status</label><select id="form-status"><option value="Pendente">Pendente</option><option value="Pago">Pago</option><option value="Recebido">Recebido</option></select></div>
                 </form>
@@ -247,6 +255,11 @@ tbody tr.row-receber td {
     const editModalCloseBtn = document.getElementById('edit-modal-close-btn');
     const editModalCancelBtn = document.getElementById('edit-modal-cancel-btn');
     const editModalSaveBtn = document.getElementById('edit-modal-save-btn');
+    const deleteModal = document.getElementById('delete-confirmation-modal');
+    const deleteModalText = document.getElementById('delete-modal-text');
+    const deleteOneBtn = document.getElementById('delete-one-btn');
+    const deleteSeriesBtn = document.getElementById('delete-series-btn');
+    const deleteCancelBtn = document.getElementById('delete-cancel-btn');
 
     // --- VARIÁVEIS DE ESTADO ---
     let db, auth, accountsCollection, categoriesCollection, unsubscribe, unsubscribeCategories;
@@ -255,6 +268,7 @@ tbody tr.row-receber td {
     let isInitialLoad = true;
     let isRegisterMode = false;
     let currentEditingAccountId = null;
+    let accountsToDelete = [];
 
     // --- LÓGICA DE AUTENTICAÇÃO E CONFIGURAÇÃO DE LISTENERS ---
     function setupAuthScreenListeners() {
@@ -393,26 +407,122 @@ tbody tr.row-receber td {
     }
 
     // --- EVENT LISTENERS GERAIS DO APP (sempre ativos) ---
+
+// CÓDIGO NOVO (2) - LÓGICA PARA MOSTRAR/ESCONDER CAMPO PARCELA
+const repeatOptionSelect = document.getElementById('form-repeat-option');
+const installmentGroup = document.getElementById('installment-group');
+
+repeatOptionSelect.addEventListener('change', () => {
+    // Se a opção selecionada for 'installments', mostra o campo. Senão, esconde.
+    if (repeatOptionSelect.value === 'installments') {
+        installmentGroup.classList.remove('hidden');
+    } else {
+        installmentGroup.classList.add('hidden');
+    }
+});
     fabAddButton.addEventListener('click', openModal);
     modalCloseBtn.addEventListener('click', closeModal);
     modalCancelBtn.addEventListener('click', closeModal);
     modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
-    addAccountForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const accountData = {
-            description: document.getElementById('form-description').value,
-            category: document.getElementById('form-category').value,
-            value: parseFloat(document.getElementById('form-value').value),
-            date: document.getElementById('form-date').value,
-            installment: document.getElementById('form-installment').value,
-            type: document.getElementById('form-type').value,
-            status: document.getElementById('form-status').value,
-        };
-        await addAccount(accountData);
-        closeModal();
-    });
+// SUBSTITUA O SEU 'addAccountForm.addEventListener' ATUAL POR ESTE BLOCO COMPLETO
+addAccountForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
+    const repeatOption = document.getElementById('form-repeat-option').value;
+    const accountData = {
+        description: document.getElementById('form-description').value,
+        category: document.getElementById('form-category').value,
+        value: parseFloat(document.getElementById('form-value').value),
+        date: document.getElementById('form-date').value,
+        installment: document.getElementById('form-installment').value,
+        type: document.getElementById('form-type').value,
+        status: document.getElementById('form-status').value,
+    };
+
+    // LÓGICA NOVA: Gerar uma "etiqueta de família" se for uma série
+    let seriesId = null;
+    if (repeatOption !== 'none') {
+        seriesId = Date.now().toString() + Math.random().toString(36).substring(2, 9);
+        accountData.seriesId = seriesId;
+    }
+
+    // Adiciona o primeiro lançamento (o atual)
+    await addAccount(accountData);
+
+    // Agora, verifica se precisa criar lançamentos futuros
+    switch (repeatOption) {
+        case 'monthly':
+            const startDate = new Date(accountData.date + 'T12:00:00');
+            const startMonth = startDate.getMonth();
+            const year = startDate.getFullYear();
+            const monthsToCreate = 11 - startMonth;
+
+            if (monthsToCreate > 0 && confirm(`Isso criará ${monthsToCreate} lançamento(s) recorrente(s) até o final de ${year}. Deseja continuar?`)) {
+                for (let i = 1; i <= monthsToCreate; i++) {
+                    const nextDate = new Date(startDate);
+                    nextDate.setMonth(startMonth + i);
+
+                    const newAccountData = { ...accountData };
+                    newAccountData.date = nextDate.toISOString().split('T')[0];
+                    newAccountData.installment = '';
+                    newAccountData.seriesId = seriesId; // Adiciona a mesma etiqueta
+
+                    await addAccount(newAccountData);
+                }
+            }
+            break;
+
+        case 'installments':
+            const installmentParts = accountData.installment.split('/').map(p => parseInt(p.trim()));
+            if (installmentParts.length === 2 && !isNaN(installmentParts[0]) && !isNaN(installmentParts[1])) {
+                const currentInstallment = installmentParts[0];
+                const totalInstallments = installmentParts[1];
+                const installmentsToCreate = totalInstallments - currentInstallment;
+
+                if (installmentsToCreate > 0 && confirm(`Isso criará as ${installmentsToCreate} parcela(s) restante(s). Deseja continuar?`)) {
+                    const firstDate = new Date(accountData.date + 'T12:00:00');
+                    for (let i = 1; i <= installmentsToCreate; i++) {
+                        const nextDate = new Date(firstDate);
+                        nextDate.setMonth(firstDate.getMonth() + i);
+
+                        const newAccountData = { ...accountData };
+                        newAccountData.date = nextDate.toISOString().split('T')[0];
+                        newAccountData.installment = `${currentInstallment + i}/${totalInstallments}`;
+                        newAccountData.seriesId = seriesId; // Adiciona a mesma etiqueta
+
+                        await addAccount(newAccountData);
+                    }
+                }
+            } else {
+                alert('Formato da parcela inválido. Use o formato "atual/total", por exemplo, "1/12".');
+            }
+            break;
+    }
+
+    closeModal();
+});
+// CÓDIGO NOVO (4) - LISTENERS DO MODAL DE EXCLUSÃO
+function closeDeleteModal() {
+    accountsToDelete = [];
+    deleteModal.classList.remove('visible');
+}
+
+deleteCancelBtn.addEventListener('click', closeDeleteModal);
+
+deleteOneBtn.addEventListener('click', async () => {
+    if (accountsToDelete.length > 0) {
+        const accountDocRef = doc(accountsCollection, accountsToDelete[0].id);
+        await deleteDoc(accountDocRef);
+    }
+    closeDeleteModal();
+});
+
+deleteSeriesBtn.addEventListener('click', async () => {
+    const deletePromises = accountsToDelete.map(acc => deleteDoc(doc(accountsCollection, acc.id)));
+    await Promise.all(deletePromises);
+    closeDeleteModal();
+});
     editModalCloseBtn.addEventListener('click', closeEditModal);
     editModalCancelBtn.addEventListener('click', closeEditModal);
     editForm.addEventListener('submit', async (e) => {
@@ -510,7 +620,31 @@ tbody tr.row-receber td {
     function showEmptyMessage() { accountsTableBody.innerHTML = `<tr><td colspan="8" class="text-center text-gray-500 py-8">Nenhuma conta encontrada. <button onclick="openModal()" class="text-indigo-600 hover:underline">Adicione uma</button> para começar.</td></tr>`; document.getElementById('dashboard-to-receive').textContent = 'R$ 0,00'; document.getElementById('dashboard-to-pay').textContent = 'R$ 0,00'; document.getElementById('dashboard-paid').textContent = 'R$ 0,00'; document.getElementById('dashboard-balance').textContent = 'R$ 0,00'; }
     async function addAccount(accountData) { try { await addDoc(accountsCollection, { ...accountData, createdAt: serverTimestamp() }); } catch (error) { console.error("Error adding account: ", error); } }
     async function updateAccount(docId, dataToUpdate) { const accountDocRef = doc(accountsCollection, docId); try { await updateDoc(accountDocRef, dataToUpdate); } catch (error) { console.error("Error updating account: ", error); } }
-    async function deleteAccount(docId) { if (!confirm('Tem certeza de que quer apagar esta conta?')) return; const accountDocRef = doc(accountsCollection, docId); try { await deleteDoc(accountDocRef); } catch (error) { console.error("Error deleting account: ", error); } }
+    // SUBSTITUA A FUNÇÃO 'deleteAccount' ANTIGA POR ESTA
+async function deleteAccount(accountId) {
+    const accountToDelete = allAccounts.find(acc => acc.id === accountId);
+    if (!accountToDelete) return;
+
+    // Se não for parte de uma série, usa o confirm simples
+    if (!accountToDelete.seriesId) {
+        if (confirm('Tem certeza de que quer apagar esta conta?')) {
+            const accountDocRef = doc(accountsCollection, accountId);
+            try {
+                await deleteDoc(accountDocRef);
+            } catch (error) {
+                console.error("Error deleting account: ", error);
+            }
+        }
+    } else {
+        // Se for parte de uma série, abre o nosso modal personalizado
+        accountsToDelete = allAccounts.filter(acc => 
+            acc.seriesId === accountToDelete.seriesId && new Date(acc.date) >= new Date(accountToDelete.date)
+        ).sort((a,b) => new Date(a.date) - new Date(b.date));
+
+        deleteModalText.textContent = `Este lançamento (${accountsToDelete.length > 1 ? `e mais ${accountsToDelete.length - 1} futuro(s)` : ''}) faz parte de uma série. O que deseja fazer?`;
+        deleteModal.classList.add('visible');
+    }
+}
     function renderCategoryList() { categoryListContainer.innerHTML = ''; if (userCategories.length === 0) { categoryListContainer.innerHTML = `<p class="text-gray-500 text-center">Nenhuma categoria personalizada.</p>`; return; } userCategories.forEach(cat => { const categoryDiv = document.createElement('div'); categoryDiv.className = 'flex justify-between items-center p-2 bg-gray-100 dark:bg-gray-600 rounded-md'; categoryDiv.innerHTML = `<span>${cat.name}</span>`; const deleteBtn = document.createElement('button'); deleteBtn.innerHTML = '&times;'; deleteBtn.title = 'Excluir categoria'; deleteBtn.className = 'btn-delete-custom'; deleteBtn.onclick = () => deleteCategory(cat.id); categoryDiv.appendChild(deleteBtn); categoryListContainer.appendChild(categoryDiv); }); }
     addCategoryForm.addEventListener('submit', async (e) => { e.preventDefault(); const categoryName = newCategoryNameInput.value.trim(); if (categoryName) { await addCategory({ name: categoryName }); newCategoryNameInput.value = ''; } });
     async function addCategory(categoryData) { try { await addDoc(categoriesCollection, categoryData); } catch (error) { console.error("Error adding category: ", error); } }
@@ -615,6 +749,22 @@ tbody tr.row-receber td {
                 </div>
         </div>
     </div>
+</div>
+
+<div id="delete-confirmation-modal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Confirmar Exclusão</h2>
+        </div>
+        <div class="modal-body">
+            <p id="delete-modal-text" class="text-center">Este lançamento faz parte de uma série. O que você deseja fazer?</p>
+        </div>
+        <div class="modal-footer justify-center flex-wrap">
+            <button id="delete-one-btn" class="btn btn-secondary">Apagar Somente Este</button>
+            <button id="delete-series-btn" class="btn btn-primary">Apagar Este e os Futuros</button>
+            <button id="delete-cancel-btn" class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
 </div>
 
 </body>
